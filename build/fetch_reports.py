@@ -11,7 +11,8 @@ Writes reports.json next to this script. A source that fails is left out and log
 warning; the script never fails the build, because the map must deploy without this panel.
 Only titles, dates, links and tags are kept: the report text stays on the shop site.
 
-  python fetch_reports.py
+  python fetch_reports.py            deploy mode: warnings only
+  python fetch_reports.py --strict   PR check: exit code 1 when a source failed
 """
 import html, json, re, sys, time, urllib.parse, urllib.request, zlib
 import xml.etree.ElementTree as ET
@@ -274,8 +275,12 @@ def reports():
     return sorted(out, key=lambda r: r["date"], reverse=True)
 
 
+warnings = []
+
+
 def warn(msg):
     # GitHub Actions shows ::warning:: lines on the run summary.
+    warnings.append(msg)
     print(f"::warning::fetch_reports: {msg}", file=sys.stderr)
 
 
@@ -289,6 +294,8 @@ def main():
             "testfish": test_fishery(today), "reports": reports()}
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
     print(f"{OUT.name}: {len(data['testfish'])} test-fishery series, {len(data['reports'])} reports")
+    if "--strict" in sys.argv and warnings:
+        sys.exit(f"--strict: {len(warnings)} source(s) failed")
 
 
 if __name__ == "__main__":

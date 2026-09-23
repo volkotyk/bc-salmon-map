@@ -36,6 +36,7 @@ Features:
 
 ```
 .github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, fetch the running-now data, build index.html, deploy to Pages
+.github/workflows/pr-preview.yml   pull requests: fetch the running-now data (strict), build index.html, attach it as the site-preview artifact; no deploy
 dfo/
   update.py             reads the DFO pages, parses the tables, validates, writes build/rules.json + build/status.json
   catalog.py            hand-kept knowledge: DFO names -> map lines, group names, Ukrainian wording
