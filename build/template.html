@@ -1,4 +1,6 @@
 <title>Лосось Metro Vancouver</title>
+<!-- The saved theme applies before the first paint; the main script runs only after Leaflet loads. -->
+<script>try { const t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch { /* storage may be blocked */ }</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@500;600;700&family=Fira+Sans:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap">
@@ -223,6 +225,12 @@ details li{margin-bottom:6px}
 .lang{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
 .lang button{border:0;border-radius:0;min-width:var(--tap);padding:0 9px;font:600 12px var(--f-mono);background:var(--panel);color:var(--ink-2)}
 .lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.tools{display:flex;align-items:center;gap:4px;flex:none}
+/* Theme switch: a quiet icon button. It shows the theme that a click turns on. */
+.theme{display:inline-flex;align-items:center;justify-content:center;width:var(--tap);padding:0;border-color:transparent;background:none;color:var(--ink-3)}
+@media (hover:hover){.theme:hover{border-color:transparent;color:var(--ink)}}
+.theme svg{display:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.theme[data-next="dark"] .i-moon,.theme[data-next="light"] .i-sun{display:block}
 /* A mouse or a trackpad does not need finger-sized targets. */
 @media (min-width:768px) and (pointer:fine){:root{--tap:32px}}
 /* Tablets and desktops: the panel is a sidebar next to the map. Keep 768px in sync with WIDE in the script. */
@@ -255,9 +263,15 @@ details li{margin-bottom:6px}
         <p class="eyebrow" id="t-eyebrow"></p>
         <div class="head">
           <h1 id="t-h1"></h1>
-          <div class="lang" role="group" aria-label="Language / Мова">
-            <button type="button" data-lang="uk" lang="uk">UA</button>
-            <button type="button" data-lang="en" lang="en">EN</button>
+          <div class="tools">
+            <button type="button" class="theme" id="theme">
+              <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+              <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            </button>
+            <div class="lang" role="group" aria-label="Language / Мова">
+              <button type="button" data-lang="uk" lang="uk">UA</button>
+              <button type="button" data-lang="en" lang="en">EN</button>
+            </div>
           </div>
         </div>
         <p class="lede" id="t-lede"></p>
@@ -327,6 +341,7 @@ const LANGS = ['uk', 'en'];
 const store = {
   get: k => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* storage may be blocked */ } },
+  del: k => { try { localStorage.removeItem(k); } catch { /* storage may be blocked */ } },
 };
 const fromHash = () => LANGS.find(l => location.hash === '#' + l);
 let LANG = fromHash() || (LANGS.includes(store.get('lang')) ? store.get('lang') : null)
@@ -356,6 +371,7 @@ const I18N = {
     lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб прокласти туди маршрут.',
     spLabel: 'Вид лосося', dateLabel: 'Дата риболовлі', today: 'Сьогодні', mapLabel: 'Карта водойм Lower Mainland',
     sheetExpand: 'Розгорнути панель', sheetCollapse: 'Згорнути панель',
+    themeDark: 'Темна тема', themeLight: 'Світла тема',
     legendTitle: 'Легенда', legendHint: 'Лінії — річки, заливка — морські підзони',
     legendBoth: 'Чавича + кижуч (Chinook + Coho)', legendChinook: 'Лише чавича (Chinook)', legendCoho: 'Лише кижуч (Coho)',
     legendKeep: sp => `${sp}: можна взяти`, legendRelease: 'Лише відпустити', legendClosed: 'Закрито на дату', legendFraser: 'Закриття (Fraser)',
@@ -427,6 +443,7 @@ const I18N = {
     lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to get directions there.',
     spLabel: 'Species', dateLabel: 'Fishing date', today: 'Today', mapLabel: 'Map of Lower Mainland salmon waters',
     sheetExpand: 'Expand panel', sheetCollapse: 'Collapse panel',
+    themeDark: 'Dark theme', themeLight: 'Light theme',
     legendTitle: 'Legend', legendHint: 'Lines: rivers · shaded: tidal subareas',
     legendBoth: 'Chinook + Coho', legendChinook: 'Chinook only', legendCoho: 'Coho only',
     legendKeep: sp => `${sp}: retention`, legendRelease: 'Release only', legendClosed: 'Closed on this date', legendFraser: 'Closure (Fraser)',
@@ -1124,6 +1141,7 @@ function applyLang(lang, save) {
   $('rules').open = open;
   $('foot').innerHTML = t('foot');
   renderAttribution();
+  renderTheme();
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   const wasOpen = activePopup && map.hasLayer(activePopup) && reopen;
   renderSpecies();
@@ -1187,8 +1205,30 @@ function styleBase() {
 
 // Repaint map colors when the viewer switches theme.
 const repaint = () => { styleBase(); render(); };
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', repaint);
+const darkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+darkMQ.addEventListener('change', () => { repaint(); renderTheme(); });
 new MutationObserver(repaint).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+// ---------- theme ----------
+// The system theme is the default. A click flips the theme; a choice that equals the system theme
+// removes the override, so the page follows the system again.
+const sysTheme = () => darkMQ.matches ? 'dark' : 'light';
+const curTheme = () => document.documentElement.dataset.theme || sysTheme();
+function renderTheme() {
+  const next = curTheme() === 'dark' ? 'light' : 'dark';
+  const b = $('theme');
+  b.dataset.next = next;
+  b.title = t(next === 'dark' ? 'themeDark' : 'themeLight');
+  b.setAttribute('aria-label', b.title);
+  // Browser toolbar color (index.html only): follow the page, not only the system.
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => { m.content = css('--panel'); });
+}
+$('theme').addEventListener('click', () => {
+  const next = $('theme').dataset.next;
+  if (next === sysTheme()) { delete document.documentElement.dataset.theme; store.del('theme'); }
+  else { document.documentElement.dataset.theme = next; store.set('theme', next); }
+  renderTheme();
+});
 
 map.on('zoomend', syncZoomClasses);
 
