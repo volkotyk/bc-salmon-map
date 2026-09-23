@@ -24,26 +24,51 @@ Features:
 - Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure.
 - Click any water for the full rule table, notes and fishery-notice links.
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
-- A daily GitHub Actions check watches the three DFO pages and opens an issue when the salmon rules change.
+- **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
 - UA / EN switch (also `#uk` / `#en` in the URL; the choice is remembered). Light and dark themes.
 
 ## Repository layout
 
 ```
-.github/workflows/pages.yml         builds index.html on every push to main and deploys it to GitHub Pages
-.github/workflows/dfo-monitor.yml   daily check of the DFO pages; opens an issue with the diff on change
-monitor/check_dfo.py                the check (Python standard library only)
-monitor/snapshots/                  last seen salmon text of each DFO page
+.github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, build index.html, deploy to Pages
+dfo/
+  update.py             reads the DFO pages, parses the tables, validates, writes build/rules.json + build/status.json
+  catalog.py            hand-kept knowledge: DFO names -> map lines, group names, Ukrainian wording
+  htmltable.py          small HTML table reader (rowspan/colspan)
+  snapshots/            plain text of the salmon part of each DFO page (git history shows what DFO changed)
 build/
-  template.html         page source: markup, CSS, JS, rules data, UA/EN texts
+  template.html         page source: markup, CSS, JS, UA/EN interface texts
+  rules.json            fishing rules parsed from DFO (generated; readable diffs in git)
+  status.json           last rules change, and "pending" when an update was blocked
   leaflet.css           Leaflet 1.9.4 CSS (inlined at build time; Leaflet JS loads from cdnjs)
-  geo.json              built map geometry: land, rivers, lakes, tidal subareas
+  geo.json              map geometry: land, rivers, lakes, tidal subareas
   sub.geojson           DFO PFMA subareas for Areas 28–29 (raw)
-  *.py                  fetch + build scripts (see below)
-  requirements.txt
+  *.py                  geometry fetch + build scripts, assemble.py
 ```
 
-The fishing rules live in `build/template.html` (`WATERS` array). Each rule has species, date range (MM-DD, may wrap past Dec 31), limit text and type (`retain`, `release`, `closed`, `gear`). English limit wording is in the `LIM_EN` table; other bilingual texts use `B('українською', 'English')`.
+Python standard library only for everything that runs in GitHub Actions; `build/requirements.txt` is only for rebuilding the geometry.
+
+## Automatic DFO updates
+
+Every day at 15:23 UTC (08:23 Pacific daylight time), on every push, and on demand from the Actions tab,
+`dfo/update.py`:
+
+1. downloads the Region 2, Area 28 and Area 29 pages;
+2. reads the tables: freshwater waters, sections, species, dates, limits, fishery notices; tidal species limits by subarea, gear restrictions, the Fraser mouth closure, and every other restriction as a popup note;
+3. validates everything against `dfo/catalog.py`;
+4. writes `build/rules.json`; the workflow commits it and republishes the map.
+
+**Safety check.** If DFO shows something the updater does not understand — a water that has no line on the map,
+an unreadable date, a new limit wording, a changed table layout, a changed Fraser-mouth boundary — the map keeps the
+previous rules, shows a red *"DFO: changes pending"* warning, and the workflow opens an issue labelled `dfo-update`
+with the reasons and the text diff. Fix `dfo/catalog.py` (for example add the new water and its Ukrainian name), push,
+and the next run publishes the new rules and clears the warning. A limit wording without a Ukrainian translation does
+not block: it is shown in English.
+
+To test the parser without the network: `python dfo/update.py --cache` (reuses `dfo/cache/`, saved by the last online run).
+
+The bot commits to `main`, so run `git pull` before your next push. GitHub pauses scheduled workflows after 60 days
+without repository activity; re-enable the workflow from the Actions tab if that happens.
 
 ## Rebuild
 
@@ -57,16 +82,13 @@ python run_all.py --offline  # rebuild from raw files already downloaded
 python run_all.py --page     # only re-assemble index.html after editing template.html
 ```
 
-`index.html` (single file, ~0.6 MB, no backend) is a build output and is not committed. GitHub Actions runs `run_all.py --page` on every push to `main` and publishes the result.
+`index.html` (single file, ~0.6 MB, no backend) is a build output and is not committed. GitHub Actions assembles and publishes it.
 
 Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `build_geo.py` → `build_tidal.py` → `assemble.py`.
 
-### Update the rules
+### Local preview
 
-1. Open the DFO pages below and compare with `WATERS` in `build/template.html`.
-2. Edit the rule rows (and `LIM_EN` if you add a new limit text).
-3. Commit and push. The **Deploy to GitHub Pages** workflow rebuilds the page and publishes it in about a minute; check the result at the live URL.
-4. Optional local preview: `python run_all.py --page`, then `python -m http.server` in the repo root and open `http://localhost:8000/`.
+`python dfo/update.py` (or `--cache`), then `cd build && python run_all.py --page`, then `python -m http.server` in the repo root and open `http://localhost:8000/`.
 
 ## Hosting
 
@@ -87,20 +109,6 @@ Other basemap options (checked September 2026):
 | Google Maps (Map Tiles API or JS API + GoogleMutant) | required, billing account with a card | 10k map loads / 100k tiles per month | adds billing risk for no benefit here |
 
 Free static hosts that work the same way: GitHub Pages, Cloudflare Pages, Netlify, Vercel (Hobby, non-commercial).
-
-## DFO change monitor
-
-`.github/workflows/dfo-monitor.yml` runs every day at 15:23 UTC (and on demand from the Actions tab).
-`monitor/check_dfo.py` downloads the three DFO pages below, keeps only the salmon part as text
-(Region 2: the whole regulation block; Areas 28 and 29: the *Salmon* tab, including restrictions,
-area descriptions and fishery-notice links) and compares it with `monitor/snapshots/`.
-
-When something changed, the workflow commits the new snapshots and opens an issue labelled
-`dfo-update` with a diff. GitHub emails the repository owner about new issues.
-Then update `WATERS` in `build/template.html`, push, and close the issue.
-If DFO changes the page layout, the check fails (red run, GitHub emails the owner) instead of
-silently comparing the wrong text. Run `git pull` before your next push, because the bot commits snapshots to `main`.
-GitHub pauses scheduled workflows after 60 days without repository activity; re-enable it from the Actions tab if that happens.
 
 ## Data sources
 

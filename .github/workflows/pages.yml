@@ -1,14 +1,21 @@
-name: Deploy to GitHub Pages
+name: Update DFO rules and deploy
 
-# Every push to main re-assembles index.html from build/template.html + build/geo.json + build/city.json
-# and publishes it. The built page is not committed.
+# Daily and on every push to main:
+#   1. dfo/update.py reads the three DFO salmon pages and rebuilds build/rules.json.
+#      If DFO shows something the parser does not understand, rules.json stays as it was,
+#      build/status.json gets "pending", and an issue is opened (once per new problem).
+#   2. Changed rules / status / snapshots are committed back to main.
+#   3. index.html is assembled with the check time and published to GitHub Pages.
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '23 15 * * *'   # 15:23 UTC = 08:23 Pacific daylight time
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
   pages: write
   id-token: write
 
@@ -21,9 +28,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Assemble the page (stdlib only, no downloads)
+
+      - id: dfo
+        name: Read DFO pages and update rules
+        run: python3 dfo/update.py
+
+      - if: steps.dfo.outputs.changed == 'true'
+        name: Commit updated rules
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build/rules.json build/status.json dfo/snapshots
+          git commit -m "DFO rules update $(date -u +%F)"
+          git push
+
+      - if: steps.dfo.outputs.new_block == 'true'
+        name: Open an issue (update blocked by the safety check)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create dfo-update --color B42318 --description "DFO rules need a manual check" --force
+          tail -n +2 dfo/out/issue.md > body.md
+          gh issue create --title "$(head -n 1 dfo/out/issue.md)" --body-file body.md --label dfo-update
+
+      - name: Assemble the page
         working-directory: build
+        env:
+          CHECKED_AT: ${{ steps.dfo.outputs.checked_at }}
         run: python3 run_all.py --page
+
       - name: Collect site files
         run: mkdir _site && cp index.html .nojekyll _site/
       - uses: actions/configure-pages@v6

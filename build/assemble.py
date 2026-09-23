@@ -1,15 +1,22 @@
-"""Inline Leaflet CSS and geo.json into template.html.
+"""Inline Leaflet CSS, geo.json, rules.json and status.json into template.html.
+
+CHECKED_AT (ISO time of the last successful DFO check) is taken from the environment when set.
 
 Writes:
   ../index.html        standalone page for GitHub Pages or any static host
   out/artifact.html    body-only variant for the claude.ai artifact host, which adds its own <html>/<head>
 """
-import os
+import json, os
 
 t = open("template.html", encoding="utf-8").read()
 css = open("leaflet.css", encoding="utf-8").read()
 geo = open("geo.json", encoding="utf-8").read()
-body = t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo)
+rules = open("rules.json", encoding="utf-8").read().replace("</", r"<\/")  # <\/ is valid JSON and keeps </script> out
+status = json.load(open("status.json", encoding="utf-8"))
+status["checkedAt"] = os.environ.get("CHECKED_AT") or None
+status = json.dumps(status, ensure_ascii=False).replace("</", r"<\/")
+body = (t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo)
+        .replace("__RULES__", rules).replace("__STATUS__", status))
 
 os.makedirs("out", exist_ok=True)
 open("out/artifact.html", "w", encoding="utf-8").write(body)

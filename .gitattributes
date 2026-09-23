@@ -1,3 +1,2 @@
 * text=auto eol=lf
-*.json -diff
-index.html -diff
+build/geo.json -diff

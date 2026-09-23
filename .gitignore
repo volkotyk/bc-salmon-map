@@ -13,5 +13,10 @@ qa-*.html
 # Built by GitHub Actions (build/run_all.py --page)
 index.html
 
-# DFO monitor scratch output
-monitor/out/
+# DFO updater scratch output (raw pages, issue text)
+dfo/cache/
+dfo/out/
+__pycache__/
+
+# Claude Code local worktrees
+.claude/

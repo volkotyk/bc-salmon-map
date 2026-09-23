@@ -1,0 +1,1797 @@
+{
+ "sources": {
+  "region2": {
+   "title": "Region 2 – Lower Mainland",
+   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html",
+   "dfoDate": "2026-09-16"
+  },
+  "area28": {
+   "title": "Area 28",
+   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html",
+   "dfoDate": "2026-09-01"
+  },
+  "area29": {
+   "title": "Area 29",
+   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html",
+   "dfoDate": "2026-09-05"
+  }
+ },
+ "waters": [
+  {
+   "id": "alouette",
+   "d": "tri",
+   "name": "Alouette River",
+   "notes": [],
+   "secs": {
+    "a": {
+     "uk": "Вище мосту 216th Street до знаків межі в Allco Park",
+     "en": "Upstream of the 216th Street bridge to a line between two fishing boundary signs at Allco park"
+    },
+    "b": {
+     "uk": "Нижче мосту 216th Street до впадіння в Pitt River",
+     "en": "Downstream of the 216th street bridge to the confluence of the Pitt River"
+    }
+   },
+   "sec": {
+    "uk": "Разом з притоками.",
+    "en": "Including tributaries."
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "09-01",
+     "to": "11-30",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain",
+     "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "09-30",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release",
+     "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "10-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain",
+     "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "10-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain",
+     "sec": "b"
+    }
+   ]
+  },
+  {
+   "id": "n-alouette",
+   "d": "tri",
+   "name": "North Alouette River",
+   "notes": [],
+   "sec": {
+    "uk": "Разом з притоками.",
+    "en": "Including tributaries."
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "09-01",
+     "to": "11-30",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "11-30",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release"
+    }
+   ]
+  },
+  {
+   "id": "ashlu",
+   "d": "sea",
+   "name": "Ashlu Creek",
+   "notes": [
+    {
+     "uk": "Басейн Squamish: разом не більше 1 заводського кижуча (Coho) на день.",
+     "en": "Squamish watershed: aggregate daily limit of 1 hatchery marked Coho for all non-tidal waters."
+    }
+   ],
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Заборона наживки",
+      "en": "Bait ban"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "coho",
+     "from": "09-15",
+     "to": "01-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "capilano",
+   "d": "north",
+   "name": "Capilano River",
+   "notes": [],
+   "sec": {
+    "uk": "Разом з притоками.",
+    "en": "Including tributaries"
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "06-30",
+     "lim": {
+      "uk": "2 заводські на день",
+      "en": "2 hatchery marked per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "07-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 заводські на день",
+      "en": "4 hatchery marked per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "08-01",
+     "to": "10-31",
+     "lim": {
+      "uk": "Заборона наживки",
+      "en": "Bait ban"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "chinook",
+     "from": "08-01",
+     "to": "09-04",
+     "lim": {
+      "uk": "4 на день, з них ≤2 понад 62 см",
+      "en": "4 per day, only 2 over 62 cm"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "chinook",
+     "from": "09-05",
+     "to": "11-30",
+     "lim": {
+      "uk": "4 на день",
+      "en": "4 per day"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN0960",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=366086&ID=all"
+      }
+     ]
+    },
+    {
+     "sp": "chinook",
+     "from": "08-01",
+     "to": "10-31",
+     "lim": {
+      "uk": "Заборона наживки",
+      "en": "Bait ban"
+     },
+     "type": "gear"
+    }
+   ]
+  },
+  {
+   "id": "chapman",
+   "d": "sun",
+   "name": "Chapman Creek",
+   "notes": [],
+   "sec": {
+    "uk": "Від знаків межі припливних вод нижче мосту Hwy 101 до точки за 100 м нижче водоспаду (приблизно 550 м вище ЛЕП).",
+    "en": "Upstream of tidal water fishing boundary signs located below the Hwy 101 Bridge to 100 m below the falls. The falls are located approximately 550 m upstream of the powerline crossing."
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 заводські на день, з них ≤2 понад 35 см",
+      "en": "4 hatchery marked per day, only 2 over 35 cm"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "chinook",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 на день, з них ≤1 понад 50 см",
+      "en": "4 per day, only 1 over 50 cm"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "cheakamus",
+   "d": "sea",
+   "name": "Cheakamus River",
+   "notes": [
+    {
+     "uk": "Басейн Squamish: разом не більше 1 заводського кижуча (Coho) на день.",
+     "en": "Squamish watershed: aggregate daily limit of 1 hatchery marked Coho for all non-tidal waters."
+    }
+   ],
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Заборона наживки",
+      "en": "Bait ban"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "coho",
+     "from": "09-15",
+     "to": "01-31",
+     "lim": {
+      "uk": "1 на день, лише заводська",
+      "en": "1 per day, hatchery marked only"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "chehalis",
+   "d": "valley",
+   "name": "Chehalis River",
+   "notes": [],
+   "sec": {
+    "uk": "Нижче лісовозного мосту за 2,4 км від Chehalis Lake, разом з притоками.",
+    "en": "Downstream of the logging bridge 2.4 km downstream of Chehalis Lake, including tributaries to that part"
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "06-01",
+     "to": "08-31",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "chinook",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 на день, з них ≤1 понад 62 см",
+      "en": "4 per day, only 1 over 62 cm"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "06-01",
+     "to": "08-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день",
+      "en": "4 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "chilliwack",
+   "d": "valley",
+   "name": {
+    "uk": "Chilliwack / Vedder River (з Sumas River)",
+    "en": "Chilliwack / Vedder River (incl. Sumas River)"
+   },
+   "notes": [],
+   "sec": {
+    "uk": "Від знаків за 100 м нижче злиття зі Slesse Creek вниз за течією, разом з Sumas River від насосної станції Barrow Town до знаків біля Fraser.",
+    "en": "From a line between 2 fishing boundary signs on either side of the Chilliwack River 100 m downstream from the confluence of the Chilliwack River and Slesse Creek downstream including that portion of the Sumas River from the Barrow Town Pump Station downstream to fishing boundary signs near the confluence with the Fraser River."
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "07-01",
+     "to": "08-31",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "chinook",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 на день, з них ≤2 понад 62 см",
+      "en": "4 per day, only 2 over 62 cm"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "07-01",
+     "to": "08-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день",
+      "en": "4 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "coquitlam",
+   "d": "tri",
+   "name": "Coquitlam River",
+   "notes": [],
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "09-05",
+     "to": "09-18",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN0961",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=366093&ID=all"
+      }
+     ]
+    },
+    {
+     "sp": "chinook",
+     "from": "09-19",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1008",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=367431&ID=all"
+      }
+     ]
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "deboville",
+   "d": "tri",
+   "name": "De Boville Slough",
+   "notes": [],
+   "sec": {
+    "uk": "Нижче злиття Cedar Creek і Hyde Creek.",
+    "en": "Downstream of the confluence of Cedar Creek and Hyde Creek."
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "10-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "fraser-closed",
+   "d": "valley",
+   "name": {
+    "uk": "Fraser River (основне русло)",
+    "en": "Fraser River (mainstem)"
+   },
+   "notes": [
+    {
+     "uk": "Нижче мосту CPR у Mission — припливна частина, див. Area 29.",
+     "en": "Below the CPR bridge at Mission is tidal water, see Area 29."
+    }
+   ],
+   "sec": {
+    "uk": "Основне русло вище залізничного мосту CPR у Mission.",
+    "en": "Mainstem waters upstream of the CPR Bridge at Mission, BC"
+   },
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Риболовлю на лосося закрито",
+      "en": "No fishing for salmon"
+     },
+     "type": "closed"
+    }
+   ]
+  },
+  {
+   "id": "harrison",
+   "d": "valley",
+   "name": "Harrison River",
+   "notes": [],
+   "secs": {
+    "a": {
+     "uk": "Від витоку з Harrison Lake до мосту Highway 7",
+     "en": "From the outlet of Harrison Lake downstream to the Highway 7 Bridge"
+    },
+    "b": {
+     "uk": "Від мосту Highway 7 до впадіння у Fraser River",
+     "en": "From the Highway 7 Bridge downstream to the confluence with the Fraser River"
+    }
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день",
+      "en": "4 hatchery marked per day"
+     },
+     "type": "retain",
+     "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день",
+      "en": "4 hatchery marked per day"
+     },
+     "type": "retain",
+     "sec": "b"
+    }
+   ]
+  },
+  {
+   "id": "kanaka",
+   "d": "tri",
+   "name": "Kanaka Creek",
+   "notes": [],
+   "sec": {
+    "uk": "Нижче мосту 112th Street.",
+    "en": "Downstream of the 112th Street bridge."
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "11-01",
+     "to": "11-30",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "khartoum",
+   "d": "sun",
+   "name": "Khartoum Lake",
+   "notes": [],
+   "lake": true,
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Лише одинарний гачок без зазубрини",
+      "en": "Single barbless hook"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "chinook",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 на день",
+      "en": "4 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 на день",
+      "en": "4 per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "little-campbell",
+   "d": "sur",
+   "name": "Little Campbell River",
+   "notes": [],
+   "secs": {
+    "a": {
+     "uk": "Нижче 12th Avenue, разом з притоками цієї частини",
+     "en": "Downstream of 12th Avenue, including tributaries to that part."
+    },
+    "b": {
+     "uk": "Від знаків межі до пішохідного мосту в кінці Stayte Road",
+     "en": "Downstream of a line between 2 fishing boundary signs on either side of the Little Campbell River to the pedestrian bridge at the foot of Stayte Road."
+    }
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "08-15",
+     "to": "09-15",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain",
+     "sec": "a"
+    },
+    {
+     "sp": "chinook",
+     "from": "09-16",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release",
+     "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "08-15",
+     "to": "09-15",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release",
+     "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "09-16",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain",
+     "sec": "a"
+    },
+    {
+     "sp": "all",
+     "from": "08-15",
+     "to": "09-30",
+     "lim": {
+      "uk": "Риболовлю на лосося закрито",
+      "en": "No fishing for salmon"
+     },
+     "type": "closed",
+     "sec": "b"
+    }
+   ]
+  },
+  {
+   "id": "lois",
+   "d": "sun",
+   "name": "Lois Lake",
+   "notes": [],
+   "lake": true,
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Лише одинарний гачок без зазубрини",
+      "en": "Single barbless hook"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "chinook",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 на день",
+      "en": "4 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "4 на день",
+      "en": "4 per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "mamquam",
+   "d": "sea",
+   "name": "Mamquam River",
+   "notes": [
+    {
+     "uk": "Басейн Squamish: разом не більше 1 заводського кижуча (Coho) на день.",
+     "en": "Squamish watershed: aggregate daily limit of 1 hatchery marked Coho for all non-tidal waters."
+    }
+   ],
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Заборона наживки",
+      "en": "Bait ban"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "coho",
+     "from": "09-15",
+     "to": "01-31",
+     "lim": {
+      "uk": "1 на день, лише заводська",
+      "en": "1 per day, hatchery marked only"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "nicomekl",
+   "d": "sur",
+   "name": "Nicomekl River",
+   "notes": [],
+   "sec": {
+    "uk": "Нижче 208th Street.",
+    "en": "Downstream of 208th Street"
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "09-01",
+     "to": "11-30",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "chinook",
+     "from": "12-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "nicomen",
+   "d": "valley",
+   "name": {
+    "uk": "Nicomen Slough (з Dewdney Slough)",
+    "en": "Nicomen Slough (incl. Dewdney Slough)"
+   },
+   "notes": [],
+   "sec": {
+    "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
+    "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River"
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день, з них ≤2 понад 35 см",
+      "en": "4 hatchery marked per day, only 2 over 35 cm"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "norrish",
+   "d": "valley",
+   "name": "Norrish (Suicide) Creek",
+   "notes": [],
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день, з них ≤2 понад 35 см",
+      "en": "4 hatchery marked per day, only 2 over 35 cm"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "serpentine",
+   "d": "sur",
+   "name": "Serpentine River",
+   "notes": [],
+   "sec": {
+    "uk": "Нижче 168th Street біля Bothwell Park.",
+    "en": "Downstream of 168th Street at Bothwell Park"
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "09-01",
+     "to": "11-30",
+     "lim": {
+      "uk": "1 на день",
+      "en": "1 per day"
+     },
+     "type": "retain"
+    },
+    {
+     "sp": "chinook",
+     "from": "12-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention"
+     },
+     "type": "release"
+    },
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "1 заводська на день",
+      "en": "1 hatchery marked per day"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "squamish",
+   "d": "sea",
+   "name": {
+    "uk": "Squamish River (з Powerhouse Channel)",
+    "en": "Squamish River (incl. Powerhouse Channel)"
+   },
+   "notes": [
+    {
+     "uk": "Басейн Squamish: разом не більше 1 заводського кижуча (Coho) на день.",
+     "en": "Squamish watershed: aggregate daily limit of 1 hatchery marked Coho for all non-tidal waters."
+    }
+   ],
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "lim": {
+      "uk": "Заборона наживки",
+      "en": "Bait ban"
+     },
+     "type": "gear"
+    },
+    {
+     "sp": "coho",
+     "from": "09-15",
+     "to": "01-31",
+     "lim": {
+      "uk": "1 на день, лише заводська",
+      "en": "1 per day, hatchery marked only"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "stave",
+   "d": "valley",
+   "name": "Stave River",
+   "notes": [],
+   "sec": {
+    "uk": "Від дамби BC Hydro до залізничного мосту CPR. Не ловіть у нерестових каналах Ruskin (східний берег) і Northrop (західний берег, разом з притокою з рибоходом).",
+    "en": "Downstream of B.C. Hydro Dam to the CPR Railway Bridge; except you shall not fish for salmon in that portion on the east side of the Stave River, known as the Ruskin Spawning Channel on the east bank of the BC Hydro park from the inlet near the dam, downstream to the boat ramp crossing; and you shall not fish for salmon in that portion on the west side of the Stave River known as the Northrop Spawning Channel from the intake downstream to where the channel joins the Stave River mainstem, including its tributary containing the fishway"
+   },
+   "rules": [
+    {
+     "sp": "coho",
+     "from": "09-01",
+     "to": "12-31",
+     "lim": {
+      "uk": "4 заводські на день, з них ≤2 понад 35 см",
+      "en": "4 hatchery marked per day, only 2 over 35 cm"
+     },
+     "type": "retain"
+    }
+   ]
+  },
+  {
+   "id": "a28-1",
+   "d": "a28",
+   "tidal": true,
+   "subs": [
+    "28-1",
+    "28-2",
+    "28-3",
+    "28-4",
+    "28-5",
+    "28-6",
+    "28-7",
+    "28-9",
+    "28-10",
+    "28-11",
+    "28-12",
+    "28-13",
+    "28-14"
+   ],
+   "subsLabel": "28-1…28-7, 28-9…28-14",
+   "name": {
+    "uk": "Howe Sound і Burrard Inlet",
+    "en": "Howe Sound & Burrard Inlet"
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, мін. 62 см",
+      "en": "2 per day, min. 62 cm"
+     }
+    },
+    {
+     "sp": "chum",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, мін. 30 см",
+      "en": "2 per day, min. 30 cm"
+     }
+    },
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, лише заводські (диких — 0), мін. 30 см",
+      "en": "2 per day, hatchery marked only (wild: 0), min. 30 cm"
+     }
+    },
+    {
+     "sp": "pink",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "4 на день, мін. 30 см",
+      "en": "4 per day, min. 30 cm"
+     }
+    },
+    {
+     "sp": "sockeye",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "release",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention (release only)"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з кількома вістрями",
+      "en": "Not allowed: a hook having more than one point"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок із зазубриною",
+      "en": "Not allowed: barbed hook"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
+      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank"
+     }
+    }
+   ],
+   "notes": [],
+   "asOf": "2026-09-01",
+   "subNotes": {
+    "28-1": [
+     {
+      "uk": "Нагадування: Умова ліцензії: даунригери заборонені в частинах підзон 28-1, 28-2, 28-3, 28-4 і 29-3 у зонах захисту скляних губок Howe Sound.",
+      "en": "Reminder: As a Condition of Licence, the use of downriggers is prohibited in portions of Subareas 28-1, 28-2, 28-3, 28-4, and 29-3 in the Howe Sound glass sponge reef marine refuges and fishery closure areas, as described at http://www.dfo-mpo.gc.ca/oceans/ceccsr-cerceef/closures-fermetures-eng.html."
+     }
+    ],
+    "28-2": [
+     {
+      "uk": "Mannion Bay (Deep Bay): Закрито: будь-яким способом (1 вер – 31 гру)",
+      "en": "Mannion Bay (Deep Bay): Closed: any gear or method (Sep 1 – Dec 31)"
+     },
+     {
+      "uk": "Whytecliff Park: Закрито: будь-яким способом (цілий рік)",
+      "en": "Whytecliff Park: Closed: any gear or method (year round)"
+     },
+     {
+      "uk": "Нагадування: Умова ліцензії: даунригери заборонені в частинах підзон 28-1, 28-2, 28-3, 28-4 і 29-3 у зонах захисту скляних губок Howe Sound.",
+      "en": "Reminder: As a Condition of Licence, the use of downriggers is prohibited in portions of Subareas 28-1, 28-2, 28-3, 28-4, and 29-3 in the Howe Sound glass sponge reef marine refuges and fishery closure areas, as described at http://www.dfo-mpo.gc.ca/oceans/ceccsr-cerceef/closures-fermetures-eng.html."
+     }
+    ],
+    "28-3": [
+     {
+      "uk": "Нагадування: Умова ліцензії: даунригери заборонені в частинах підзон 28-1, 28-2, 28-3, 28-4 і 29-3 у зонах захисту скляних губок Howe Sound.",
+      "en": "Reminder: As a Condition of Licence, the use of downriggers is prohibited in portions of Subareas 28-1, 28-2, 28-3, 28-4, and 29-3 in the Howe Sound glass sponge reef marine refuges and fishery closure areas, as described at http://www.dfo-mpo.gc.ca/oceans/ceccsr-cerceef/closures-fermetures-eng.html."
+     }
+    ],
+    "28-4": [
+     {
+      "uk": "Porteau Cove: Закрито: будь-яким способом (цілий рік)",
+      "en": "Porteau Cove: Closed: any gear or method (year round)"
+     },
+     {
+      "uk": "Нагадування: Умова ліцензії: даунригери заборонені в частинах підзон 28-1, 28-2, 28-3, 28-4 і 29-3 у зонах захисту скляних губок Howe Sound.",
+      "en": "Reminder: As a Condition of Licence, the use of downriggers is prohibited in portions of Subareas 28-1, 28-2, 28-3, 28-4, and 29-3 in the Howe Sound glass sponge reef marine refuges and fishery closure areas, as described at http://www.dfo-mpo.gc.ca/oceans/ceccsr-cerceef/closures-fermetures-eng.html."
+     }
+    ],
+    "28-6": [
+     {
+      "uk": "Point Atkinson: Закрито: будь-яким способом (цілий рік)",
+      "en": "Point Atkinson: Closed: any gear or method (year round)"
+     }
+    ],
+    "28-9": [
+     {
+      "uk": "Capilano River: Обмеження спорядження: гачок з одним вістрям понад 15 мм від вістря до цівки (1 сер – 31 гру)",
+      "en": "Capilano River: Gear Restriction: a hook having a single point greater than 15 mm from point to shank (Aug 1 – Dec 31)"
+     }
+    ],
+    "28-10": [
+     {
+      "uk": "Нагадування: Закрито для вилову через навігаційні закриття в підзонах 28-8 (False Creek) і 28-10 (Burrard Inlet, частково).",
+      "en": "Reminder: Closed to harvesting per navigational closures in sub-areas 28-8 (False Creek) and 28-10 (Burrard Inlet, partial)."
+     },
+     {
+      "uk": "Seymour River: Обмеження спорядження: гачок з одним вістрям понад 15 мм від вістря до цівки (1 сер – 31 гру)",
+      "en": "Seymour River: Gear Restriction: a hook having a single point greater than 15 mm from point to shank (Aug 1 – Dec 31)"
+     }
+    ]
+   }
+  },
+  {
+   "id": "a28-2",
+   "d": "a28",
+   "tidal": true,
+   "subs": [
+    "28-8"
+   ],
+   "subsLabel": "28-8",
+   "name": {
+    "uk": "False Creek",
+    "en": "False Creek"
+   },
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "closed",
+     "lim": {
+      "uk": "Закрито для вилову (навігаційне закриття)",
+      "en": "Closed to harvesting (navigational closure)"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з кількома вістрями",
+      "en": "Not allowed: a hook having more than one point"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок із зазубриною",
+      "en": "Not allowed: barbed hook"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
+      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank"
+     }
+    }
+   ],
+   "notes": [],
+   "asOf": "2026-09-01",
+   "subNotes": {
+    "28-8": [
+     {
+      "uk": "Нагадування: Закрито для вилову через навігаційні закриття в підзонах 28-8 (False Creek) і 28-10 (Burrard Inlet, частково).",
+      "en": "Reminder: Closed to harvesting per navigational closures in sub-areas 28-8 (False Creek) and 28-10 (Burrard Inlet, partial)."
+     }
+    ]
+   }
+  },
+  {
+   "id": "a29-1",
+   "d": "a29",
+   "tidal": true,
+   "subs": [
+    "29-1",
+    "29-2",
+    "29-3",
+    "29-4",
+    "29-5",
+    "29-8"
+   ],
+   "subsLabel": "29-1…29-5, 29-8",
+   "name": {
+    "uk": "Strait of Georgia",
+    "en": "Strait of Georgia"
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, мін. 62 см",
+      "en": "2 per day, min. 62 cm"
+     }
+    },
+    {
+     "sp": "chum",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, мін. 30 см",
+      "en": "2 per day, min. 30 cm"
+     }
+    },
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, лише заводські (диких — 0), мін. 30 см",
+      "en": "2 per day, hatchery marked only (wild: 0), min. 30 cm"
+     }
+    },
+    {
+     "sp": "pink",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "4 на день, мін. 30 см",
+      "en": "4 per day, min. 30 cm"
+     }
+    },
+    {
+     "sp": "sockeye",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "release",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention (release only)"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з кількома вістрями",
+      "en": "Not allowed: a hook having more than one point"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок із зазубриною",
+      "en": "Not allowed: barbed hook"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
+      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank"
+     }
+    }
+   ],
+   "notes": [
+    {
+     "uk": "Нагадування: In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line).",
+     "en": "Reminder: In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
+    }
+   ],
+   "asOf": "2026-09-05",
+   "subNotes": {
+    "29-1": [
+     {
+      "uk": "Смуга 29-1 перед Chapman Creek: Coho salmon · Денний ліміт: 2",
+      "en": "Portion of Subarea 29-1 in front of Chapman Creek: Coho salmon · Daily Limit Pieces: 2"
+     }
+    ],
+    "29-3": [
+     {
+      "uk": "Нагадування: Умова ліцензії: даунригери заборонені в частинах підзон 28-1, 28-2, 28-3, 28-4 і 29-3 у зонах захисту скляних губок Howe Sound.",
+      "en": "Reminder: As a Condition of Licence, the use of downriggers is prohibited in portions of Subareas 28-1, 28-2, 28-3, 28-4, and 29-3 in the Howe Sound glass sponge reef marine refuges and fishery closure areas, as described at http://www.dfo-mpo.gc.ca/oceans/ceccsr-cerceef/closures-fermetures-eng.html."
+     }
+    ]
+   }
+  },
+  {
+   "id": "a29-2",
+   "d": "a29",
+   "tidal": true,
+   "subs": [
+    "29-6",
+    "29-7",
+    "29-9",
+    "29-10",
+    "29-11",
+    "29-12",
+    "29-13",
+    "29-14",
+    "29-15",
+    "29-16",
+    "29-17"
+   ],
+   "subsLabel": "29-6, 29-7, 29-9…29-17",
+   "name": {
+    "uk": "Припливна Fraser, Roberts Bank, Boundary Bay",
+    "en": "Tidal Fraser, Roberts Bank, Boundary Bay"
+   },
+   "rules": [
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "closed",
+     "lim": {
+      "uk": "Закрито для лосося (ліміт 0)",
+      "en": "Closed to salmon (limit 0)"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з кількома вістрями",
+      "en": "Not allowed: a hook having more than one point"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок із зазубриною",
+      "en": "Not allowed: barbed hook"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
+      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank"
+     }
+    }
+   ],
+   "notes": [
+    {
+     "uk": "Нагадування: In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line).",
+     "en": "Reminder: In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
+    }
+   ],
+   "asOf": "2026-09-05",
+   "subNotes": {
+    "29-9": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-11": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-12": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-13": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-14": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-15": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-16": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ],
+    "29-17": [
+     {
+      "uk": "Припливна частина Fraser (Area 29): Закрито: від години після заходу до години перед сходом сонця (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Closed: From one hour after sunset to one hour before sunrise only - (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливній частині Fraser заборонено ловити на волосінь з гачком із зазубриною.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Обмеження спорядження: природна наживка (5 вер – 6 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Gear Restriction: natural bait (Sep 5 – Oct 6)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Нагадування: У припливних водах Fraser можна використовувати лише одну волосінь.",
+      "en": "Tidal portion of the Fraser River (in Area 29): Reminder: As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River."
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chinook salmon · Мінімальний розмір (см): 30",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chinook salmon · Minimum Size (cm): 30"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Coho salmon · Мінімальний розмір (см): 25",
+      "en": "Tidal portion of the Fraser River (in Area 29): Coho salmon · Minimum Size (cm): 25"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Closed: barbless hook and line (year round)"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Pink salmon · Денний ліміт: 0",
+      "en": "Tidal portion of the Fraser River (in Area 29): Pink salmon · Daily Limit Pieces: 0"
+     },
+     {
+      "uk": "Припливна частина Fraser (Area 29): Sockeye salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
+      "en": "Tidal Portion of Fraser River (Area 29): Sockeye salmon · Closed: barbless hook and line (year round)"
+     }
+    ]
+   }
+  },
+  {
+   "id": "a29-mouth",
+   "d": "a29",
+   "tidal": true,
+   "closure": true,
+   "geom": "mouth",
+   "name": {
+    "uk": "Гирло Fraser: сезонне закриття",
+    "en": "Fraser River mouth: seasonal closure"
+   },
+   "sec": {
+    "uk": "Від Point Grey і North Arm Jetty на захід до 123°20.8′ W.",
+    "en": "From Point Grey and the North Arm Jetty west to 123°20.8′ W."
+   },
+   "subsLabel": {
+    "uk": "частина 29-3",
+    "en": "part of 29-3"
+   },
+   "asOf": "2026-09-05",
+   "notes": [],
+   "rules": [
+    {
+     "sp": "all",
+     "from": "08-01",
+     "to": "09-30",
+     "type": "closed",
+     "lim": {
+      "uk": "Закрито для всіх видів лосося",
+      "en": "Closed to all salmon"
+     }
+    }
+   ]
+  }
+ ]
+}

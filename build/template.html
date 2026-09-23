@@ -86,6 +86,10 @@ details h3{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:up
 details ul{padding-left:18px;margin:8px 0 0;color:var(--ink-2)}
 details li{margin-bottom:6px}
 .foot{font-size:12px;color:var(--ink-3);margin:0}
+.status{font:12.5px/1.45 var(--f-body);color:var(--ink-2);margin:0;padding:10px 12px;background:var(--chip-bg);border-radius:6px}
+.status b{font-weight:600;color:var(--ink)}
+.dfo-chip{position:absolute;top:10px;right:10px;z-index:500;font:600 12px var(--f-mono);padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+.dfo-chip.warn{background:var(--c-fraser);border-color:var(--c-fraser);color:#fff}
 .mapwrap{position:relative;min-height:0}
 #map{position:absolute;inset:0;background:var(--sea)}
 .legend{position:absolute;left:12px;bottom:26px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px)}
@@ -172,6 +176,7 @@ details li{margin-bottom:6px}
       </div>
     </div>
 
+    <p class="banner" id="pending" hidden></p>
     <p class="summary" id="summary"></p>
     <p class="banner" id="banner" hidden></p>
 
@@ -179,17 +184,21 @@ details li{margin-bottom:6px}
 
     <details id="rules"></details>
 
+    <p class="status" id="status-line"></p>
     <p class="foot" id="foot"></p>
   </aside>
 
   <main class="mapwrap">
     <div id="map" role="application"></div>
+    <button type="button" class="dfo-chip" id="dfo-chip"></button>
     <details class="legend" id="legend"><summary id="legend-title"></summary><div id="legend-body"></div></details>
   </main>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script id="geo" type="application/json">__GEO__</script>
+<script id="data-rules" type="application/json">__RULES__</script>
+<script id="data-status" type="application/json">__STATUS__</script>
 <script>
 (() => {
 const GEO = JSON.parse(document.getElementById('geo').textContent);
@@ -219,6 +228,11 @@ const fmtFull = iso => { const [y, m, d] = iso.split('-').map(Number); return LA
 const I18N = {
   uk: {
     title: 'Лосось Metro Vancouver',
+    checked: dt => `Правила DFO перевірено <b>${dt}</b>.`, notChecked: 'Автоматичну перевірку DFO на цій копії не запускали.',
+    rulesChanged: d => `Карту востаннє оновлено за змінами DFO <b>${d}</b>.`,
+    dfoDates: (a, b, c) => `Дата сторінок DFO: Region 2 — ${a}, Area 28 — ${b}, Area 29 — ${c}.`,
+    pending: d => `DFO змінив правила (${d}), але автоматичне оновлення зупинилося на запобіжнику. Карта показує попередні правила — перевірте джерело DFO.`,
+    chipOk: d => `DFO ✓ ${d}`, chipWarn: 'DFO: є зміни',
     eyebrow: 'B.C. · Lower Mainland · прісні та солоні води',
     h1: 'Де ловити лосося',
     lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб прокласти туди маршрут.',
@@ -255,11 +269,17 @@ const I18N = {
         <li>Річний ліміт чавичі (Chinook) з усіх припливних вод — 10.</li>
         <li>Лише гачок без зазубрини, цілий рік. З 1 вересня до 31 березня — лише гачок з одним вістрям і відстанню від вістря до цівки не більше 22 мм.</li>
         <li>Мінімальний розмір: чавича (Chinook) — 62 см; кижуч (Coho), кета (Chum), горбуша (Pink), нерка (Sockeye) — 30 см.</li>
-        <li>Статуси DFO для Area 28 і 29 не мають дати завершення. Для будь-якої вибраної дати сторінка показує стан на 1 і 5 вересня 2026. Виняток — сезонні закриття з датами, наприклад гирло Fraser.</li></ul>`,
+        <li>Статуси DFO для Area 28 і 29 не мають дати завершення, тому для будь-якої вибраної дати сторінка показує поточний стан. Виняток — сезонні закриття з датами, наприклад гирло Fraser.</li>
+        <li>Правила на карті щодня автоматично оновлюються зі сторінок DFO. Якщо DFO змінить щось незвичне, оновлення зупиняється, і сторінка показує попередження.</li></ul>`,
     foot: `Джерела: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>, межі підзон — шар DFO PFMA Subareas 1:50 000. Межі ділянок на річках приблизні: точний опис є у вікні водойми. Правила змінюються через fishery notices, тому перевірте джерело перед виїздом. Картографічні дані © учасники OpenStreetMap (ODbL).`,
   },
   en: {
     title: 'Metro Vancouver Salmon Map',
+    checked: dt => `DFO rules checked <b>${dt}</b>.`, notChecked: 'The automatic DFO check has not run for this copy.',
+    rulesChanged: d => `Map last updated from DFO changes on <b>${d}</b>.`,
+    dfoDates: (a, b, c) => `DFO page dates: Region 2 — ${a}, Area 28 — ${b}, Area 29 — ${c}.`,
+    pending: d => `DFO changed the rules (${d}), but the automatic update stopped at a safety check. The map shows the previous rules — check the DFO source.`,
+    chipOk: d => `DFO ✓ ${d}`, chipWarn: 'DFO: changes pending',
     eyebrow: 'B.C. · Lower Mainland · fresh and tidal waters',
     h1: 'Where to fish for salmon',
     lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to get directions there.',
@@ -295,7 +315,8 @@ const I18N = {
         <li>Annual limit: 10 Chinook from all tidal waters.</li>
         <li>Barbless hooks year round. From Sep 1 to Mar 31, single-point hooks only, max. 22 mm from point to shank.</li>
         <li>Minimum size: Chinook 62 cm; Coho, Chum, Pink and Sockeye 30 cm.</li>
-        <li>DFO statuses for Areas 28 and 29 have no end date. For any selected date the page shows the status as of Sep 1 and Sep 5, 2026. Dated seasonal closures, such as the Fraser mouth, follow the selected date.</li></ul>`,
+        <li>DFO statuses for Areas 28 and 29 have no end date, so for any selected date the page shows the current status. Dated seasonal closures, such as the Fraser mouth, follow the selected date.</li>
+        <li>The map updates itself from the DFO pages every day. If DFO changes something unusual, the update stops and the page shows a warning.</li></ul>`,
     foot: `Sources: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>; subarea boundaries from the DFO PFMA Subareas 1:50,000 layer. River section boundaries on the map are approximate; the exact description is in each water's popup. Rules change through fishery notices, so check the source before you go. Map data © OpenStreetMap contributors (ODbL).`,
   },
 };
@@ -332,178 +353,11 @@ const DISTRICTS = {
   a29:   B('Солона вода · Area 29', 'Tidal waters · Area 29'),
 };
 
-const FN = {
-  FN0960:'https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=366086&ID=all',
-  FN0961:'https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=366093&ID=all',
-  FN1008:'https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=367431&ID=all',
-};
-
-// Limit texts are written once in Ukrainian; this table gives the DFO English wording.
-const LIM_EN = {
-  'Заборона наживки': 'Bait ban',
-  'Лише одинарний гачок без зазубрини': 'Single barbless hook only',
-  'Лише відпустити': 'Non-retention (release only)',
-  '1 на день': '1 per day',
-  '1 на день, лише заводська': '1 per day, hatchery marked only',
-  '1 заводська на день': '1 hatchery marked per day',
-  '2 заводські на день': '2 hatchery marked per day',
-  '4 заводські на день': '4 hatchery marked per day',
-  '4 заводські на день, з них ≤2 понад 35 см': '4 hatchery marked per day, only 2 over 35 cm',
-  '4 на день': '4 per day',
-  '4 на день, з них ≤1 понад 50 см': '4 per day, only 1 over 50 cm',
-  '4 на день, з них ≤2 понад 62 см': '4 per day, only 2 over 62 cm',
-  '4 на день, з них ≤1 понад 62 см': '4 per day, only 1 over 62 cm',
-  'Риболовлю на лосося закрито': 'No fishing for salmon',
-  'Риболовлю на лосося закрито до окремого повідомлення': 'No fishing for salmon until further notice',
-  '2 на день, мін. 62 см': '2 per day, min. 62 cm',
-  '2 на день, лише заводські (диких — 0), мін. 30 см': '2 per day, hatchery marked only (wild: 0), min. 30 cm',
-  '2 на день, мін. 30 см': '2 per day, min. 30 cm',
-  '4 на день, мін. 30 см': '4 per day, min. 30 cm',
-  'Лише гачок без зазубрини': 'Barbless hook only',
-  'Лише гачок з одним вістрям, до 22 мм від вістря до цівки': 'Single-point hook only, max. 22 mm point to shank',
-  'Закрито для вилову: навігаційне закриття': 'Closed to harvesting (navigational closure)',
-  'Закрито для всіх видів лосося': 'Closed to all salmon',
-  'Закрито для лосося (ліміт 0)': 'Closed to salmon (limit 0)',
-};
-const lim = s => LANG === 'en' ? (LIM_EN[s] || s) : s;
-
-// Rule: species ('all' = any salmon), MM-DD from/to (a range may wrap past Dec 31), limit text, type, optional section key.
-const R = (sp, from, to, lim, type = 'retain', sec, fn) => ({sp, from, to, lim, type, sec, fn});
-const YEAR = ['04-01', '03-31'];
-const BAIT = R('all', ...YEAR, 'Заборона наживки', 'gear');
-const BARBLESS = R('all', ...YEAR, 'Лише одинарний гачок без зазубрини', 'gear');
-const REL = 'Лише відпустити';
-const TRIBS = B('Разом з притоками.', 'Including tributaries.');
-const SQUAMISH = B('Басейн Squamish: разом не більше 1 заводського кижуча (Coho) на день.',
-                   'Squamish watershed: aggregate daily limit of 1 hatchery marked Coho for all non-tidal waters.');
-
-const TIDAL_OPEN = [
-  R('chinook', ...YEAR, '2 на день, мін. 62 см'),
-  R('coho',    ...YEAR, '2 на день, лише заводські (диких — 0), мін. 30 см'),
-  R('chum',    ...YEAR, '2 на день, мін. 30 см'),
-  R('pink',    ...YEAR, '4 на день, мін. 30 см'),
-  R('sockeye', ...YEAR, REL, 'release'),
-  R('all', ...YEAR, 'Лише гачок без зазубрини', 'gear'),
-  R('all', '09-01', '03-31', 'Лише гачок з одним вістрям, до 22 мм від вістря до цівки', 'gear'),
-];
-const SPONGE = B('Даунригери заборонені в зонах захисту скляних губок Howe Sound.',
-                 'Downriggers are prohibited in the Howe Sound glass sponge reef refuges.');
-const HOOK15 = B('З 1 серпня до 31 грудня заборонено гачок з одним вістрям понад 15 мм від вістря до цівки.',
-                 'Aug 1 – Dec 31: no single-point hook larger than 15 mm from point to shank.');
-
-const WATERS = [
-  {id:'squamish', name:'Squamish River', d:'sea', sec:B('Разом з Powerhouse Channel.', 'Including Powerhouse Channel.'), notes:[SQUAMISH],
-   rules:[BAIT, R('coho','09-15','01-31','1 на день, лише заводська')]},
-  {id:'cheakamus', name:'Cheakamus River', d:'sea', notes:[SQUAMISH],
-   rules:[BAIT, R('coho','09-15','01-31','1 на день, лише заводська')]},
-  {id:'mamquam', name:'Mamquam River', d:'sea', notes:[SQUAMISH],
-   rules:[BAIT, R('coho','09-15','01-31','1 на день, лише заводська')]},
-  {id:'ashlu', name:'Ashlu Creek', d:'sea', notes:[SQUAMISH],
-   rules:[BAIT, R('coho','09-15','01-31','1 заводська на день')]},
-
-  {id:'chapman', name:'Chapman Creek', d:'sun',
-   sec:B('Від знаків межі припливних вод нижче мосту Hwy 101 до точки за 100 м нижче водоспаду (приблизно 550 м вище ЛЕП).',
-         'From the tidal boundary signs below the Hwy 101 bridge to 100 m below the falls (about 550 m upstream of the powerline crossing).'),
-   rules:[R('coho',...YEAR,'4 заводські на день, з них ≤2 понад 35 см'), R('chinook',...YEAR,'4 на день, з них ≤1 понад 50 см')]},
-  {id:'lois', name:'Lois Lake', d:'sun', lake:true,
-   rules:[BARBLESS, R('chinook',...YEAR,'4 на день'), R('coho',...YEAR,'4 на день')]},
-  {id:'khartoum', name:'Khartoum Lake', d:'sun', lake:true,
-   rules:[BARBLESS, R('chinook',...YEAR,'4 на день'), R('coho',...YEAR,'4 на день')]},
-
-  {id:'capilano', name:'Capilano River', d:'north', sec:TRIBS,
-   rules:[R('coho','04-01','06-30','2 заводські на день'), R('coho','07-01','03-31','4 заводські на день'),
-          R('coho','08-01','10-31','Заборона наживки','gear'),
-          R('chinook','08-01','09-04','4 на день, з них ≤2 понад 62 см'), R('chinook','09-05','11-30','4 на день','retain',null,'FN0960'),
-          R('chinook','08-01','10-31','Заборона наживки','gear')]},
-
-  {id:'coquitlam', name:'Coquitlam River', d:'tri',
-   rules:[R('chinook','09-05','09-18','1 заводська на день','retain',null,'FN0961'), R('chinook','09-19','12-31','1 на день','retain',null,'FN1008'),
-          R('coho','09-01','12-31','1 заводська на день')]},
-  {id:'deboville', name:'De Boville Slough', d:'tri', sec:B('Нижче злиття Cedar Creek і Hyde Creek.', 'Downstream of the confluence of Cedar Creek and Hyde Creek.'),
-   rules:[R('coho','10-01','12-31','1 заводська на день')]},
-  {id:'alouette', name:'Alouette River', d:'tri', sec:TRIBS,
-   secs:{a:B('Вище мосту 216th Street до знаків межі в Allco Park', 'Upstream of the 216th Street bridge to the boundary signs at Allco Park'),
-         b:B('Нижче мосту 216th Street до впадіння в Pitt River', 'Downstream of the 216th Street bridge to the Pitt River confluence')},
-   rules:[R('chinook','09-01','11-30','1 на день','retain','a'), R('coho','09-01','09-30',REL,'release','a'),
-          R('coho','10-01','12-31','1 заводська на день','retain','a'), R('coho','10-01','12-31','1 заводська на день','retain','b')]},
-  {id:'n-alouette', name:'North Alouette River', d:'tri', sec:TRIBS,
-   rules:[R('chinook','09-01','11-30','1 на день'), R('coho','09-01','11-30',REL,'release')]},
-  {id:'kanaka', name:'Kanaka Creek', d:'tri', sec:B('Нижче мосту 112th Street.', 'Downstream of the 112th Street bridge.'),
-   rules:[R('coho','11-01','11-30','1 заводська на день')]},
-
-  {id:'serpentine', name:'Serpentine River', d:'sur', sec:B('Нижче 168th Street біля Bothwell Park.', 'Downstream of 168th Street at Bothwell Park.'),
-   rules:[R('chinook','09-01','11-30','1 на день'), R('chinook','12-01','12-31',REL,'release'), R('coho','09-01','12-31','1 заводська на день')]},
-  {id:'nicomekl', name:'Nicomekl River', d:'sur', sec:B('Нижче 208th Street.', 'Downstream of 208th Street.'),
-   rules:[R('chinook','09-01','11-30','1 на день'), R('chinook','12-01','12-31',REL,'release'), R('coho','09-01','12-31','1 заводська на день')]},
-  {id:'little-campbell', name:'Little Campbell River', d:'sur',
-   secs:{a:B('Нижче 12th Avenue, разом з притоками цієї частини', 'Downstream of 12th Avenue, including tributaries to that part'),
-         b:B('Від знаків межі до пішохідного мосту в кінці Stayte Road', 'From the boundary signs to the pedestrian bridge at the foot of Stayte Road')},
-   rules:[R('chinook','08-15','09-15','1 заводська на день','retain','a'), R('chinook','09-16','12-31',REL,'release','a'),
-          R('coho','08-15','09-15',REL,'release','a'), R('coho','09-16','12-31','1 заводська на день','retain','a'),
-          R('all','08-15','09-30','Риболовлю на лосося закрито','closed','b')]},
-
-  {id:'stave', name:'Stave River', d:'valley',
-   sec:B('Від дамби BC Hydro до залізничного мосту CPR. Не ловіть у нерестових каналах Ruskin (східний берег) і Northrop (західний берег).',
-         'From the BC Hydro dam to the CPR bridge. No fishing in the Ruskin (east bank) and Northrop (west bank) spawning channels.'),
-   rules:[R('coho','09-01','12-31','4 заводські на день, з них ≤2 понад 35 см')]},
-  {id:'norrish', name:'Norrish (Suicide) Creek', d:'valley',
-   rules:[R('coho','09-01','12-31','4 заводські на день, з них ≤2 понад 35 см')]},
-  {id:'nicomen', name:B('Nicomen Slough (з Dewdney Slough)', 'Nicomen Slough (incl. Dewdney Slough)'), d:'valley',
-   sec:B('Від злиття з Siddle (Bell\'s) Creek до Fraser River.', 'From the confluence of Siddle (Bell\'s) Creek to the Fraser River.'),
-   rules:[R('coho','09-01','12-31','4 заводські на день, з них ≤2 понад 35 см')]},
-  {id:'harrison', name:'Harrison River', d:'valley',
-   sec:B('Від витоку з Harrison Lake до впадіння у Fraser River (обидві ділянки, до і після мосту Highway 7).',
-         'From the Harrison Lake outlet to the Fraser River (both sections, above and below the Highway 7 bridge).'),
-   rules:[R('coho','09-01','12-31','4 заводські на день')]},
-  {id:'chehalis', name:'Chehalis River', d:'valley',
-   sec:B('Нижче лісовозного мосту за 2,4 км від Chehalis Lake, разом з притоками.', 'Downstream of the logging bridge 2.4 km below Chehalis Lake, including tributaries.'),
-   rules:[R('chinook','06-01','08-31','1 на день'), R('chinook','09-01','12-31','4 на день, з них ≤1 понад 62 см'),
-          R('coho','06-01','08-31',REL,'release'), R('coho','09-01','12-31','4 заводські на день')]},
-  {id:'chilliwack', name:B('Chilliwack / Vedder River (з Sumas River)', 'Chilliwack / Vedder River (incl. Sumas River)'), d:'valley',
-   sec:B('Від знаків за 100 м нижче злиття зі Slesse Creek вниз за течією. Sumas River — від насосної станції Barrow Town до знаків біля Fraser.',
-         'From the signs 100 m below the Slesse Creek confluence downstream. Sumas River: from the Barrow Town Pump Station to the signs near the Fraser.'),
-   rules:[R('chinook','07-01','08-31','1 на день'), R('chinook','09-01','12-31','4 на день, з них ≤2 понад 62 см'),
-          R('coho','07-01','08-31',REL,'release'), R('coho','09-01','12-31','4 заводські на день')]},
-
-  {id:'fraser-closed', name:B('Fraser River (основне русло)', 'Fraser River (mainstem)'), d:'valley', closure:true,
-   sec:B('Вище залізничного мосту CPR у Mission. Нижче мосту — припливна частина, див. Area 29.', 'Upstream of the CPR bridge at Mission. Below the bridge is tidal water, see Area 29.'),
-   rules:[R('all','04-01','03-31','Риболовлю на лосося закрито до окремого повідомлення','closed')]},
-
-  // ---------- tidal: DFO Areas 28 and 29 ----------
-  {id:'a28', name:B('Howe Sound і Burrard Inlet', 'Howe Sound & Burrard Inlet'), d:'a28', tidal:true, asOf:'2026-09-01',
-   subs:['28-1','28-2','28-3','28-4','28-5','28-6','28-7','28-9','28-10','28-11','28-12','28-13','28-14'],
-   subsLabel:B('28-1…28-14, крім 28-8', '28-1…28-14 except 28-8'),
-   rules:TIDAL_OPEN,
-   subNotes:{
-     '28-1':[SPONGE], '28-3':[SPONGE],
-     '28-2':[B('Whytecliff Park: закрито для будь-якої риболовлі цілий рік.', 'Whytecliff Park: closed to all fishing year round.'),
-             B('Mannion Bay (Deep Bay), Bowen Island: закрито для будь-якої риболовлі з 1 вересня до 31 грудня.', 'Mannion Bay (Deep Bay), Bowen Island: closed to all fishing Sep 1 – Dec 31.'), SPONGE],
-     '28-4':[B('Porteau Cove: закрито для будь-якої риболовлі цілий рік (схід від знаків межі).', 'Porteau Cove: closed to all fishing year round (east of the boundary signs).'), SPONGE],
-     '28-6':[B('Point Atkinson: закрито для будь-якої риболовлі цілий рік (ділянка біля Starboat Cove).', 'Point Atkinson: closed to all fishing year round (near Starboat Cove).')],
-     '28-9':[B('Гирло Capilano River (від пірсу 14th Street до Prospect Point і First Narrows Bridge).', 'Capilano River mouth (14th Street pier – Prospect Point – First Narrows Bridge).'), HOOK15],
-     '28-10':[B('Припливна частина Seymour River (від мосту BCR до знаків межі).', 'Tidal Seymour River (BCR bridge to the boundary signs).'), HOOK15,
-              B('Частина Burrard Inlet закрита для вилову через навігаційне закриття.', 'Part of Burrard Inlet is closed to harvesting (navigational closure).')],
-   }},
-  {id:'a28-8', name:'False Creek', d:'a28', tidal:true, asOf:'2026-09-01', subs:['28-8'], subsLabel:'28-8',
-   rules:[R('all',...YEAR,'Закрито для вилову: навігаційне закриття','closed')]},
-
-  {id:'a29', name:'Strait of Georgia', d:'a29', tidal:true, asOf:'2026-09-05',
-   subs:['29-1','29-2','29-3','29-4','29-5','29-8'], subsLabel:'29-1…29-5, 29-8',
-   rules:TIDAL_OPEN,
-   subNotes:{
-     '29-1':[B('Смуга 0,5 милі перед Chapman Creek (Davis Bay, Trail Bay): денний ліміт кижуча (Coho) — 2.', 'Half-mile strip off Chapman Creek (Davis Bay, Trail Bay): Coho daily limit 2.')],
-     '29-3':[B('Усередині підзони є сезонне закриття гирла Fraser (1 серпня – 30 вересня), див. червону зону.', 'This subarea contains the seasonal Fraser mouth closure (Aug 1 – Sep 30), see the red zone.'), SPONGE],
-   }},
-  {id:'a29-mouth', name:B('Гирло Fraser: сезонне закриття', 'Fraser River mouth: seasonal closure'), d:'a29', tidal:true, closure:true, geom:'mouth', asOf:'2026-09-05',
-   subsLabel:B('частина 29-3', 'part of 29-3'),
-   sec:B('Від Point Grey і North Arm Jetty на захід до 123°20.8′ W.', 'From Point Grey and the North Arm Jetty west to 123°20.8′ W.'),
-   rules:[R('all','08-01','09-30','Закрито для всіх видів лосося','closed')]},
-  {id:'a29-closed', name:B('Припливна Fraser, Roberts Bank, Boundary Bay', 'Tidal Fraser, Roberts Bank, Boundary Bay'), d:'a29', tidal:true, asOf:'2026-09-05',
-   subs:['29-6','29-7','29-9','29-10','29-11','29-12','29-13','29-14','29-15','29-16','29-17'], subsLabel:'29-6, 29-7, 29-9…29-17',
-   rules:[R('all',...YEAR,'Закрито для лосося (ліміт 0)','closed')],
-   notes:[B('Припливна частина Fraser (від мосту CPR у Mission до гирла): лосося не можна залишати цілий рік. Вночі (з години після заходу до години перед сходом сонця) закрито для будь-якої риби. З 5 вересня до 6 жовтня заборонена природна наживка. Лише одна волосінь, гачки без зазубрини.',
-            'Tidal Fraser (CPR bridge at Mission to the mouth): no salmon retention year round. Closed to all finfish from one hour after sunset to one hour before sunrise. Natural bait ban Sep 5 – Oct 6. One line only, barbless hooks.')]},
-];
+// Rules come from build/rules.json, generated by dfo/update.py from the DFO pages. Every text is {uk, en}.
+const RULES = JSON.parse(document.getElementById('data-rules').textContent);
+const STATUS = JSON.parse(document.getElementById('data-status').textContent);
+const WATERS = RULES.waters;
+const lim = v => tx(v);
 
 const DISTRICT_LABELS = [
   ['Sea-to-Sky',-123.55,50.0],['Sunshine Coast',-124.05,49.66],['North Shore',-123.04,49.42],
@@ -539,6 +393,8 @@ function evaluate(w, sel, md) {
       ? {cat:'fraser', text: lim(r.lim) + (isYear(r) ? '' : t('closureOn', fmtRange(r)))}
       : {cat:'inactive', text: t('closureOff', fmtRange(r))};
   }
+  const full = !w.tidal && w.rules.find(r => r.sp === 'all' && r.type === 'closed' && !r.sec && isActive(r, md));
+  if (full) return {cat:'fraser', text: lim(full.lim) + (isYear(full) ? '' : t('closureOn', fmtRange(full)))};
   if (sel === 'all') {
     const st = Object.fromEntries(SP_IDS.map(s => [s, speciesStatus(w, s, md)]));
     const ret = SP_IDS.filter(s => st[s].st === 'retain');
@@ -668,7 +524,7 @@ function rulesTable(rules, md, asOf) {
   const rows = rules.map(r => {
     const now = isActive(r, md);
     const cat = RULE_CAT(r);
-    const fn = r.fn ? ` <a href="${FN[r.fn]}" target="_blank" rel="noopener">${r.fn}</a>` : '';
+    const fn = (r.fn || []).map(f => ` <a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.id)}</a>`).join('');
     return `<tr class="${now ? 'now' : ''}" style="--c:${now && cat ? catColor(cat) : 'transparent'}">
       <td class="sp">${esc(spName(r.sp))}</td><td class="d">${fmtRange(r, asOf)}</td><td>${esc(lim(r.lim))}${fn}</td></tr>`;
   }).join('');
@@ -764,6 +620,26 @@ function render() {
   map.closePopup();
 }
 
+const fmtDateTime = iso => {
+  const d = new Date(iso), p2 = n => String(n).padStart(2, '0');
+  return `${fmtFull(`${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`)}, ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+};
+function renderStatus() {
+  const src = RULES.sources || {}, dd = k => src[k] && src[k].dfoDate ? fmtFull(src[k].dfoDate) : '—';
+  $('status-line').innerHTML = [
+    STATUS.checkedAt ? t('checked', esc(fmtDateTime(STATUS.checkedAt))) : esc(t('notChecked')),
+    STATUS.rulesChanged ? t('rulesChanged', esc(fmtFull(STATUS.rulesChanged))) : '',
+    esc(t('dfoDates', dd('region2'), dd('area28'), dd('area29'))),
+  ].filter(Boolean).join(' ');
+  const pend = STATUS.pending;
+  $('pending').hidden = !pend;
+  if (pend) $('pending').textContent = t('pending', fmtFull(pend.since));
+  const chip = $('dfo-chip');
+  chip.classList.toggle('warn', !!pend);
+  chip.textContent = pend ? t('chipWarn') : t('chipOk', STATUS.checkedAt ? fmtDateTime(STATUS.checkedAt).split(',')[0] : fmtFull(STATUS.rulesChanged || RULES.sources.region2.dfoDate));
+}
+$('dfo-chip').addEventListener('click', () => $((STATUS.pending ? 'pending' : 'status-line')).scrollIntoView({behavior:'smooth', block:'center'}));
+
 function applyLang(lang, save) {
   LANG = lang;
   if (save) store.set('lang', lang);
@@ -783,6 +659,7 @@ function applyLang(lang, save) {
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   const wasOpen = activePopup && map.hasLayer(activePopup) && reopen;
   renderSpecies();
+  renderStatus();
   render();
   if (wasOpen) wasOpen();
 }
