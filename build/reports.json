@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-23T22:06Z",
+ "generated": "2026-09-23T22:30Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -148,12 +148,30 @@
    "manual": true
   },
   {
+   "src": "Instagram",
+   "title": "Big chinook (spring) caught on a small bead on the Vedder",
+   "url": "https://www.instagram.com/p/DdmOONjtUxR/",
+   "date": "2026-09-22",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
    "src": "Instagram · Pacific Angler",
    "title": "44 lb chinook landed on a guided charter off Vancouver",
    "url": "https://www.instagram.com/pacificangler/reel/Ddk2CMms7z6/",
    "date": "2026-09-21",
    "sp": ["chinook"],
    "w": [],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "A fish caught and released on the Vedder",
+   "url": "https://www.instagram.com/p/Ddj52g9yNK4/",
+   "date": "2026-09-21",
+   "sp": [],
+   "w": ["chilliwack"],
    "manual": true
   },
   {
@@ -181,6 +199,15 @@
    "date": "2026-09-18",
    "sp": ["chinook", "coho"],
    "w": ["chilliwack", "capilano", "squamish", "cheakamus", "harrison", "a29-mouth"]
+  },
+  {
+   "src": "Instagram",
+   "title": "Chum hooked and released on the Vedder, no chinook or coho for the group",
+   "url": "https://www.instagram.com/p/Ddaj4DOu9b-/",
+   "date": "2026-09-17",
+   "sp": ["chum"],
+   "w": ["chilliwack"],
+   "manual": true
   },
   {
    "src": "Instagram · Berry's Bait",
@@ -219,6 +246,24 @@
    "reddit": true
   },
   {
+   "src": "Instagram",
+   "title": "Fall Chinook Derby day on the Vedder: fish on (video)",
+   "url": "https://www.instagram.com/p/DdOyJgFKY1n/",
+   "date": "2026-09-13",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "Chinook day on the Vedder: many fish, a big female landed",
+   "url": "https://www.instagram.com/p/DdNJLCPPcez/",
+   "date": "2026-09-12",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: September 11, 2026",
    "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-11-2026",
@@ -244,6 +289,15 @@
    "w": ["a29-mouth"]
   },
   {
+   "src": "Instagram",
+   "title": "Coho limit from a Vancouver beach on a rainy day, many fish jumping",
+   "url": "https://www.instagram.com/p/Dc31zQvFkYO/",
+   "date": "2026-09-04",
+   "sp": ["coho"],
+   "w": [],
+   "manual": true
+  },
+  {
    "src": "Reddit r/FishingBC",
    "title": "Few salmon seen on the Vedder on Sep 1 (low water before the rain)",
    "url": "https://www.reddit.com/r/fishingBC/comments/1w67gld/ambleside_vs_vedder_for_salmon/",
@@ -259,6 +313,15 @@
    "date": "2026-09-02",
    "sp": ["chinook"],
    "w": [],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "Chinook opening day (Sep 1) at Sand Heads",
+   "url": "https://www.instagram.com/p/DczVAt_IG-e/",
+   "date": "2026-09-02",
+   "sp": ["chinook"],
+   "w": ["29-3"],
    "manual": true
   }
  ]
