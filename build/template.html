@@ -910,7 +910,8 @@ $('groups').addEventListener('click', e => {
   map.flyToBounds(bounds, {padding:[60, 60], maxZoom:13, duration:.6});
   // flyToBounds may not emit 'moveend' when the view does not change, so a timer is the fallback.
   let shown = false;
-  const show = () => { if (!shown) { shown = true; openPopup(w, null, w.subs && w.subs[0]); } };
+  // map.stop() ends a still-running flight: Leaflet skips popup auto-pan while the map animates.
+  const show = () => { if (!shown) { shown = true; map.stop(); openPopup(w, null, w.subs && w.subs[0]); } };
   map.once('moveend', show);
   setTimeout(show, 900);
   if (window.matchMedia('(max-width:760px)').matches) $('map').scrollIntoView({behavior:'smooth', block:'start'});
