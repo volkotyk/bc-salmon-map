@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-23T21:22Z",
+ "generated": "2026-09-23T22:00Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -139,12 +139,84 @@
  ],
  "reports": [
   {
+   "src": "Instagram · Bon Chovy Charters",
+   "title": "Good weather and some nice fish on the water off Vancouver",
+   "url": "https://www.instagram.com/bonchovyfishingcharters/p/DdmCQhlG0Nd/",
+   "date": "2026-09-22",
+   "sp": [],
+   "w": [],
+   "manual": true
+  },
+  {
+   "src": "Instagram · Pacific Angler",
+   "title": "44 lb chinook landed on a guided charter off Vancouver",
+   "url": "https://www.instagram.com/pacificangler/reel/Ddk2CMms7z6/",
+   "date": "2026-09-21",
+   "sp": ["chinook"],
+   "w": [],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "A salmon fishing day on the Vedder with several salmon (video)",
+   "url": "https://www.tiktok.com/@markatal/video/7687776168346684693",
+   "date": "2026-09-20",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Fish on at the Vedder River (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7687770752111693076",
+   "date": "2026-09-20",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: September 18, 2026",
    "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-18-2026",
    "date": "2026-09-18",
    "sp": ["chinook", "coho"],
    "w": ["chilliwack", "capilano", "squamish", "cheakamus", "harrison", "a29-mouth"]
+  },
+  {
+   "src": "Instagram · Berry's Bait",
+   "title": "Sand Heads chinook fishery still going strong",
+   "url": "https://www.instagram.com/berrysbait/p/DdW2xtjsxD1/",
+   "date": "2026-09-16",
+   "sp": ["chinook"],
+   "w": ["29-3"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Chinook hooked on the Vedder River (video)",
+   "url": "https://www.tiktok.com/@ebifisher/video/7686227244183817479",
+   "date": "2026-09-16",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Fish on at the Vedder River (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7686292339584666900",
+   "date": "2026-09-16",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Reddit r/FishingBC",
+   "title": "A school of about 20 chinook beached on the Vedder, anglers put them back",
+   "url": "https://www.reddit.com/r/fishingBC/comments/1wfhc5c/school_of_chinook_beach_themselves_on_the_vedder/",
+   "date": "2026-09-13",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
   },
   {
    "src": "Pacific Angler",
@@ -155,12 +227,39 @@
    "w": ["chilliwack", "capilano", "a29-mouth"]
   },
   {
+   "src": "TikTok",
+   "title": "Fish on at the Vedder River (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7683734656469978389",
+   "date": "2026-09-09",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: September 4, 2026",
    "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-4-2026",
    "date": "2026-09-04",
    "sp": ["chinook", "coho"],
    "w": ["a29-mouth"]
+  },
+  {
+   "src": "Reddit r/FishingBC",
+   "title": "Few salmon seen on the Vedder on Sep 1 (low water before the rain)",
+   "url": "https://www.reddit.com/r/fishingBC/comments/1w67gld/ambleside_vs_vedder_for_salmon/",
+   "date": "2026-09-03",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram · Pacific Angler",
+   "title": "Fall chinook opener: guides found good fish off Vancouver",
+   "url": "https://www.instagram.com/pacificangler/p/DczQNA7gW5t/",
+   "date": "2026-09-02",
+   "sp": ["chinook"],
+   "w": [],
+   "manual": true
   }
  ]
 }
