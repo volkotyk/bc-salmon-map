@@ -13,3 +13,6 @@ __pycache__/
 salmon-map.html
 salmon-map-standalone.html
 qa-*.html
+
+# Built by GitHub Actions (build/run_all.py --page)
+index.html

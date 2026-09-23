@@ -29,7 +29,7 @@ Features:
 ## Repository layout
 
 ```
-index.html              the built page (single file, ~2 MB, no backend) — served by GitHub Pages
+.github/workflows/pages.yml   builds index.html on every push to main and deploys it to GitHub Pages
 build/
   template.html         page source: markup, CSS, JS, rules data, UA/EN texts
   leaflet.css           Leaflet 1.9.4 CSS (inlined at build time; Leaflet JS loads from cdnjs)
@@ -54,13 +54,16 @@ python run_all.py --offline  # rebuild from raw files already downloaded
 python run_all.py --page     # only re-assemble index.html after editing template.html
 ```
 
+`index.html` (single file, ~2 MB, no backend) is a build output and is not committed. GitHub Actions runs `run_all.py --page` on every push to `main` and publishes the result.
+
 Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `osm_city.py` (roads, places, POI) → `build_geo.py` → `build_tidal.py` → `osm_minor_bbox.py` (streets near rivers) → `build_city.py` → `assemble.py`.
 
 ### Update the rules
 
 1. Open the DFO pages below and compare with `WATERS` in `build/template.html`.
 2. Edit the rule rows (and `LIM_EN` if you add a new limit text).
-3. Run `python run_all.py --page`, open `index.html` in a browser, commit and push. GitHub Pages redeploys in about a minute.
+3. Commit and push. The **Deploy to GitHub Pages** workflow rebuilds the page and publishes it in about a minute; check the result at the live URL.
+4. Optional local preview: `python run_all.py --page`, then `python -m http.server` in the repo root and open `http://localhost:8000/`.
 
 ## Hosting
 

@@ -91,7 +91,13 @@ details li{margin-bottom:6px}
 .foot{font-size:12px;color:var(--ink-3);margin:0}
 .mapwrap{position:relative;min-height:0}
 #map{position:absolute;inset:0;background:var(--sea)}
-.legend{position:absolute;left:12px;bottom:26px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px)}
+.legend{position:absolute;left:12px;bottom:26px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px)}
+.legend summary{cursor:pointer;font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:6px}
+.legend summary::-webkit-details-marker{display:none}
+.legend summary::before{content:'';width:0;height:0;border:5px solid transparent;border-left-color:currentColor;transition:transform .15s}
+.legend[open] summary::before{transform:rotate(90deg) translateX(2px)}
+.legend[open] summary{margin-bottom:8px}
+#legend-body{display:flex;flex-direction:column;gap:6px}
 .legend .row{display:flex;align-items:center;gap:8px}
 .legend .sw{width:26px;height:0;border-top:5px solid var(--c);flex:none;border-radius:3px}
 .legend .sw.dash{border-top-style:dashed;border-top-width:3px}
@@ -187,7 +193,7 @@ details li{margin-bottom:6px}
 
   <main class="mapwrap">
     <div id="map" role="application"></div>
-    <div class="legend" id="legend"></div>
+    <details class="legend" id="legend"><summary id="legend-title"></summary><div id="legend-body"></div></details>
   </main>
 </div>
 
@@ -228,7 +234,7 @@ const I18N = {
     h1: 'Де ловити лосося',
     lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб побачити найближчу вулицю й прокласти маршрут.',
     spLabel: 'Вид лосося', dateLabel: 'Дата риболовлі', today: 'Сьогодні', mapLabel: 'Карта водойм Lower Mainland',
-    legendHint: 'Лінії — річки, заливка — морські підзони',
+    legendTitle: 'Легенда', legendHint: 'Лінії — річки, заливка — морські підзони',
     legendBoth: 'Чавича + кижуч (Chinook + Coho)', legendChinook: 'Лише чавича (Chinook)', legendCoho: 'Лише кижуч (Coho)',
     legendKeep: sp => `${sp}: можна взяти`, legendRelease: 'Лише відпустити', legendClosed: 'Закрито на дату', legendFraser: 'Закриття (Fraser)',
     summary: (acc, fo, ft, to, tt, d, rel) => `${acc} можна взяти у <b>${fo}</b> з ${ft} прісних водойм і в <b>${to}</b> з ${tt} морських підзон на ${d}.` + (rel ? ` Ще в <b>${rel}</b> — лише відпустити.` : ''),
@@ -271,7 +277,7 @@ const I18N = {
     h1: 'Where to fish for salmon',
     lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to see the nearest road and get directions.',
     spLabel: 'Species', dateLabel: 'Fishing date', today: 'Today', mapLabel: 'Map of Lower Mainland salmon waters',
-    legendHint: 'Lines: rivers · shaded: tidal subareas',
+    legendTitle: 'Legend', legendHint: 'Lines: rivers · shaded: tidal subareas',
     legendBoth: 'Chinook + Coho', legendChinook: 'Chinook only', legendCoho: 'Coho only',
     legendKeep: sp => `${sp}: retention`, legendRelease: 'Release only', legendClosed: 'Closed on this date', legendFraser: 'Closure (Fraser)',
     summary: (acc, fo, ft, to, tt, d, rel) => `${acc} retention open in <b>${fo}</b> of ${ft} freshwater waters and <b>${to}</b> of ${tt} tidal subareas on ${d}.` + (rel ? ` Release only in <b>${rel}</b> more.` : ''),
@@ -750,10 +756,13 @@ function routeBlock(ll) {
     <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" rel="noopener">${t('routeGoogle')}</a>
     <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}" target="_blank" rel="noopener">${t('openOsm')}</a></div>`;
 }
+// Popup size follows the map size, so on a phone it scrolls inside instead of covering the whole map.
+const popupOpts = w => { const {x, y} = map.getSize();
+  return {maxWidth: Math.min(w, x - 56), maxHeight: Math.max(160, Math.round(y * .6)), autoPanPaddingTopLeft:[48, 16], autoPanPaddingBottomRight:[16, 16]}; };
 let reopen = null, activePopup = null;                // re-renders the open popup after a language switch
 function openPointPopup(ll, title) {
   reopen = () => openPointPopup(ll, title);
-  activePopup = L.popup({maxWidth:320, autoPanPadding:[24, 24]}).setLatLng(ll)
+  activePopup = L.popup(popupOpts(320)).setLatLng(ll)
     .setContent(`<div class="pop">${title ? `<h3>${esc(title)}</h3>` : ''}${routeBlock(ll)}</div>`).openOn(map);
 }
 map.on('click', e => { if (Date.now() - skipMapClick > 80) openPointPopup(e.latlng, ''); });
@@ -788,7 +797,7 @@ function openPopup(w, latlng, sub) {
   const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}
     ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${asOf}
     <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
-  activePopup = L.popup({maxWidth:360, autoPanPadding:[24, 24]}).setLatLng(ll).setContent(html).openOn(map);
+  activePopup = L.popup(popupOpts(360)).setLatLng(ll).setContent(html).openOn(map);
 }
 
 // A point on the feature itself (not just the bounds centre, which can fall on dry land for a curved river).
@@ -824,7 +833,8 @@ function legend() {
     ? [['both', t('legendBoth')], ['chinook', t('legendChinook')], ['coho', t('legendCoho')]]
     : [[state.sp, t('legendKeep', spName(state.sp))]];
   rows.push(['release', t('legendRelease'), 'dash'], ['closed', t('legendClosed'), 'thin'], ['fraser', t('legendFraser'), 'dash']);
-  $('legend').innerHTML = rows.map(([c, text, k]) => `<div class="row"><span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>${esc(text)}</div>`).join('')
+  $('legend-title').textContent = t('legendTitle');
+  $('legend-body').innerHTML = rows.map(([c, text, k]) => `<div class="row"><span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>${esc(text)}</div>`).join('')
     + `<div class="hint">${esc(t('legendHint'))}</div>`;
 }
 
@@ -945,5 +955,8 @@ const all = L.featureGroup(WATERS.filter(w => !w.tidal && !w.closure).map(w => l
 map.fitBounds(all.getBounds(), {padding:[20, 20]});
 syncZoomClasses(); syncRoads(); syncPoi();
 new ResizeObserver(() => map.invalidateSize()).observe($('map'));
+const narrow = window.matchMedia('(max-width:760px)');
+$('legend').open = !narrow.matches;
+map.on('popupopen', () => { if (narrow.matches) $('legend').open = false; });
 })();
 </script>
