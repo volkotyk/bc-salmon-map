@@ -137,6 +137,15 @@ button:active{background:var(--line)}
 .spark path{fill:var(--c);opacity:.35}
 .spark path.now{opacity:1}
 .spark path.z{fill:var(--ink-3);opacity:.6}
+/* Report pin: a speech bubble whose sharp corner (bottom left) sits on the water. iconAnchor [0, 24] = that corner. */
+.rep-pin{box-sizing:border-box;display:flex;align-items:center;gap:3px;height:24px;padding:0 7px;border:1.5px solid var(--focus);border-radius:12px 12px 12px 2px;
+  background:var(--panel);color:var(--focus);font:700 11px/1 var(--f-mono);white-space:nowrap;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.rep-pin svg{width:12px;height:12px;flex:none}
+.rep-pin::after{content:'';position:absolute;inset:-10px}  /* a finger-sized hit area around the small bubble */
+.rep-pin.in-legend{display:inline-flex;position:static;flex:none;height:18px;padding:0 5px;cursor:default;box-shadow:none}
+.rep-pin.in-legend::after{content:none}
+.pop-reps{margin:4px 0 0;padding-left:18px}
+.pop-reps li{margin-bottom:4px}
 .run .lim .dot{display:inline-block;width:8px;height:8px;vertical-align:baseline}
 .run-lede,.run-note{color:var(--ink-2);font-size:13px;margin:0 0 6px}
 .run-note{color:var(--ink-3);font-size:12px;margin:6px 0 0}
@@ -373,6 +382,9 @@ const I18N = {
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: улов за 28 днів, найбільше ${max} шт. (${d})`,
     sparkDay: (d, n) => `${d}: ${n} шт.`,
     shopTitle: 'Звіти рибальських магазинів', mentioned: 'Згадано: ', watersIn: 'Водойми: ',
+    pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`} магазину`,
+    popReports: 'Свіжі звіти магазинів', popReportsNote: 'Звіт — думка магазину. Діють правила з таблиці вище.',
+    legendPin: 'Водойма у свіжому звіті магазину',
     runNote: g => `Дані DFO попередні (unverified). Звіт магазину — думка його авторів: згадка виду не означає, що цей вид можна залишити. Правила дивіться на карті. Оновлено ${g}.`,
     rules: `<summary>Загальні правила</summary>
       <h3>Усюди</h3><ul>
@@ -441,6 +453,9 @@ const I18N = {
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: catch over 28 days, highest ${max} fish (${d})`,
     sparkDay: (d, n) => `${d}: ${n} fish`,
     shopTitle: 'Tackle shop reports', mentioned: 'Mentions: ', watersIn: 'Waters: ',
+    pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent shop report' : `${n} recent shop reports`}`,
+    popReports: 'Recent shop reports', popReportsNote: 'A report is the shop\'s opinion. The rules in the table above apply.',
+    legendPin: 'Water named in a recent shop report',
     runNote: g => `DFO data are preliminary (unverified). A shop report is its authors' opinion: a species in a report does not mean you can retain it. Check the rules on the map. Updated ${g}.`,
     rules: `<summary>General rules</summary>
       <h3>Everywhere</h3><ul>
@@ -738,8 +753,13 @@ function openPopup(w, latlng, sub) {
   const asOf = w.asOf ? `<p class="note">${esc(t('asOf', fmtFull(w.asOf)))}</p>` : '';
   const ll = latlng || anchorPoint(w);
   const need = licensed(w) ? '' : `<p class="banner">${esc(t('needLicence', !!w.tidal))}</p>`;
+  // Recent shop reports that name this water: under the rules, because the rules are what applies.
+  const reps = reportsFor(w), repHtml = reps.length ? `<div class="subh">${esc(t('popReports'))}</div><ul class="pop-reps">`
+    + reps.map(r => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.src)} · ${fmtIso(r.date)} ↗</a>`
+      + (r.sp.length ? ` — ${esc(t('mentioned'))}${r.sp.map(sp => esc(spLow(sp))).join(', ')}` : '') + '</li>').join('')
+    + `</ul><p class="note">${esc(t('popReportsNote'))}</p>` : '';
   const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}${need}
-    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${asOf}
+    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${repHtml}${asOf}
     <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
   activePopup = L.popup(popupOpts(360)).setLatLng(ll).setContent(html).openOn(map);
 }
@@ -808,6 +828,7 @@ function legend() {
   if (state.lic !== 'all') rows.push(['other', t('legendOther'), 'dot2']);
   $('legend-title').textContent = t('legendTitle');
   $('legend-body').innerHTML = rows.map(([c, text, k]) => `<div class="row"><span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>${esc(text)}</div>`).join('')
+    + (pins.getLayers().length ? `<div class="row"><span class="rep-pin in-legend">${PIN_SVG}</span>${esc(t('legendPin'))}</div>` : '')
     + `<div class="hint">${esc(t('legendHint'))}</div>`;
 }
 
@@ -851,10 +872,35 @@ function spark(s, today, recent) {
     + `<line x1="0" x2="${W}" y1="${SPARK_H - .5}" y2="${SPARK_H - .5}"/>${bars}</svg>`;
 }
 
+// ---------- report pins: a bubble on each water that a recent shop report names ----------
+// A report key is a water id or a tidal subarea ("28-8"). One pin per water; a tidal pin sits at the
+// label point of the first named subarea, any other pin on the water's own line (anchorPoint).
+const freshShops = () => (REPORTS.reports || []).filter(r => r.date >= isoShift(todayISO(), -SHOP_MAX_AGE) && /^https:\/\//.test(r.url));
+const waterOf = k => WATERS.find(w => w.id === k || (w.subs || []).includes(k));
+const reportsFor = w => freshShops().filter(r => (r.w || []).some(k => waterOf(k) === w));
+const PIN_SVG = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 3h8M2 6h8M2 9h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+map.createPane('pins').style.zIndex = 620;             // above the map labels (600), below tooltips and popups
+const pins = L.layerGroup().addTo(map);
+function renderPins() {
+  pins.clearLayers();
+  const first = new Map();                             // water -> the first key that names it
+  freshShops().forEach(r => (r.w || []).forEach(k => { const w = waterOf(k); if (w && !first.has(w)) first.set(w, k); }));
+  first.forEach((k, w) => {
+    const n = reportsFor(w).length, sub = GEO.subpts[k] ? k : w.subs && w.subs[0];
+    const ll = GEO.subpts[k] ? L.latLng(GEO.subpts[k][1], GEO.subpts[k][0]) : anchorPoint(w);
+    const m = L.marker(ll, {pane:'pins', keyboard:true, riseOnHover:true, title:t('pinTitle', tx(w.name), n),
+      icon: L.divIcon({className:'rep-pin', html:PIN_SVG + (n > 1 ? `<b>${n}</b>` : ''), iconSize:null, iconAnchor:[0, 24]})});
+    m.on('add', () => m.getElement().setAttribute('aria-label', t('pinTitle', tx(w.name), n)));
+    m.on('click', () => { skipMapClick = Date.now(); openPopup(w, ll, sub); });
+    pins.addLayer(m);
+  });
+}
+
 function renderRun() {
+  renderPins();
   const today = todayISO();
   const series = (REPORTS.testfish || []).filter(s => s.days.length && s.days[s.days.length - 1][0] >= isoShift(today, -RUN_MAX_AGE));
-  const shops = (REPORTS.reports || []).filter(r => r.date >= isoShift(today, -SHOP_MAX_AGE) && /^https:\/\//.test(r.url));
+  const shops = freshShops();
   $('run').hidden = !series.length && !shops.length;
   if ($('run').hidden) return;
   const dot = sp => `<span class="dot" style="--c:var(${CAT_VAR[sp]})"></span>`;
