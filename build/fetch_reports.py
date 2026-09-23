@@ -48,6 +48,18 @@ FEEDS = [
 ]
 KEEP_REPORTS = 3          # newest reports kept per feed
 
+# Reddit: the public Atom feed of the newest posts (no API key). Most posts are questions, so a post
+# counts as a report only when it names a map water, salmon, and a catch or fish-condition word, and
+# its title is not a question. Posts stay in the snapshot for KEEP_DAYS, also after they leave the feed.
+REDDIT = ["fishingBC", "chilliwack"]
+REDDIT_FEED = "https://www.reddit.com/r/{}/new.rss?limit=100"
+SALMON_RE = re.compile(r"\bsalmon\b", re.I)
+# "catch" alone is left out: questions use it too ("hoping to catch a coho").
+CATCH_RE = re.compile(r"\b(?:caught|landed|hooked|fish on|limit(?:ed)? out|beached|bit(?:e|ing)|slow|dead|"
+                      r"skunked|no fish|plenty|lots of|school of|rolling|jumping|fresh (?:fish|run)|run is)\b", re.I)
+QUESTION_RE = re.compile(r"\?\s*$|\bvs\.?\b|\blooking for\b|^(?:how|where|what|which|when|why|any|anyone|is|are|does|do|"
+                         r"should|can|could|thoughts|help|i'?m looking|tips?|advice|recommend\w*|beginner|first time|best)\b", re.I)
+
 # Species names as anglers write them. "Pink" and "spring" alone are also a colour and a season.
 SPECIES = {
     "chinook": r"chinook|springs|spring salmon",
@@ -100,7 +112,12 @@ def fetch(url, data=None):
                 return r.read()
         except Exception as e:          # network hiccup: retry, then let the caller skip the source
             last = e
-            time.sleep(5 * (attempt + 1))
+            if attempt == 2:
+                break
+            # 429 Too Many Requests (Reddit): wait as the server asks (Retry-After), up to a minute.
+            limited = getattr(e, "code", 0) == 429
+            asked = (e.headers.get("Retry-After") or "") if limited and e.headers else ""
+            time.sleep(min(60, int(asked)) if asked.isdigit() else (20 if limited else 5) * (attempt + 1))
     raise RuntimeError(f"cannot fetch {url}: {last}")
 
 
@@ -284,6 +301,45 @@ def shop_reports(name, url, title_re):
     return out[:KEEP_REPORTS]
 
 
+def reddit_reports(sub, today):
+    root = ET.fromstring(fetch(REDDIT_FEED.format(sub)))
+    since, out = (today - timedelta(days=KEEP_DAYS)).isoformat(), []
+    for e in root.iter(ATOM + "entry"):
+        title = re.sub(r"\s+", " ", e.findtext(ATOM + "title", "")).strip()
+        link = next((l.get("href") for l in e.iter(ATOM + "link")), None)
+        stamp = (e.findtext(ATOM + "published") or e.findtext(ATOM + "updated") or "")[:10]
+        # The feed body ends with "submitted by /u/<name> [link] [comments]": the name is not kept.
+        body = re.sub(r"submitted by\s+/u/\S+.*$", "", text_of(e.findtext(ATOM + "content", "")))
+        text = f"{title} {body}"
+        w = [k for k, rx in WATERS_RE.items() if rx.search(text)]
+        sp = [k for k, rx in SPECIES_RE.items() if rx.search(text)]
+        if not (link and link.startswith("https://") and stamp >= since and w and (sp or SALMON_RE.search(text))
+                and CATCH_RE.search(text) and not QUESTION_RE.search(title)):
+            continue
+        out.append({"src": f"Reddit r/{sub}", "title": title[:140], "url": link, "date": stamp, "sp": sp, "w": w, "reddit": True})
+    return out
+
+
+def reddit(prev, today):
+    since, out = (today - timedelta(days=KEEP_DAYS)).isoformat(), []
+    for i, sub in enumerate(REDDIT):
+        if i:
+            time.sleep(5)               # two requests a few seconds apart: well inside Reddit's rate limit
+        src = f"Reddit r/{sub}"
+        old = [r for r in prev.get("reports", []) if r.get("src") == src and r.get("date", "") >= since]
+        try:
+            got = reddit_reports(sub, today)
+        except Exception as e:
+            warn(f"{src}: {e} (kept {len(old)} posts of the previous snapshot)")
+            got = []
+        # Keep the posts of earlier runs too: a busy subreddit pushes a post out of the feed in days.
+        urls = {r["url"] for r in got}
+        merged = got + [r for r in old if r["url"] not in urls]
+        print(f"{src}: {len(got)} matching posts in the feed, {len(merged)} kept")
+        out += merged
+    return out
+
+
 def reports(prev):
     out = []
     for name, url, title_re in FEEDS:
@@ -442,7 +498,7 @@ def main():
     except (OSError, ValueError):
         prev = {}
     today = datetime.now(timezone(timedelta(hours=-8))).date()     # Pacific standard time is close enough for a date
-    auto = reports(prev)
+    auto = reports(prev) + reddit(prev, today)
     manual = [r for r in manual_reports(today, waters, known) if r["url"] not in {a["url"] for a in auto} or not r["url"]]
     data = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
             "testfish": test_fishery(today, prev) + manual_testfish(today),

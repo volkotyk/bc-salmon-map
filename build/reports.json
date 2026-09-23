@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-23T22:00Z",
+ "generated": "2026-09-23T22:06Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -210,13 +210,13 @@
    "manual": true
   },
   {
-   "src": "Reddit r/FishingBC",
-   "title": "A school of about 20 chinook beached on the Vedder, anglers put them back",
+   "src": "Reddit r/fishingBC",
+   "title": "School of chinook beach themselves on the vedder.",
    "url": "https://www.reddit.com/r/fishingBC/comments/1wfhc5c/school_of_chinook_beach_themselves_on_the_vedder/",
    "date": "2026-09-13",
    "sp": ["chinook"],
    "w": ["chilliwack"],
-   "manual": true
+   "reddit": true
   },
   {
    "src": "Pacific Angler",

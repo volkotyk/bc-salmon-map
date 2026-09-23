@@ -6,7 +6,7 @@ name: Update DFO rules and deploy
 #      build/status.json gets "pending", and an issue is opened (once per new problem).
 #   2. Changed rules / status / snapshots are committed back to main.
 #   3. build/fetch_reports.py gets the "running now" panel data (DFO and PSC test fisheries,
-#      tackle shop reports). A failed source is a warning and keeps its previous data.
+#      tackle shop reports, Reddit). A failed source is a warning and keeps its previous data.
 #      When the data changed, build/reports.json is committed: git history is the daily snapshot.
 #   4. index.html is assembled with the check time and published to GitHub Pages.
 on:
