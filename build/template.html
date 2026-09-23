@@ -350,7 +350,7 @@ const I18N = {
     rulesChanged: d => `Карту востаннє оновлено за змінами DFO <b>${d}</b>.`,
     dfoDates: (a, b, c) => `Дата сторінок DFO: Region 2 — ${a}, Area 28 — ${b}, Area 29 — ${c}.`,
     pending: d => `DFO змінив правила (${d}), але автоматичне оновлення зупинилося на запобіжнику. Карта показує попередні правила — перевірте джерело DFO.`,
-    chipOk: d => `DFO ✓ ${d}`, chipWarn: 'DFO: є зміни',
+    chipOk: d => `DFO ✓ ${d}`, chipWarn: 'DFO: є зміни', credit: 'Автор: Володимир Котик',
     eyebrow: 'B.C. · Lower Mainland · прісні та солоні води',
     h1: 'Де ловити лосося',
     lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб прокласти туди маршрут.',
@@ -421,7 +421,7 @@ const I18N = {
     rulesChanged: d => `Map last updated from DFO changes on <b>${d}</b>.`,
     dfoDates: (a, b, c) => `DFO page dates: Region 2 — ${a}, Area 28 — ${b}, Area 29 — ${c}.`,
     pending: d => `DFO changed the rules (${d}), but the automatic update stopped at a safety check. The map shows the previous rules — check the DFO source.`,
-    chipOk: d => `DFO ✓ ${d}`, chipWarn: 'DFO: changes pending',
+    chipOk: d => `DFO ✓ ${d}`, chipWarn: 'DFO: changes pending', credit: 'Made by Volodymyr Kotyk',
     eyebrow: 'B.C. · Lower Mainland · fresh and tidal waters',
     h1: 'Where to fish for salmon',
     lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to get directions there.',
@@ -629,7 +629,15 @@ const map = L.map('map', {
   zoomSnap: .25, minZoom: 7.5, maxZoom: 17, attributionControl: true,
   maxBounds: [[48.6, -125.3], [50.7, -120.8]], maxBoundsViscosity: .8,
 });
-map.attributionControl.setPrefix(false).addAttribution('© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · DFO');
+map.attributionControl.setPrefix(false);
+// One attribution string: data credits, then the author link. applyLang replaces it, so the credit follows the language.
+let attribution = '';
+function renderAttribution() {
+  map.attributionControl.removeAttribution(attribution);
+  attribution = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · DFO · '
+    + `<a href="https://www.linkedin.com/in/vskotyk" target="_blank" rel="author noopener">${esc(t('credit'))}</a>`;
+  map.attributionControl.addAttribution(attribution);
+}
 [['base', 350], ['tidal', 380], ['water', 410]].forEach(([n, z]) => { map.createPane(n).style.zIndex = z; });
 const R_BASE = L.svg({pane:'base', padding:.5});
 const R_TIDAL = L.svg({pane:'tidal', padding:.5});
@@ -1115,6 +1123,7 @@ function applyLang(lang, save) {
   $('rules').innerHTML = t('rules');
   $('rules').open = open;
   $('foot').innerHTML = t('foot');
+  renderAttribution();
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   const wasOpen = activePopup && map.hasLayer(activePopup) && reopen;
   renderSpecies();

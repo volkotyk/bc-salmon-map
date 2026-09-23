@@ -37,6 +37,7 @@ HEAD = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#142124" media="(prefers-color-scheme: dark)">
+<meta name="author" content="Volodymyr Kotyk">
 <meta name="description" content="Where to fish for salmon in the BC Lower Mainland: DFO Region 2 rivers and tidal Areas 28 and 29 by species and date. Українською та англійською.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 16c5-7 13-8 20-3l6-4v14l-6-4c-7 5-15 4-20-3z' fill='%23c2410c'/%3E%3C/svg%3E">
 </head>
