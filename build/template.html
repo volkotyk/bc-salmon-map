@@ -145,6 +145,11 @@ button:active{background:var(--line)}
 .rep-pin.in-legend{display:inline-flex;position:static;flex:none;height:18px;padding:0 5px;cursor:default;box-shadow:none}
 .rep-pin.in-legend::after{content:none}
 .man{font-style:italic;color:var(--ink-3)}
+.run h3 .cnt{font-family:var(--f-mono);letter-spacing:0}
+/* The "show more" fold of the report list: plain text styling, not the section style of the rules <details>. */
+.run details.more{border-top:0;padding-top:0}
+.run details.more summary{font:600 13px var(--f-body);letter-spacing:0;text-transform:none;color:var(--focus);padding:6px 6px;min-height:var(--tap);display:flex;align-items:center}
+.run details.more ul{padding-left:0;margin:0;color:inherit}
 .pop-reps{margin:4px 0 0;padding-left:18px}
 .pop-reps li{margin-bottom:4px}
 .run .lim .dot{display:inline-block;width:8px;height:8px;vertical-align:baseline}
@@ -382,7 +387,7 @@ const I18N = {
     trend: {up: '↑ більше, ніж тижнем раніше', down: '↓ менше, ніж тижнем раніше', flat: '→ як тижнем раніше'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: улов за 28 днів, найбільше ${max} шт. (${d})`,
     sparkDay: (d, n) => `${d}: ${n} шт.`,
-    shopTitle: 'Звіти магазинів і рибалок', mentioned: 'Згадано: ', watersIn: 'Водойми: ',
+    shopTitle: 'Звіти магазинів і рибалок', mentioned: 'Згадано: ', watersIn: 'Водойми: ', showMore: n => `Показати ще ${n}`,
     pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`}`,
     popReports: 'Свіжі звіти', popReportsNote: 'Звіт — думка його автора. Діють правила з таблиці вище.',
     legendPin: 'Водойма у свіжому звіті', manualTag: 'додано вручну',
@@ -453,7 +458,7 @@ const I18N = {
     trend: {up: '↑ more than the week before', down: '↓ fewer than the week before', flat: '→ same as the week before'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: catch over 28 days, highest ${max} fish (${d})`,
     sparkDay: (d, n) => `${d}: ${n} fish`,
-    shopTitle: 'Shop and angler reports', mentioned: 'Mentions: ', watersIn: 'Waters: ',
+    shopTitle: 'Shop and angler reports', mentioned: 'Mentions: ', watersIn: 'Waters: ', showMore: n => `Show ${n} more`,
     pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent report' : `${n} recent reports`}`,
     popReports: 'Recent reports', popReportsNote: 'A report is its author\'s opinion. The rules in the table above apply.',
     legendPin: 'Water named in a recent report', manualTag: 'added by hand',
@@ -835,7 +840,7 @@ function legend() {
 
 // ---------- running now: Fraser test fisheries + tackle shop reports ----------
 // Shows only current data: a series with no sample in RUN_MAX_AGE days (off season) is left out.
-const RUN_MAX_AGE = 14, SHOP_MAX_AGE = 21;
+const RUN_MAX_AGE = 14, SHOP_MAX_AGE = 21, SHOP_SHOW = 5;
 const SITES = {Albion:'Albion (Fort Langley)', Whonnock:'Whonnock (Maple Ridge)', Qualark:B('Qualark (біля Yale)', 'Qualark (near Yale)')};
 const isoShift = (iso, n) => { const [y, m, d] = iso.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); };
 const fmtIso = iso => fmt(iso.slice(5));
@@ -922,10 +927,14 @@ function renderRun() {
   const waters = r => [...new Set((r.w || []).map(k => WATERS.find(w => w.id === k || (w.subs || []).includes(k))).filter(Boolean))];
   const reps = shops.map(r => `<li class="item"><span></span><span class="nm">${extLink(r.url, esc(r.title))}</span>
       <span class="lim">${esc(r.src)}${manualTag(r)} · ${fmtIso(r.date)}${r.sp.length ? ` · ${esc(t('mentioned'))}${r.sp.map(sp => `${dot(sp)} ${esc(spLow(sp))}`).join(', ')}` : ''}
-      ${waters(r).length ? `<span class="wl">${esc(t('watersIn'))}${waters(r).map(w => `<button type="button" class="wlink" data-id="${w.id}">${esc(tx(w.name))}</button>`).join('')}</span>` : ''}</span></li>`).join('');
+      ${waters(r).length ? `<span class="wl">${esc(t('watersIn'))}${waters(r).map(w => `<button type="button" class="wlink" data-id="${w.id}">${esc(tx(w.name))}</button>`).join('')}</span>` : ''}</span></li>`);
+  // The newest SHOP_SHOW reports stay open; the rest fold under "show N more". The pins and popups keep all of them.
+  const moreOpen = !!($('run').querySelector('details.more') || {}).open;   // keep the choice across a language switch
   $('run').innerHTML = `<h2>${esc(t('runTitle'))}</h2>`
     + (rows ? `<p class="run-lede">${esc(t('runLede'))}</p><ul>${rows}</ul>` : '')
-    + (reps ? `<h3>${esc(t('shopTitle'))}</h3><ul>${reps}</ul>` : '')
+    + (reps.length ? `<h3>${esc(t('shopTitle'))} <span class="cnt">(${reps.length})</span></h3><ul>${reps.slice(0, SHOP_SHOW).join('')}</ul>`
+      + (reps.length > SHOP_SHOW ? `<details class="more"${moreOpen ? ' open' : ''}><summary>${esc(t('showMore', reps.length - SHOP_SHOW))}</summary>`
+        + `<ul>${reps.slice(SHOP_SHOW).join('')}</ul></details>` : '') : '')
     + `<p class="run-note">${esc(t('runNote', REPORTS.generated ? fmtFull(REPORTS.generated.slice(0, 10)) : '—'))}</p>`;
 }
 
