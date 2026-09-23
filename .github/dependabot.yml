@@ -1,0 +1,18 @@
+version: 2
+
+# Dependabot checks the actions in .github/workflows once a week and opens one PR for all of them.
+# A new release must be 7 days old before Dependabot offers it (the default is 3): a bad or
+# compromised release is usually found and pulled in that time. Security updates ignore this delay.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: America/Vancouver
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
