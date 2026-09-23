@@ -22,6 +22,7 @@ Features:
 - Filter by species: Chinook, Coho, Chum, Pink, Sockeye (Ukrainian names always show the English DFO name).
 - Species identification card: pick a species to see drawings of the sea phase and the spawning phase, plus the key marks (gums, tail spots, colours).
 - Pick a date: the map and list show the rules in force on that day, including ranges that cross New Year.
+- Licence switch: *Both*, *Freshwater* (BC Freshwater Fishing Licence) or *Tidal* (BC Tidal Waters Sport Fishing Licence). With one licence, the list and the summary show only the waters it covers; the other waters stay on the map as faint outlines, and their popup names the licence they need. The choice is remembered.
 - Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure.
 - Click any water for the full rule table, notes and fishery-notice links.
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.

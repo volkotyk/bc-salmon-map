@@ -72,6 +72,15 @@ h1{font:700 24px/1.1 var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .ctl-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;font:600 13px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
 .species{position:relative;display:flex;gap:8px;overflow-x:auto;touch-action:pan-x;scrollbar-width:none;margin:0 -16px;padding:3px 16px;scroll-padding-inline:16px}
 .species::-webkit-scrollbar{display:none}
+.ctl-label.vis{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+/* Licence switch: one segmented radio group. */
+.seg{position:relative;display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{flex:1;display:flex;align-items:center;justify-content:center;min-height:var(--tap);padding:0 8px;cursor:pointer;background:var(--panel);font-weight:500;text-align:center;user-select:none}
+.seg label:not(:first-of-type){border-left:1px solid var(--line)}
+.seg label:active{background:var(--chip-bg)}
+.seg input:checked+label{background:var(--ink);color:var(--panel)}
+.seg input:focus-visible+label{outline:2px solid var(--focus);outline-offset:-3px}
 .species input{position:absolute;opacity:0;pointer-events:none}
 .species label{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:var(--tap);padding:0 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;background:var(--panel);font-weight:500;user-select:none;white-space:nowrap}
 .species label:active{background:var(--chip-bg)}
@@ -138,6 +147,7 @@ details li{margin-bottom:6px}
 .legend .sw{width:26px;height:0;border-top:5px solid var(--c);flex:none;border-radius:3px}
 .legend .sw.dash{border-top-style:dashed;border-top-width:3px}
 .legend .sw.thin{border-top-width:2px}
+.legend .sw.dot2{border-top-style:dotted;border-top-width:2px;opacity:.5}
 .legend .sw.fill{height:12px;border:1px solid var(--c);background:color-mix(in srgb,var(--c) 28%,transparent);border-radius:2px}
 .legend .hint{color:var(--ink-3);font-size:11.5px;border-top:1px solid var(--line);padding-top:6px}
 .leaflet-container{font-family:var(--f-body);background:var(--sea)}
@@ -234,6 +244,12 @@ details li{margin-bottom:6px}
         </div>
       </div>
 
+      <div class="ctl">
+        <span class="ctl-label vis" id="lic-label"></span>
+        <div class="seg" role="radiogroup" aria-labelledby="lic-label" aria-describedby="lic-hint" id="licence"></div>
+        <p class="sp-hint" id="lic-hint"></p>
+      </div>
+
       <p class="banner" id="pending" hidden></p>
       <p class="summary" id="summary"></p>
       <p class="banner" id="banner" hidden></p>
@@ -307,7 +323,13 @@ const I18N = {
     legendBoth: 'Чавича + кижуч (Chinook + Coho)', legendChinook: 'Лише чавича (Chinook)', legendCoho: 'Лише кижуч (Coho)',
     legendKeep: sp => `${sp}: можна взяти`, legendRelease: 'Лише відпустити', legendClosed: 'Закрито на дату', legendFraser: 'Закриття (Fraser)',
     summary: (acc, fo, ft, to, tt, d, rel) => `${acc} можна взяти у <b>${fo}</b> з ${ft} прісних водойм і в <b>${to}</b> з ${tt} морських підзон на ${d}.` + (rel ? ` Ще в <b>${rel}</b> — лише відпустити.` : ''),
-    banner: (sp, d, rel) => `На ${d} немає водойм, де вид «${sp}» можна залишити. ` + (rel ? `Ловити й відпускати можна в ${rel} місцях.` : 'Прісні води Регіону 2 мають відкриття лише для чавичі (Chinook) і кижуча (Coho).'),
+    summaryFresh: (acc, fo, ft, d, rel) => `${acc} можна взяти у <b>${fo}</b> з ${ft} прісних водойм на ${d}.` + (rel ? ` Ще в <b>${rel}</b> — лише відпустити.` : ''),
+    summaryTidal: (acc, to, tt, d, rel) => `${acc} можна взяти в <b>${to}</b> з ${tt} морських підзон на ${d}.` + (rel ? ` Ще в <b>${rel}</b> — лише відпустити.` : ''),
+    banner: (sp, d, rel, fresh) => `На ${d} немає водойм, де вид «${sp}» можна залишити. ` + (rel ? `Ловити й відпускати можна в ${rel} місцях.` : fresh ? 'Прісні води Регіону 2 мають відкриття лише для чавичі (Chinook) і кижуча (Coho).' : ''),
+    licLabel: 'Ваша ліцензія', lic: {all:'Обидві', fresh:'Прісна', tidal:'Солона'},
+    licHint: 'Прісні води: BC Freshwater Fishing Licence. Солона (припливна) вода: BC Tidal Waters Sport Fishing Licence.',
+    legendOther: 'Потрібна інша ліцензія',
+    needLicence: tidal => `Для цієї водойми потрібна ${tidal ? 'BC Tidal Waters Sport Fishing Licence' : 'BC Freshwater Fishing Licence'}.`,
     canKeep: 'Можна взяти: ', releaseSuffix: ' — відпустити', releaseShort: 'відпустити',
     releaseOnly: 'Лише відпустити (без утримання)', closedOnDate: 'Закрито на цю дату',
     closureOn: range => ` (${range})`, closureOff: range => `Закриття діє ${range}; зараз тут діють правила підзони 29-3`,
@@ -360,7 +382,13 @@ const I18N = {
     legendBoth: 'Chinook + Coho', legendChinook: 'Chinook only', legendCoho: 'Coho only',
     legendKeep: sp => `${sp}: retention`, legendRelease: 'Release only', legendClosed: 'Closed on this date', legendFraser: 'Closure (Fraser)',
     summary: (acc, fo, ft, to, tt, d, rel) => `${acc} retention open in <b>${fo}</b> of ${ft} freshwater waters and <b>${to}</b> of ${tt} tidal subareas on ${d}.` + (rel ? ` Release only in <b>${rel}</b> more.` : ''),
-    banner: (sp, d, rel) => `On ${d} there is no water where ${sp} can be retained. ` + (rel ? `Catch-and-release is allowed in ${rel} places.` : 'Region 2 fresh waters open only for Chinook and Coho.'),
+    summaryFresh: (acc, fo, ft, d, rel) => `${acc} retention open in <b>${fo}</b> of ${ft} freshwater waters on ${d}.` + (rel ? ` Release only in <b>${rel}</b> more.` : ''),
+    summaryTidal: (acc, to, tt, d, rel) => `${acc} retention open in <b>${to}</b> of ${tt} tidal subareas on ${d}.` + (rel ? ` Release only in <b>${rel}</b> more.` : ''),
+    banner: (sp, d, rel, fresh) => `On ${d} there is no water where ${sp} can be retained. ` + (rel ? `Catch-and-release is allowed in ${rel} places.` : fresh ? 'Region 2 fresh waters open only for Chinook and Coho.' : ''),
+    licLabel: 'Your licence', lic: {all:'Both', fresh:'Freshwater', tidal:'Tidal'},
+    licHint: 'Fresh waters: BC Freshwater Fishing Licence. Tidal waters: BC Tidal Waters Sport Fishing Licence.',
+    legendOther: 'Needs the other licence',
+    needLicence: tidal => `This water needs a ${tidal ? 'BC Tidal Waters Sport Fishing Licence' : 'BC Freshwater Fishing Licence'}.`,
     canKeep: 'Retention: ', releaseSuffix: ' — release', releaseShort: 'release',
     releaseOnly: 'Non-retention (release only)', closedOnDate: 'Closed on this date',
     closureOn: range => ` (${range})`, closureOff: range => `Closure applies ${range}; subarea 29-3 rules apply now`,
@@ -532,7 +560,7 @@ function evaluate(w, sel, md) {
 // ---------- theme-aware colors ----------
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const CAT_VAR = {chinook:'--c-chinook', coho:'--c-coho', both:'--c-both', chum:'--c-chum', pink:'--c-pink', sockeye:'--c-sockeye',
-                 release:'--c-release', closed:'--c-closed', inactive:'--c-closed', fraser:'--c-fraser'};
+                 release:'--c-release', closed:'--c-closed', inactive:'--c-closed', fraser:'--c-fraser', other:'--c-closed'};
 const catColor = cat => css(CAT_VAR[cat]);
 
 // ---------- map and panes ----------
@@ -591,9 +619,17 @@ WATERS.forEach(w => {
 });
 layers['a29-mouth'].poly.bringToFront();
 
+// 'other': the water needs the licence that the viewer does not have. It stays on the map as a faint outline.
 function styleWater(w, cat) {
   const L_ = layers[w.id];
   const color = catColor(cat);
+  if (cat === 'other') {
+    const faint = {color, weight: w.tidal ? 1 : 2, opacity: .35, dashArray: '2 4', fillColor: color, fillOpacity: w.lake ? .1 : 0};
+    if (w.tidal) { L_.poly.setStyle(faint); return; }
+    L_.halo.setStyle({opacity: 0, fill: false});
+    L_.line.setStyle({...faint, lineCap: 'round', lineJoin: 'round'});
+    return;
+  }
   const closed = cat === 'closed' || cat === 'inactive';
   if (w.tidal) {
     L_.poly.setStyle({
@@ -661,7 +697,8 @@ function openPopup(w, latlng, sub) {
   const tag = w.tidal ? `<span class="tag">${w.geom === 'mouth' ? t('partOf293') : esc(t('subarea', sub))}</span>` : '';
   const asOf = w.asOf ? `<p class="note">${esc(t('asOf', fmtFull(w.asOf)))}</p>` : '';
   const ll = latlng || anchorPoint(w);
-  const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}
+  const need = licensed(w) ? '' : `<p class="banner">${esc(t('needLicence', !!w.tidal))}</p>`;
+  const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}${need}
     ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${asOf}
     <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
   activePopup = L.popup(popupOpts(360)).setLatLng(ll).setContent(html).openOn(map);
@@ -681,8 +718,18 @@ function anchorPoint(w) {
 }
 
 // ---------- controls ----------
-const state = {sp:'all', md:'09-22'};
+// lic: the viewer's licence. 'fresh' = BC Freshwater Fishing Licence, 'tidal' = BC Tidal Waters Sport Fishing Licence.
+const LICENCES = ['all', 'fresh', 'tidal'];
+const state = {sp:'all', md:'09-22', lic: LICENCES.includes(store.get('lic')) ? store.get('lic') : 'all'};
+const licensed = w => state.lic === 'all' || (state.lic === 'tidal') === !!w.tidal;
 const $ = id => document.getElementById(id);
+
+function renderLicence() {
+  $('lic-label').textContent = t('licLabel');
+  $('lic-hint').textContent = t('licHint');
+  $('licence').innerHTML = LICENCES.map(l => `<input type="radio" name="lic" id="lic-${l}" value="${l}" ${l === state.lic ? 'checked' : ''}>
+    <label for="lic-${l}">${esc(t('lic')[l])}</label>`).join('');
+}
 const pad = n => String(n).padStart(2, '0');
 const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 
@@ -718,14 +765,16 @@ function legend() {
     ? [['both', t('legendBoth')], ['chinook', t('legendChinook')], ['coho', t('legendCoho')]]
     : [[state.sp, t('legendKeep', spName(state.sp))]];
   rows.push(['release', t('legendRelease'), 'dash'], ['closed', t('legendClosed'), 'thin'], ['fraser', t('legendFraser'), 'dash']);
+  if (state.lic !== 'all') rows.push(['other', t('legendOther'), 'dot2']);
   $('legend-title').textContent = t('legendTitle');
   $('legend-body').innerHTML = rows.map(([c, text, k]) => `<div class="row"><span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>${esc(text)}</div>`).join('')
     + `<div class="hint">${esc(t('legendHint'))}</div>`;
 }
 
 function render() {
-  const {sp, md} = state;
-  const res = WATERS.map(w => ({w, ...evaluate(w, sp, md)}));
+  const {sp, md, lic} = state;
+  const res = WATERS.filter(licensed).map(w => ({w, ...evaluate(w, sp, md)}));
+  WATERS.forEach(w => { if (!licensed(w)) styleWater(w, 'other'); });
   res.forEach(({w, cat}) => styleWater(w, cat));
   layers['a29-mouth'].poly.bringToFront();
 
@@ -735,15 +784,19 @@ function render() {
   const fo = fresh.filter(r => RETAIN.has(r.cat)).length;
   const to = nSubs(tidal.filter(r => RETAIN.has(r.cat)));
   const rel = fresh.filter(r => r.cat === 'release').length + nSubs(tidal.filter(r => r.cat === 'release'));
-  $('summary').innerHTML = t('summary', SP_ACC[LANG][sp], fo, fresh.length, to, nSubs(tidal), fmt(md), rel);
+  const acc = SP_ACC[LANG][sp];
+  $('summary').innerHTML = lic === 'fresh' ? t('summaryFresh', acc, fo, fresh.length, fmt(md), rel)
+    : lic === 'tidal' ? t('summaryTidal', acc, to, nSubs(tidal), fmt(md), rel)
+    : t('summary', acc, fo, fresh.length, to, nSubs(tidal), fmt(md), rel);
   const none = fo + to === 0;
   $('banner').hidden = !none;
-  if (none) $('banner').textContent = t('banner', spName(sp), fmt(md), rel);
+  if (none) $('banner').textContent = t('banner', spName(sp), fmt(md), rel, lic !== 'tidal');
 
   const ORDER = {both:0, chinook:0, coho:0, chum:0, pink:0, sockeye:0, release:1, inactive:2, closed:2, fraser:3};
   $('groups').innerHTML = Object.entries(DISTRICTS).map(([d, title]) => {
     const items = res.filter(r => r.w.d === d)
       .sort((a, b) => (ORDER[a.cat] - ORDER[b.cat]) || tx(a.w.name).localeCompare(tx(b.w.name)));
+    if (!items.length) return '';                       // a district outside the viewer's licence
     return `<section class="group"><h2>${esc(tx(title))}</h2><ul>${items.map(({w, cat, text}) => {
       const off = cat === 'closed' || cat === 'inactive';
       return `<li><button type="button" class="item ${off ? 'is-off' : ''}" data-id="${w.id}">
@@ -899,6 +952,7 @@ function applyLang(lang, save) {
   const wasOpen = activePopup && map.hasLayer(activePopup) && reopen;
   renderSpecies();
   renderSpCard();
+  renderLicence();
   renderStatus();
   render();
   layoutSheet();
@@ -906,6 +960,7 @@ function applyLang(lang, save) {
 }
 
 $('species').addEventListener('change', e => { state.sp = e.target.value; renderSpCard(); render(); });
+$('licence').addEventListener('change', e => { state.lic = e.target.value; store.set('lic', state.lic); render(); });
 $('date').addEventListener('change', e => { if (e.target.value) { state.md = e.target.value.slice(5); render(); } });
 $('today').addEventListener('click', () => { $('date').value = todayISO(); state.md = $('date').value.slice(5); render(); });
 document.querySelector('.lang').addEventListener('click', e => {
