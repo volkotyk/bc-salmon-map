@@ -50,7 +50,8 @@ build/
   geo.json              map geometry: land, rivers, lakes, tidal subareas
   sub.geojson           DFO PFMA subareas for Areas 28–29 (raw)
   species/*.webp        species illustrations (public domain), inlined into the page; fetch_species.py downloads them
-  fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (not committed; a failed source is skipped)
+  fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (a failed source keeps its previous data)
+  reports.json          running-now data (generated; committed when the data change, so git history is the daily snapshot)
   *.py                  geometry fetch + build scripts, assemble.py
 ```
 

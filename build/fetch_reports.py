@@ -7,14 +7,17 @@ Two kinds of source:
   shop reports   weekly fishing reports of tackle shops (Atom feed): title, date, link,
                  species and map waters named in the text
 
-Writes reports.json next to this script. A source that fails is left out and logged as a
-warning; the script never fails the build, because the map must deploy without this panel.
-Only titles, dates, links and tags are kept: the report text stays on the shop site.
+Writes reports.json next to this script. The file is committed: git history keeps a daily snapshot,
+and a local build has data without the network. A source that fails keeps its data from the previous
+snapshot and is logged as a warning; the script never fails the deploy, because the map must deploy
+without this panel. With GITHUB_OUTPUT set, it writes changed=true when the data (not only the time
+stamp) differ from the previous snapshot. Only titles, dates, links and tags are kept: the report
+text stays on the shop site.
 
   python fetch_reports.py            deploy mode: warnings only
   python fetch_reports.py --strict   PR check: exit code 1 when a source failed
 """
-import html, json, re, sys, time, urllib.parse, urllib.request, zlib
+import html, json, os, re, sys, time, urllib.parse, urllib.request, zlib
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -215,27 +218,36 @@ def psc(url):
     return {sp: sorted(d) for sp, d in out.items()}
 
 
-def test_fishery(today):
+def test_fishery(today, prev):
     since = (today - timedelta(days=KEEP_DAYS)).isoformat()
     week = (today - timedelta(days=7)).isoformat()
-    got = []                            # (site, species, source, url, days), downstream to upstream
-    for sp, fsub, code in ALBION:
-        try:
-            got.append(("Albion", sp, "DFO", ALBION_PAGE, albion(today.year, fsub, code)))
-        except Exception as e:
-            warn(f"Albion {sp}: {e}")
-    for site, url in PSC:
-        try:
-            got += [(site, sp, "PSC", PSC_PAGE, d) for sp, d in psc(url).items()]
-        except Exception as e:
-            warn(f"{site}: {e}")
-    out = []
-    for site, sp, src, url, days in got:
+    old = prev.get("testfish", [])
+    out = []                            # downstream to upstream
+
+    def add(site, sp, src, url, days):
         days = [d for d in days if d[0] >= since]
         print(f"{site} {sp}: {len(days)} days since {since}, {sum(d[1] for d in days)} fish")
         # No fish in the last 7 days: the species is not running there now (a stray fish weeks ago is not a run).
         if any(d[1] for d in days if d[0] > week):
             out.append({"id": f"{site.lower()}-{sp}", "sp": sp, "site": site, "src": src, "url": url, "days": days})
+
+    def keep(msg, match):
+        # A failed source keeps the series of the previous snapshot; their dates show their age.
+        kept = [s for s in old if match(s["id"])]
+        warn(f"{msg} (kept {len(kept)} series of the previous snapshot)")
+        out.extend(kept)
+
+    for sp, fsub, code in ALBION:
+        try:
+            add("Albion", sp, "DFO", ALBION_PAGE, albion(today.year, fsub, code))
+        except Exception as e:
+            keep(f"Albion {sp}: {e}", lambda i, sp=sp: i == f"albion-{sp}")
+    for site, url in PSC:
+        try:
+            for sp, days in psc(url).items():
+                add(site, sp, "PSC", PSC_PAGE, days)
+        except Exception as e:
+            keep(f"{site}: {e}", lambda i, p=f"{site.lower()}-": i.startswith(p))
     return out
 
 
@@ -262,17 +274,26 @@ def shop_reports(name, url, title_re):
     return out[:KEEP_REPORTS]
 
 
-def reports():
+def reports(prev):
     out = []
     for name, url, title_re in FEEDS:
         try:
             got = shop_reports(name, url, title_re)
         except Exception as e:
-            warn(f"{name}: {e}")
+            kept = [r for r in prev.get("reports", []) if r.get("src") == name]
+            warn(f"{name}: {e} (kept {len(kept)} reports of the previous snapshot)")
+            out += kept
             continue
         print(f"{name}: {len(got)} reports")
         out += got
     return sorted(out, key=lambda r: r["date"], reverse=True)
+
+
+def dump(data):
+    """Indented JSON for readable git diffs, with each flat list (a day row, species or water tags) on one line."""
+    s = json.dumps(data, ensure_ascii=False, indent=1)
+    flat = lambda m: re.sub(r"\s*\n\s*", " ", m.group(0)).replace("[ ", "[").replace(" ]", "]") if "\n" in m.group(0) else m.group(0)
+    return re.sub(r"\[[^\[\]{}]*\]", flat, s) + "\n"
 
 
 warnings = []
@@ -289,11 +310,21 @@ def main():
     known = {w["id"] for w in waters} | {s for w in waters for s in w.get("subs") or []}
     if WATERS.keys() - known:
         warn(f"WATERS keys missing from rules.json: {sorted(WATERS.keys() - known)}")
+    try:
+        prev = json.loads(OUT.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        prev = {}
     today = datetime.now(timezone(timedelta(hours=-8))).date()     # Pacific standard time is close enough for a date
     data = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
-            "testfish": test_fishery(today), "reports": reports()}
-    OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8", newline="\n")
-    print(f"{OUT.name}: {len(data['testfish'])} test-fishery series, {len(data['reports'])} reports")
+            "testfish": test_fishery(today, prev), "reports": reports(prev)}
+    OUT.write_text(dump(data), encoding="utf-8", newline="\n")
+    # The snapshot is committed. "changed" ignores the time stamp, so a run that finds no new data makes no commit.
+    changed = {k: v for k, v in data.items() if k != "generated"} != {k: v for k, v in prev.items() if k != "generated"}
+    print(f"{OUT.name}: {len(data['testfish'])} test-fishery series, {len(data['reports'])} reports, "
+          f"{'changed' if changed else 'no data change'}")
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+            f.write(f"changed={'true' if changed else 'false'}\n")
     if "--strict" in sys.argv and warnings:
         sys.exit(f"--strict: {len(warnings)} source(s) failed")
 

@@ -2,7 +2,7 @@
 
   python run_all.py            fetch OSM + DFO data and reports, rebuild geo.json, write ../index.html
   python run_all.py --offline  skip downloads, reuse the raw files already in this folder
-  python run_all.py --page     only re-assemble ../index.html from template.html + geo.json (+ reports.json if present)
+  python run_all.py --page     only re-assemble ../index.html from template.html + geo.json + reports.json
 """
 import subprocess, sys
 

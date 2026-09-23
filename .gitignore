@@ -2,7 +2,6 @@
 build/osm.json
 build/coast.json
 build/out/
-build/reports.json
 __pycache__/
 *.pyc
 
