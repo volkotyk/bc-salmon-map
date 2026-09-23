@@ -5,12 +5,15 @@ name: Update DFO rules and deploy
 #      If DFO shows something the parser does not understand, rules.json stays as it was,
 #      build/status.json gets "pending", and an issue is opened (once per new problem).
 #   2. Changed rules / status / snapshots are committed back to main.
-#   3. index.html is assembled with the check time and published to GitHub Pages.
+#   3. build/fetch_reports.py gets the "running now" panel data (DFO and PSC test fisheries,
+#      tackle shop reports). A failed source is a warning; build/reports.json is not committed.
+#   4. index.html is assembled with the check time and published to GitHub Pages.
 on:
   push:
     branches: [main]
   schedule:
     - cron: '23 15 * * *'   # 15:23 UTC = 08:23 Pacific daylight time
+    - cron: '41 16 * * *'   # 16:41 UTC: second run, because PSC posts the test-fishery PDFs at about 16:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -50,6 +53,10 @@ jobs:
           gh label create dfo-update --color B42318 --description "DFO rules need a manual check" --force
           tail -n +2 dfo/out/issue.md > body.md
           gh issue create --title "$(head -n 1 dfo/out/issue.md)" --body-file body.md --label dfo-update
+
+      - name: Fetch the running-now data (a failed source is a warning, not an error)
+        working-directory: build
+        run: python3 fetch_reports.py
 
       - name: Assemble the page
         working-directory: build

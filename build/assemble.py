@@ -1,6 +1,7 @@
-"""Inline Leaflet CSS, geo.json, rules.json, status.json and species/*.webp into template.html.
+"""Inline Leaflet CSS, geo.json, rules.json, status.json, species/*.webp and reports.json into template.html.
 
 CHECKED_AT (ISO time of the last successful DFO check) is taken from the environment when set.
+reports.json (from fetch_reports.py) is optional: without it the page hides the "running now" panel.
 
 Writes:
   ../index.html        standalone page for GitHub Pages or any static host
@@ -18,8 +19,13 @@ status = json.dumps(status, ensure_ascii=False).replace("</", r"<\/")
 # Species illustrations as data URIs: the page stays one file and works offline after the first load.
 species = json.dumps({os.path.basename(p)[:-5]: "data:image/webp;base64," + base64.b64encode(open(p, "rb").read()).decode()
                       for p in sorted(glob.glob("species/*.webp"))})
+reports = open("reports.json", encoding="utf-8").read() if os.path.exists("reports.json") else "{}"
+# Report titles come from other sites: escape every "<" (also "<!--") so no text can end the <script> block.
+reports = reports.replace("<", "\\u003c")
+# Reports go in last, so a title that contains "__GEO__" or "__RULES__" stays plain text.
 body = (t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo)
-        .replace("__RULES__", rules).replace("__STATUS__", status).replace("__SPECIES__", species))
+        .replace("__RULES__", rules).replace("__STATUS__", status).replace("__SPECIES__", species)
+        .replace("__REPORTS__", reports))
 
 os.makedirs("out", exist_ok=True)
 open("out/artifact.html", "w", encoding="utf-8").write(body)
