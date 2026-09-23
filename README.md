@@ -27,6 +27,7 @@ Features:
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
 - UA / EN switch (also `#uk` / `#en` in the URL; the choice is remembered). Light and dark themes.
+- Mobile first: on a phone the map fills the screen and the panel is a bottom sheet. Drag the sheet or tap its handle: the short position shows the species and the date, the middle position adds the list, the tall position shows everything. From 768 px wide the panel is a sidebar.
 
 ## Repository layout
 

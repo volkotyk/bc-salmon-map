@@ -41,19 +41,40 @@
   --chip-bg:#1c2c2f;
   --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
 }
-html,body{height:100%}
-body{background:var(--paper);color:var(--ink);font:14px/1.45 var(--f-body)}
-.app{display:grid;grid-template-columns:minmax(320px,400px) 1fr;height:100%}
-.panel{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:20px 20px 28px;display:flex;flex-direction:column;gap:18px}
-.eyebrow{font:600 12px/1.2 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-h1{font:700 34px/1.02 var(--f-display);margin:4px 0 6px;text-wrap:balance;letter-spacing:-.005em}
+/* Mobile first. Phones (the default): a full-screen map with the panel as a bottom sheet over it.
+   JS sets --sheet-vis, the visible sheet height; the sheet, the legend and the bottom map controls follow it.
+   From 768px: the panel is a sidebar next to the map. --tap is the minimum size of a touch target. */
+:root{--tap:44px;--sheet-vis:0px;--sheet-ease:transform .32s cubic-bezier(.2,.8,.2,1)}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-tap-highlight-color:transparent}
+.mapwrap{position:fixed;inset:0;isolation:isolate}
+.panel{position:fixed;left:0;right:0;bottom:0;z-index:2;height:calc(100dvh - 44px - env(safe-area-inset-top));display:flex;flex-direction:column;
+  background:var(--panel);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.2);padding-bottom:env(safe-area-inset-bottom);
+  transform:translateY(calc(100% - var(--sheet-vis)));transition:var(--sheet-ease)}
+.grip{flex:none;display:flex;align-items:center;justify-content:center;width:100%;height:28px;min-height:0;padding:0;border:0;border-radius:16px 16px 0 0;background:none;cursor:grab;touch-action:none}
+.grip::before{content:'';width:40px;height:5px;border-radius:3px;background:var(--ink-3);opacity:.5}
+/* Peek and half: the sheet does not scroll; a vertical drag anywhere on it moves the sheet. Full: the content scrolls. */
+.panel-body{flex:1;min-height:0;overflow:hidden;overscroll-behavior:contain;touch-action:none;padding:4px 16px 24px;display:flex;flex-direction:column;gap:12px}
+:root[data-sheet="full"] .panel-body{overflow-y:auto;touch-action:pan-y}
+:root[data-sheet="full"] .species{touch-action:auto}
+.sheet-drag .panel,.sheet-drag .legend,.sheet-drag .leaflet-bottom{transition:none}
+.sheet-drag .panel{user-select:none}
+.intro{display:contents}
+.eyebrow,.lede{order:1}
+#rules,.status,.foot{order:2}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.eyebrow{font:600 12px/1.2 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0}
+h1{font:700 24px/1.1 var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.005em}
 .lede{color:var(--ink-2);margin:0;max-width:60ch}
 .lede a,.foot a,.pop a,details a{color:var(--focus)}
 .ctl{display:flex;flex-direction:column;gap:8px}
-.ctl-label{font:600 13px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
-.species{display:flex;flex-wrap:wrap;gap:6px}
+/* Phones: the species chips and the date value explain themselves, so the labels are for screen readers only. */
+.ctl-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;font:600 13px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.species{position:relative;display:flex;gap:8px;overflow-x:auto;touch-action:pan-x;scrollbar-width:none;margin:0 -16px;padding:3px 16px;scroll-padding-inline:16px}
+.species::-webkit-scrollbar{display:none}
 .species input{position:absolute;opacity:0;pointer-events:none}
-.species label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;background:var(--panel);font-weight:500;user-select:none}
+.species label{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:var(--tap);padding:0 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;background:var(--panel);font-weight:500;user-select:none;white-space:nowrap}
+.species label:active{background:var(--chip-bg)}
 .species label small{color:var(--ink-3);font-size:11px;font-weight:400}
 .species input:checked+label{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .species input:checked+label small{color:inherit;opacity:.7}
@@ -72,9 +93,11 @@ h1{font:700 34px/1.02 var(--f-display);margin:4px 0 6px;text-wrap:balance;letter
 .dot.off{background:none;border:1.5px solid var(--c-closed)}
 .dot.sq{border-radius:2px;opacity:.75}
 .daterow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-input[type=date]{font:500 14px var(--f-mono);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
-button{font:500 13px var(--f-body);padding:7px 11px;border:1px solid var(--line);border-radius:6px;background:var(--chip-bg);color:var(--ink);cursor:pointer}
-button:hover{border-color:var(--ink-3)}
+/* 16px keeps iOS Safari from zooming the page when the field gets focus. */
+input[type=date]{font:500 16px var(--f-mono);min-height:var(--tap);padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+button{font:500 13px var(--f-body);min-height:var(--tap);padding:0 14px;border:1px solid var(--line);border-radius:8px;background:var(--chip-bg);color:var(--ink);cursor:pointer}
+button:active{background:var(--line)}
+@media (hover:hover){button:hover{border-color:var(--ink-3)}}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .summary{font:500 15px/1.35 var(--f-body);margin:0}
 .summary b{font-family:var(--f-mono);font-weight:500}
@@ -82,8 +105,9 @@ button:hover{border-color:var(--ink-3)}
 .groups{display:flex;flex-direction:column;gap:16px}
 .group h2{font:600 15px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
 .group ul{list-style:none;margin:0;padding:0}
-.item{display:grid;grid-template-columns:12px 1fr;gap:4px 10px;align-items:start;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:7px 6px;color:inherit}
-.item:hover{background:var(--chip-bg)}
+.item{display:grid;grid-template-columns:12px 1fr;gap:4px 10px;align-items:start;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:10px 6px;color:inherit}
+.item:active{background:var(--chip-bg)}
+@media (hover:hover){.item:hover{background:var(--chip-bg)}}
 .item .dot{margin-top:5px}
 .item .nm{font-weight:600}
 .item .nm small{font:400 12px var(--f-mono);color:var(--ink-3);margin-left:6px}
@@ -98,16 +122,17 @@ details li{margin-bottom:6px}
 .foot{font-size:12px;color:var(--ink-3);margin:0}
 .status{font:12.5px/1.45 var(--f-body);color:var(--ink-2);margin:0;padding:10px 12px;background:var(--chip-bg);border-radius:6px}
 .status b{font-weight:600;color:var(--ink)}
-.dfo-chip{position:absolute;top:10px;right:10px;z-index:500;font:600 12px var(--f-mono);padding:5px 9px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+.dfo-chip{position:absolute;top:calc(10px + env(safe-area-inset-top));right:10px;z-index:500;font:600 12px var(--f-mono);padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);box-shadow:0 1px 6px rgba(0,0,0,.12)}
 .dfo-chip.warn{background:var(--c-fraser);border-color:var(--c-fraser);color:#fff}
-.mapwrap{position:relative;min-height:0}
 #map{position:absolute;inset:0;background:var(--sea)}
-.legend{position:absolute;left:12px;bottom:26px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px)}
-.legend summary{cursor:pointer;font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:6px}
+.legend{position:absolute;left:8px;bottom:22px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px);
+  transform:translateY(calc(-1 * min(var(--sheet-vis), 60dvh)));transition:var(--sheet-ease)}
+.legend[open]{padding-bottom:10px}
+.legend summary{cursor:pointer;min-height:var(--tap);font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:6px}
 .legend summary::-webkit-details-marker{display:none}
 .legend summary::before{content:'';width:0;height:0;border:5px solid transparent;border-left-color:currentColor;transition:transform .15s}
 .legend[open] summary::before{transform:rotate(90deg) translateX(2px)}
-.legend[open] summary{margin-bottom:8px}
+.legend[open] summary{margin-bottom:2px}
 #legend-body{display:flex;flex-direction:column;gap:6px}
 .legend .row{display:flex;align-items:center;gap:8px}
 .legend .sw{width:26px;height:0;border-top:5px solid var(--c);flex:none;border-radius:3px}
@@ -120,7 +145,15 @@ details li{margin-bottom:6px}
 .leaflet-popup-content{margin:14px 16px;min-width:240px;max-width:340px;font-size:13px;line-height:1.4}
 .leaflet-container a.leaflet-popup-close-button{color:var(--ink-3)}
 .leaflet-bar a{background:var(--panel);color:var(--ink);border-bottom-color:var(--line)}
-.leaflet-bar a:hover{background:var(--chip-bg);color:var(--ink)}
+@media (hover:hover){.leaflet-bar a:hover{background:var(--chip-bg);color:var(--ink)}}
+.leaflet-top{top:env(safe-area-inset-top)}
+/* The bottom map controls and the legend ride on top of the sheet, up to 60dvh; a full sheet covers them. */
+.leaflet-bottom{transform:translateY(calc(-1 * min(var(--sheet-vis), 60dvh)));transition:var(--sheet-ease)}
+@media (pointer:coarse){
+  .leaflet-touch .leaflet-bar a{width:var(--tap);height:var(--tap);line-height:var(--tap);font-size:22px}
+  .leaflet-container a.leaflet-popup-close-button{width:var(--tap);height:var(--tap);font:22px/var(--tap) Tahoma,Verdana,sans-serif}
+  .pop h3{padding-right:24px}
+}
 .leaflet-control-attribution{background:color-mix(in srgb,var(--panel) 85%,transparent)!important;color:var(--ink-3)}
 .leaflet-control-attribution a{color:var(--ink-2)}
 .leaflet-tooltip{background:var(--panel);color:var(--ink);border-color:var(--line);font:600 13px var(--f-body)}
@@ -145,59 +178,78 @@ details li{margin-bottom:6px}
 .route{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:12.5px}
 .route .ll{font:500 12px var(--f-mono);color:var(--ink-3);user-select:all}
 .route a{font-weight:600}
-@media (max-width:760px){
-  .app{grid-template-columns:1fr;grid-template-rows:auto;height:auto}
-  .mapwrap{order:-1;height:62svh;min-height:380px}
-  .panel{border-right:0;border-top:1px solid var(--line);overflow:visible;padding:18px 16px 28px}
-  h1{font-size:30px}
-  .legend{bottom:22px;left:8px;font-size:12px}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
+.lang button{border:0;border-radius:0;min-width:var(--tap);padding:0 9px;font:600 12px var(--f-mono);background:var(--panel);color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+/* A mouse or a trackpad does not need finger-sized targets. */
+@media (min-width:768px) and (pointer:fine){:root{--tap:32px}}
+/* Tablets and desktops: the panel is a sidebar next to the map. Keep 768px in sync with WIDE in the script. */
+@media (min-width:768px){
+  body{font-size:14px;line-height:1.45}
+  .app{display:grid;grid-template-columns:minmax(320px,400px) 1fr;height:100%}
+  .mapwrap{position:relative;inset:auto;min-height:0}
+  .panel{position:static;height:auto;min-height:0;transform:none;transition:none;border-radius:0;box-shadow:none;border-right:1px solid var(--line);padding-bottom:0}
+  .grip{display:none}
+  .panel-body{overflow-y:auto;touch-action:auto;padding:20px 20px 28px;gap:18px}
+  .intro{display:flex;flex-direction:column;gap:4px}
+  .eyebrow,.lede,#rules,.status,.foot{order:0}
+  .lede{margin-top:4px}
+  h1{font-size:34px;line-height:1.02}
+  .ctl-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
+  .species{flex-wrap:wrap;overflow:visible;touch-action:auto;margin:0;padding:0;gap:6px}
+  .species label{padding:0 10px}
+  input[type=date]{font-size:14px}
+  .legend,.leaflet-bottom{transform:none;transition:none}
+  .legend{left:12px;bottom:26px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.lang{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex:none}
-.lang button{border:0;border-radius:0;padding:4px 9px;font:600 12px var(--f-mono);background:var(--panel);color:var(--ink-2)}
-.lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 </style>
 
 <div class="app">
-  <aside class="panel">
-    <header>
-      <div class="topline">
-        <div class="eyebrow" id="t-eyebrow"></div>
-        <div class="lang" role="group" aria-label="Language / Мова">
-          <button type="button" data-lang="uk" lang="uk">UA</button>
-          <button type="button" data-lang="en" lang="en">EN</button>
+  <aside class="panel" id="panel">
+    <button type="button" class="grip" id="grip" aria-controls="panel-body" aria-expanded="false"></button>
+    <div class="panel-body" id="panel-body">
+      <div class="intro">
+        <p class="eyebrow" id="t-eyebrow"></p>
+        <div class="head">
+          <h1 id="t-h1"></h1>
+          <div class="lang" role="group" aria-label="Language / Мова">
+            <button type="button" data-lang="uk" lang="uk">UA</button>
+            <button type="button" data-lang="en" lang="en">EN</button>
+          </div>
+        </div>
+        <p class="lede" id="t-lede"></p>
+      </div>
+
+      <div class="ctl">
+        <span class="ctl-label" id="sp-label"></span>
+        <div class="species" role="radiogroup" aria-labelledby="sp-label" id="species"></div>
+      </div>
+
+      <div class="ctl">
+        <label class="ctl-label" for="date" id="date-label"></label>
+        <div class="daterow" id="date-row">
+          <input type="date" id="date">
+          <button type="button" id="today"></button>
         </div>
       </div>
-      <h1 id="t-h1"></h1>
-      <p class="lede" id="t-lede"></p>
-    </header>
 
-    <div class="ctl">
-      <span class="ctl-label" id="sp-label"></span>
-      <div class="species" role="radiogroup" aria-labelledby="sp-label" id="species"></div>
-      <p class="sp-hint" id="sp-hint"></p>
-      <details class="spcard" id="spcard" hidden><summary id="spcard-title"></summary><div id="spcard-body"></div></details>
-    </div>
+      <p class="banner" id="pending" hidden></p>
+      <p class="summary" id="summary"></p>
+      <p class="banner" id="banner" hidden></p>
 
-    <div class="ctl">
-      <label class="ctl-label" for="date" id="date-label"></label>
-      <div class="daterow">
-        <input type="date" id="date">
-        <button type="button" id="today"></button>
+      <div class="ctl">
+        <p class="sp-hint" id="sp-hint"></p>
+        <details class="spcard" id="spcard" hidden><summary id="spcard-title"></summary><div id="spcard-body"></div></details>
       </div>
+
+      <div class="groups" id="groups"></div>
+
+      <details id="rules"></details>
+
+      <p class="status" id="status-line"></p>
+      <p class="foot" id="foot"></p>
     </div>
-
-    <p class="banner" id="pending" hidden></p>
-    <p class="summary" id="summary"></p>
-    <p class="banner" id="banner" hidden></p>
-
-    <div class="groups" id="groups"></div>
-
-    <details id="rules"></details>
-
-    <p class="status" id="status-line"></p>
-    <p class="foot" id="foot"></p>
   </aside>
 
   <main class="mapwrap">
@@ -250,6 +302,7 @@ const I18N = {
     h1: 'Де ловити лосося',
     lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб прокласти туди маршрут.',
     spLabel: 'Вид лосося', dateLabel: 'Дата риболовлі', today: 'Сьогодні', mapLabel: 'Карта водойм Lower Mainland',
+    sheetExpand: 'Розгорнути панель', sheetCollapse: 'Згорнути панель',
     legendTitle: 'Легенда', legendHint: 'Лінії — річки, заливка — морські підзони',
     legendBoth: 'Чавича + кижуч (Chinook + Coho)', legendChinook: 'Лише чавича (Chinook)', legendCoho: 'Лише кижуч (Coho)',
     legendKeep: sp => `${sp}: можна взяти`, legendRelease: 'Лише відпустити', legendClosed: 'Закрито на дату', legendFraser: 'Закриття (Fraser)',
@@ -302,6 +355,7 @@ const I18N = {
     h1: 'Where to fish for salmon',
     lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to get directions there.',
     spLabel: 'Species', dateLabel: 'Fishing date', today: 'Today', mapLabel: 'Map of Lower Mainland salmon waters',
+    sheetExpand: 'Expand panel', sheetCollapse: 'Collapse panel',
     legendTitle: 'Legend', legendHint: 'Lines: rivers · shaded: tidal subareas',
     legendBoth: 'Chinook + Coho', legendChinook: 'Chinook only', legendCoho: 'Coho only',
     legendKeep: sp => `${sp}: retention`, legendRelease: 'Release only', legendClosed: 'Closed on this date', legendFraser: 'Closure (Fraser)',
@@ -568,8 +622,10 @@ function routeBlock(ll) {
     <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}" target="_blank" rel="noopener">${t('openOsm')}</a></div>`;
 }
 // Popup size follows the map size, so on a phone it scrolls inside instead of covering the whole map.
-const popupOpts = w => { const {x, y} = map.getSize();
-  return {maxWidth: Math.min(w, x - 56), maxHeight: Math.max(160, Math.round(y * .6)), autoPanPaddingTopLeft:[48, 16], autoPanPaddingBottomRight:[16, 16]}; };
+// On a phone a popup collapses the sheet to 'peek' (see 'popupopen'), so the peek height is kept clear.
+const popupOpts = w => { const {x, y} = map.getSize(), b = WIDE.matches ? 0 : sheet.peek;
+  return {maxWidth: Math.min(w, x - 56), maxHeight: Math.max(160, Math.round((y - b) * .6)),
+    autoPanPaddingTopLeft:[48, WIDE.matches ? 16 : 64], autoPanPaddingBottomRight:[16, 16 + b]}; };
 let reopen = null, activePopup = null;                // re-renders the open popup after a language switch
 function openPointPopup(ll, title) {
   reopen = () => openPointPopup(ll, title);
@@ -717,7 +773,111 @@ function renderStatus() {
   chip.classList.toggle('warn', !!pend);
   chip.textContent = pend ? t('chipWarn') : t('chipOk', STATUS.checkedAt ? fmtDateTime(STATUS.checkedAt).split(',')[0] : fmtFull(STATUS.rulesChanged || RULES.sources.region2.dfoDate));
 }
-$('dfo-chip').addEventListener('click', () => $((STATUS.pending ? 'pending' : 'status-line')).scrollIntoView({behavior:'smooth', block:'center'}));
+$('dfo-chip').addEventListener('click', () => {
+  setSheet('full');
+  $(STATUS.pending ? 'pending' : 'status-line').scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+// ---------- bottom sheet (phones) ----------
+// Below WIDE the panel is a bottom sheet with three detents: 'peek' shows the title and the controls,
+// 'half' covers half the screen, 'full' shows the whole panel and scrolls. Drag the sheet or tap the grip.
+const WIDE = window.matchMedia('(min-width:768px)');
+const root = document.documentElement;
+const sheet = {el: $('panel'), body: $('panel-body'), grip: $('grip'), state: 'peek', peek: 0, full: 0, vis: 0, safeBottom: 0, noClickUntil: 0};
+const DETENTS = ['peek', 'half', 'full'];
+const detentVis = s => s === 'full' ? sheet.full : s === 'half' ? Math.max(sheet.peek, Math.round(sheet.full * .55)) : sheet.peek;
+const setVis = v => { sheet.vis = v; root.style.setProperty('--sheet-vis', `${v}px`); };
+
+// Peek ends below the date row. The measure adds the body scroll offset, and the translateY of the sheet cancels out.
+function measureSheet() {
+  const top = sheet.el.getBoundingClientRect().top;
+  sheet.safeBottom = parseFloat(getComputedStyle(sheet.el).paddingBottom) || 0;
+  sheet.full = sheet.el.offsetHeight;
+  sheet.peek = Math.min(sheet.full, Math.ceil($('date-row').getBoundingClientRect().bottom - top + sheet.body.scrollTop + 14 + sheet.safeBottom));
+}
+
+function setSheet(s) {
+  if (WIDE.matches) return;
+  sheet.state = s;
+  root.dataset.sheet = s;
+  if (s !== 'full') sheet.body.scrollTop = 0;          // only a full sheet scrolls
+  setVis(detentVis(s));
+  sheet.grip.setAttribute('aria-expanded', String(s !== 'peek'));
+  sheet.grip.setAttribute('aria-label', t(s === 'full' ? 'sheetCollapse' : 'sheetExpand'));
+}
+
+function layoutSheet() {
+  if (WIDE.matches) { delete root.dataset.sheet; root.style.removeProperty('--sheet-vis'); return; }
+  measureSheet();
+  setSheet(sheet.state);
+}
+
+sheet.grip.addEventListener('click', () => setSheet({peek: 'half', half: 'full', full: 'peek'}[sheet.state]));
+
+// Drag. A full sheet scrolls its content natively, so there only the grip drags it.
+// A horizontal move gives the gesture to the species row, which scrolls sideways.
+// Moves are read on window: a mouse, unlike a finger, has no implicit pointer capture.
+let drag = null;
+sheet.el.addEventListener('pointerdown', e => {
+  if (WIDE.matches || !e.isPrimary || e.button > 0) return;
+  if (sheet.state === 'full' && !sheet.grip.contains(e.target)) return;
+  drag = {id: e.pointerId, x: e.clientX, y: e.clientY, vis: sheet.vis, moved: false, lastY: e.clientY, lastT: e.timeStamp, v: 0};
+});
+window.addEventListener('pointermove', e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.moved) {
+    if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { drag = null; return; }
+    if (Math.abs(dy) < 8) return;
+    drag.moved = true;
+    getSelection().removeAllRanges();                   // a mouse drag starts a text selection
+    sheet.el.setPointerCapture(e.pointerId);
+    root.classList.add('sheet-drag');
+  }
+  const dt = e.timeStamp - drag.lastT;
+  if (dt > 0) drag.v = (drag.lastY - e.clientY) / dt;   // px/ms, up is positive
+  drag.lastY = e.clientY; drag.lastT = e.timeStamp;
+  setVis(Math.min(sheet.full, Math.max(sheet.peek, drag.vis - dy)));
+});
+const endDrag = e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const d = drag; drag = null;
+  if (!d.moved) return;
+  root.classList.remove('sheet-drag');
+  sheet.noClickUntil = performance.now() + 400;        // the drag must not also press the button under the finger
+  const vis = DETENTS.map(detentVis);
+  let i = vis.reduce((best, v, k) => Math.abs(v - sheet.vis) < Math.abs(vis[best] - sheet.vis) ? k : best, 0);
+  if (Math.abs(d.v) > .4) {                             // a flick goes to the next detent in its direction
+    i = d.v > 0 ? vis.findIndex(v => v > sheet.vis + 1) : vis.findLastIndex(v => v < sheet.vis - 1);
+    if (i < 0) i = d.v > 0 ? DETENTS.length - 1 : 0;
+  }
+  setSheet(DETENTS[i]);
+};
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+sheet.el.addEventListener('click', e => {
+  if (performance.now() < sheet.noClickUntil) { e.preventDefault(); e.stopPropagation(); }
+}, true);
+
+// Keyboard: focus below the visible part opens the sheet fully; Escape collapses it.
+sheet.body.addEventListener('focusin', e => {
+  if (WIDE.matches || sheet.state === 'full') return;
+  // Position inside the sheet, so a running transition of the sheet cancels out.
+  const top = sheet.el.getBoundingClientRect().top, r = e.target.getBoundingClientRect();
+  if (r.top < top || r.bottom - top > sheet.vis - sheet.safeBottom) {
+    setSheet('full');
+    e.target.scrollIntoView({block: 'nearest'});
+  }
+});
+sheet.el.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || WIDE.matches || sheet.state === 'peek') return;
+  setSheet('peek');
+  sheet.grip.focus();
+});
+
+// Web fonts, a language switch and the browser toolbar change the sizes.
+const sheetRO = new ResizeObserver(layoutSheet);
+[sheet.el, document.querySelector('.head'), $('date-row')].forEach(el => sheetRO.observe(el));
 
 function applyLang(lang, save) {
   LANG = lang;
@@ -741,6 +901,7 @@ function applyLang(lang, save) {
   renderSpCard();
   renderStatus();
   render();
+  layoutSheet();
   if (wasOpen) wasOpen();
 }
 
@@ -758,15 +919,17 @@ $('groups').addEventListener('click', e => {
   const w = WATERS.find(x => x.id === b.dataset.id);
   const L_ = layers[w.id];
   const bounds = (L_.poly || L_.line).getBounds();
-  map.flyToBounds(bounds, {padding:[60, 60], maxZoom:13, duration:.6});
+  setSheet('peek');
+  map.flyToBounds(bounds, {...mapPadding(60), maxZoom:13, duration:.6});
   // flyToBounds may not emit 'moveend' when the view does not change, so a timer is the fallback.
   let shown = false;
   // map.stop() ends a still-running flight: Leaflet skips popup auto-pan while the map animates.
   const show = () => { if (!shown) { shown = true; map.stop(); openPopup(w, null, w.subs && w.subs[0]); } };
   map.once('moveend', show);
   setTimeout(show, 900);
-  if (window.matchMedia('(max-width:760px)').matches) $('map').scrollIntoView({behavior:'smooth', block:'start'});
 });
+// Fit padding that keeps a feature clear of the map controls and, on a phone, of the peeking sheet.
+const mapPadding = p => WIDE.matches ? {padding:[p, p]} : {paddingTopLeft:[p / 2, p + 10], paddingBottomRight:[p / 2, sheet.peek + p / 2]};
 
 // ---------- basemap: real tiles when the host allows them, built-in vector map otherwise ----------
 // The claude.ai artifact sandbox blocks external images, so tiles fail there and the vector layers stay.
@@ -801,11 +964,11 @@ state.md = $('date').value.slice(5);
 styleBase();
 applyLang(LANG, false);
 const all = L.featureGroup(WATERS.filter(w => !w.tidal && !w.closure).map(w => layers[w.id].line));
-map.fitBounds(all.getBounds(), {padding:[20, 20]});
+map.fitBounds(all.getBounds(), mapPadding(20));
 syncZoomClasses();
 new ResizeObserver(() => map.invalidateSize()).observe($('map'));
-const narrow = window.matchMedia('(max-width:760px)');
-$('legend').open = !narrow.matches;
-map.on('popupopen', () => { if (narrow.matches) $('legend').open = false; });
+$('legend').open = WIDE.matches;
+WIDE.addEventListener('change', () => { layoutSheet(); $('legend').open = WIDE.matches; });
+map.on('popupopen', () => { if (!WIDE.matches) { $('legend').open = false; setSheet('peek'); } });
 })();
 </script>
