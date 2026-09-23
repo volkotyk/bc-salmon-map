@@ -17,7 +17,7 @@ text stays on the shop site.
   python fetch_reports.py            deploy mode: warnings only
   python fetch_reports.py --strict   PR check: exit code 1 when a source failed
 """
-import html, json, os, re, sys, time, urllib.parse, urllib.request, zlib
+import csv, html, json, os, re, sys, time, urllib.parse, urllib.request, zlib
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -218,18 +218,28 @@ def psc(url):
     return {sp: sorted(d) for sp, d in out.items()}
 
 
+def series(today, site, sp, src, url, days, **extra):
+    """A series of the page, or None: only the last KEEP_DAYS days, and only while the species runs there."""
+    since, week = (today - timedelta(days=KEEP_DAYS)).isoformat(), (today - timedelta(days=7)).isoformat()
+    days = [d for d in days if d[0] >= since]
+    print(f"{site} {sp}: {len(days)} days since {since}, {sum(d[1] for d in days)} fish")
+    # No fish in the last 7 days: the species is not running there now (a stray fish weeks ago is not a run).
+    if not any(d[1] for d in days if d[0] > week):
+        return None
+    return {"id": f"{slug(site)}-{sp}", "sp": sp, "site": site, "src": src, "url": url, "days": days, **extra}
+
+
+slug = lambda s: re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+
 def test_fishery(today, prev):
-    since = (today - timedelta(days=KEEP_DAYS)).isoformat()
-    week = (today - timedelta(days=7)).isoformat()
     old = prev.get("testfish", [])
     out = []                            # downstream to upstream
 
     def add(site, sp, src, url, days):
-        days = [d for d in days if d[0] >= since]
-        print(f"{site} {sp}: {len(days)} days since {since}, {sum(d[1] for d in days)} fish")
-        # No fish in the last 7 days: the species is not running there now (a stray fish weeks ago is not a run).
-        if any(d[1] for d in days if d[0] > week):
-            out.append({"id": f"{site.lower()}-{sp}", "sp": sp, "site": site, "src": src, "url": url, "days": days})
+        s = series(today, site, sp, src, url, days)
+        if s:
+            out.append(s)
 
     def keep(msg, match):
         # A failed source keeps the series of the previous snapshot; their dates show their age.
@@ -280,13 +290,130 @@ def reports(prev):
         try:
             got = shop_reports(name, url, title_re)
         except Exception as e:
-            kept = [r for r in prev.get("reports", []) if r.get("src") == name]
+            kept = [r for r in prev.get("reports", []) if r.get("src") == name and not r.get("manual")]
             warn(f"{name}: {e} (kept {len(kept)} reports of the previous snapshot)")
             out += kept
             continue
         print(f"{name}: {len(got)} reports")
         out += got
     return sorted(out, key=lambda r: r["date"], reverse=True)
+
+
+# ---------- manual data: build/manual/*.csv, written by hand and committed ----------
+# The script only reads these files. A bad row is a warning and is left out (PR check: red).
+MANUAL = HERE / "manual"
+SP_NAMES = {"chinook": "chinook", "spring": "chinook", "чавича": "chinook", "coho": "coho", "кижуч": "coho",
+            "chum": "chum", "кета": "chum", "pink": "pink", "горбуша": "pink", "sockeye": "sockeye", "нерка": "sockeye"}
+AUTO_SITES = {"albion", "whonnock", "qualark"}      # collected automatically, in other effort units
+
+
+def read_csv(name):
+    """Rows of build/manual/<name> as (line number, dict). Lines that start with # are comments."""
+    path = MANUAL / name
+    if not path.exists():
+        return []
+    lines = [(n, ln) for n, ln in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), 1)
+             if ln.strip() and not ln.lstrip().startswith("#")]
+    if not lines:
+        return []
+    rows = csv.DictReader([ln for _, ln in lines])
+    return [(n, {k.strip(): (v or "").strip() for k, v in row.items() if k}) for (n, _), row in zip(lines[1:], rows)]
+
+
+def manual_date(where, value, today):
+    try:
+        d = datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        warn(f"{where}: date {value!r} is not YYYY-MM-DD")
+        return None
+    if d > today + timedelta(days=1):
+        warn(f"{where}: date {value} is in the future")
+        return None
+    return d
+
+
+def manual_species(where, value):
+    sp = SP_NAMES.get(value.strip().lower())
+    if not sp:
+        warn(f"{where}: unknown species {value!r} (use chinook, coho, chum, pink, sockeye)")
+    return sp
+
+
+def manual_water(where, value, waters, known):
+    """A map key for a water name: a key itself, a water name of rules.json, or a name the report tags know."""
+    v = value.strip()
+    # A tidal group id ("a28-2") follows the DFO table order, so a tidal group is stored as its first subarea.
+    stable = lambda w: w["subs"][0] if w.get("tidal") and w.get("subs") else w["id"]
+    for w in waters:
+        names = w["name"].values() if isinstance(w["name"], dict) else [w["name"]]
+        if v == w["id"] or v.lower() in (n.lower() for n in names):
+            return stable(w)
+    if v in known:                      # a subarea label
+        return v
+    k = next((k for k, rx in WATERS_RE.items() if rx.search(v)), None)
+    if not k:
+        warn(f"{where}: unknown water {v!r} (use a water id or name from build/rules.json, or a subarea like 28-8)")
+    return k
+
+
+def manual_reports(today, waters, known):
+    since, out = today - timedelta(days=KEEP_DAYS), []
+    for n, r in read_csv("reports.csv"):
+        where = f"manual/reports.csv line {n}"
+        d = manual_date(where, r.get("date", ""), today)
+        title, src, url = r.get("title", ""), r.get("source", ""), r.get("url", "")
+        if not (title and src):
+            warn(f"{where}: title and source are required")
+            continue
+        if url and not url.startswith("https://"):
+            warn(f"{where}: url must start with https://")
+            continue
+        if not d or d < since:
+            continue
+        split = lambda s: [x for x in re.split(r"\s*[;,]\s*", s) if x]    # "coho; chum" or "coho, chum"
+        sp = [s for s in (manual_species(where, x) for x in split(r.get("species", ""))) if s]
+        w = [k for k in (manual_water(where, x, waters, known) for x in split(r.get("waters", ""))) if k]
+        out.append({"src": src, "title": title, "url": url, "date": d.isoformat(),
+                    "sp": list(dict.fromkeys(sp)), "w": list(dict.fromkeys(w)), "manual": True})
+    print(f"manual reports: {len(out)} in the last {KEEP_DAYS} days")
+    return out
+
+
+def manual_testfish(today):
+    groups = {}                         # (site, species) -> {"src", "url", "rows": {date: (catch, effort)}}
+    for n, r in read_csv("testfish.csv"):
+        where = f"manual/testfish.csv line {n}"
+        site, d = r.get("site", ""), manual_date(where, r.get("date", ""), today)
+        sp = manual_species(where, r.get("species", ""))
+        if not (site and sp and d):
+            continue
+        if slug(site) in AUTO_SITES:
+            warn(f"{where}: {site} is collected automatically; add other sites only")
+            continue
+        try:
+            catch = int(r.get("catch", ""))
+            effort = float(r["effort"]) if r.get("effort") else None
+            if catch < 0 or (effort is not None and effort <= 0):
+                raise ValueError
+        except ValueError:
+            warn(f"{where}: catch must be a whole number >= 0, effort empty or > 0")
+            continue
+        g = groups.setdefault((site, sp), {"src": r.get("source") or "manual", "url": "", "rows": {}})
+        if r.get("url", "").startswith("https://"):
+            g["url"] = g["url"] or r["url"]
+        if d.isoformat() in g["rows"]:
+            warn(f"{where}: {site} {sp} {d} is already in the file; the later row wins")
+        g["rows"][d.isoformat()] = (catch, effort)
+    out = []
+    for (site, sp), g in groups.items():
+        rows = sorted(g["rows"].items())
+        # CPUE needs the effort of every day; otherwise the trend compares the catch itself.
+        per_effort = all(e for _, (_, e) in rows)
+        days = [day(iso, c, e) if per_effort else [iso, c, float(c)] for iso, (c, e) in rows]
+        s = series(today, site, sp, g["src"], g["url"], days, manual=True)
+        if s:
+            out.append(s)
+    return out
 
 
 def dump(data):
@@ -315,8 +442,11 @@ def main():
     except (OSError, ValueError):
         prev = {}
     today = datetime.now(timezone(timedelta(hours=-8))).date()     # Pacific standard time is close enough for a date
+    auto = reports(prev)
+    manual = [r for r in manual_reports(today, waters, known) if r["url"] not in {a["url"] for a in auto} or not r["url"]]
     data = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
-            "testfish": test_fishery(today, prev), "reports": reports(prev)}
+            "testfish": test_fishery(today, prev) + manual_testfish(today),
+            "reports": sorted(auto + manual, key=lambda r: r["date"], reverse=True)}
     OUT.write_text(dump(data), encoding="utf-8", newline="\n")
     # The snapshot is committed. "changed" ignores the time stamp, so a run that finds no new data makes no commit.
     changed = {k: v for k, v in data.items() if k != "generated"} != {k: v for k, v in prev.items() if k != "generated"}

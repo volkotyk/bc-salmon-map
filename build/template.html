@@ -144,6 +144,7 @@ button:active{background:var(--line)}
 .rep-pin::after{content:'';position:absolute;inset:-10px}  /* a finger-sized hit area around the small bubble */
 .rep-pin.in-legend{display:inline-flex;position:static;flex:none;height:18px;padding:0 5px;cursor:default;box-shadow:none}
 .rep-pin.in-legend::after{content:none}
+.man{font-style:italic;color:var(--ink-3)}
 .pop-reps{margin:4px 0 0;padding-left:18px}
 .pop-reps li{margin-bottom:4px}
 .run .lim .dot{display:inline-block;width:8px;height:8px;vertical-align:baseline}
@@ -381,11 +382,11 @@ const I18N = {
     trend: {up: '↑ більше, ніж тижнем раніше', down: '↓ менше, ніж тижнем раніше', flat: '→ як тижнем раніше'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: улов за 28 днів, найбільше ${max} шт. (${d})`,
     sparkDay: (d, n) => `${d}: ${n} шт.`,
-    shopTitle: 'Звіти рибальських магазинів', mentioned: 'Згадано: ', watersIn: 'Водойми: ',
-    pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`} магазину`,
-    popReports: 'Свіжі звіти магазинів', popReportsNote: 'Звіт — думка магазину. Діють правила з таблиці вище.',
-    legendPin: 'Водойма у свіжому звіті магазину',
-    runNote: g => `Дані DFO попередні (unverified). Звіт магазину — думка його авторів: згадка виду не означає, що цей вид можна залишити. Правила дивіться на карті. Оновлено ${g}.`,
+    shopTitle: 'Звіти магазинів і рибалок', mentioned: 'Згадано: ', watersIn: 'Водойми: ',
+    pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`}`,
+    popReports: 'Свіжі звіти', popReportsNote: 'Звіт — думка його автора. Діють правила з таблиці вище.',
+    legendPin: 'Водойма у свіжому звіті', manualTag: 'додано вручну',
+    runNote: g => `Дані DFO попередні (unverified). Звіт — думка його автора: згадка виду не означає, що цей вид можна залишити. Правила дивіться на карті. Оновлено ${g}.`,
     rules: `<summary>Загальні правила</summary>
       <h3>Усюди</h3><ul>
         <li>Денний ліміт усіх видів лосося з припливних і прісних вод разом — 4. Ліміти для окремих видів теж діють.</li>
@@ -452,11 +453,11 @@ const I18N = {
     trend: {up: '↑ more than the week before', down: '↓ fewer than the week before', flat: '→ same as the week before'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: catch over 28 days, highest ${max} fish (${d})`,
     sparkDay: (d, n) => `${d}: ${n} fish`,
-    shopTitle: 'Tackle shop reports', mentioned: 'Mentions: ', watersIn: 'Waters: ',
-    pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent shop report' : `${n} recent shop reports`}`,
-    popReports: 'Recent shop reports', popReportsNote: 'A report is the shop\'s opinion. The rules in the table above apply.',
-    legendPin: 'Water named in a recent shop report',
-    runNote: g => `DFO data are preliminary (unverified). A shop report is its authors' opinion: a species in a report does not mean you can retain it. Check the rules on the map. Updated ${g}.`,
+    shopTitle: 'Shop and angler reports', mentioned: 'Mentions: ', watersIn: 'Waters: ',
+    pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent report' : `${n} recent reports`}`,
+    popReports: 'Recent reports', popReportsNote: 'A report is its author\'s opinion. The rules in the table above apply.',
+    legendPin: 'Water named in a recent report', manualTag: 'added by hand',
+    runNote: g => `DFO data are preliminary (unverified). A report is its author's opinion: a species in a report does not mean you can retain it. Check the rules on the map. Updated ${g}.`,
     rules: `<summary>General rules</summary>
       <h3>Everywhere</h3><ul>
         <li>The daily limit for all Pacific salmon from tidal and fresh waters combined is 4. Individual species limits also apply.</li>
@@ -755,7 +756,7 @@ function openPopup(w, latlng, sub) {
   const need = licensed(w) ? '' : `<p class="banner">${esc(t('needLicence', !!w.tidal))}</p>`;
   // Recent shop reports that name this water: under the rules, because the rules are what applies.
   const reps = reportsFor(w), repHtml = reps.length ? `<div class="subh">${esc(t('popReports'))}</div><ul class="pop-reps">`
-    + reps.map(r => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.src)} · ${fmtIso(r.date)} ↗</a>`
+    + reps.map(r => `<li>${extLink(r.url, `${esc(r.src)} · ${fmtIso(r.date)}`)}${manualTag(r)}${r.manual ? `: ${esc(r.title)}` : ''}`
       + (r.sp.length ? ` — ${esc(t('mentioned'))}${r.sp.map(sp => esc(spLow(sp))).join(', ')}` : '') + '</li>').join('')
     + `</ul><p class="note">${esc(t('popReportsNote'))}</p>` : '';
   const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}${need}
@@ -875,7 +876,10 @@ function spark(s, today, recent) {
 // ---------- report pins: a bubble on each water that a recent shop report names ----------
 // A report key is a water id or a tidal subarea ("28-8"). One pin per water; a tidal pin sits at the
 // label point of the first named subarea, any other pin on the water's own line (anchorPoint).
-const freshShops = () => (REPORTS.reports || []).filter(r => r.date >= isoShift(todayISO(), -SHOP_MAX_AGE) && /^https:\/\//.test(r.url));
+// A manual report may have no url; any url it has must be https.
+const freshShops = () => (REPORTS.reports || []).filter(r => r.date >= isoShift(todayISO(), -SHOP_MAX_AGE) && (!r.url || /^https:\/\//.test(r.url)));
+const extLink = (url, html) => url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${html} ↗</a>` : html;
+const manualTag = x => x.manual ? ` · <span class="man">${esc(t('manualTag'))}</span>` : '';
 const waterOf = k => WATERS.find(w => w.id === k || (w.subs || []).includes(k));
 const reportsFor = w => freshShops().filter(r => (r.w || []).some(k => waterOf(k) === w));
 const PIN_SVG = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 3h8M2 6h8M2 9h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
@@ -909,15 +913,15 @@ function renderRun() {
     const recent = isoShift(last, -7);                     // the same 7 days as the total and the bright bars
     const wk = s.days.filter(d => d[0] > recent).reduce((a, d) => a + d[1], 0);
     const tr = trend(s.days, last);
-    const site = `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(tx(SITES[s.site] || s.site))} · ${esc(s.src)} ↗</a>`
-      + (s.id === 'albion-coho' ? ` · ${esc(t('runInNet'))}` : '');
+    const site = extLink(s.url, `${esc(tx(SITES[s.site] || s.site))} · ${esc(s.src)}`)
+      + (s.id === 'albion-coho' ? ` · ${esc(t('runInNet'))}` : '') + manualTag(s);
     return `<li class="item">${dot(s.sp)}<span class="nm">${esc(spName(s.sp))} <small>${site}</small></span>
       <span class="lim">${esc(t('runLine', fmtIso(last), n, wk))}${tr ? `<br>${esc(t('trend')[tr])}` : ''}</span>${spark(s, today, recent)}</li>`;
   }).join('');
   // A key is a water id or a tidal subarea; unknown keys are skipped, and two keys of one group show once.
   const waters = r => [...new Set((r.w || []).map(k => WATERS.find(w => w.id === k || (w.subs || []).includes(k))).filter(Boolean))];
-  const reps = shops.map(r => `<li class="item"><span></span><span class="nm"><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)} ↗</a></span>
-      <span class="lim">${esc(r.src)} · ${fmtIso(r.date)}${r.sp.length ? ` · ${esc(t('mentioned'))}${r.sp.map(sp => `${dot(sp)} ${esc(spLow(sp))}`).join(', ')}` : ''}
+  const reps = shops.map(r => `<li class="item"><span></span><span class="nm">${extLink(r.url, esc(r.title))}</span>
+      <span class="lim">${esc(r.src)}${manualTag(r)} · ${fmtIso(r.date)}${r.sp.length ? ` · ${esc(t('mentioned'))}${r.sp.map(sp => `${dot(sp)} ${esc(spLow(sp))}`).join(', ')}` : ''}
       ${waters(r).length ? `<span class="wl">${esc(t('watersIn'))}${waters(r).map(w => `<button type="button" class="wlink" data-id="${w.id}">${esc(tx(w.name))}</button>`).join('')}</span>` : ''}</span></li>`).join('');
   $('run').innerHTML = `<h2>${esc(t('runTitle'))}</h2>`
     + (rows ? `<p class="run-lede">${esc(t('runLede'))}</p><ul>${rows}</ul>` : '')

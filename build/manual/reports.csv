@@ -1,0 +1,11 @@
+# Manual fishing reports. One row per report. Lines that start with # are comments.
+# date     YYYY-MM-DD, the day of the report (required)
+# source   who reported: a shop, a forum, a person (required)
+# title    a short line for the page (required)
+# url      https:// link to the report (optional; empty = no link)
+# species  chinook, coho, chum, pink, sockeye (or чавича, кижуч, кета, горбуша, нерка); separate with ; (optional)
+# waters   water names or ids from build/rules.json, or a tidal subarea like 28-8; separate with ; (optional)
+# Put a value that contains a comma in "double quotes". The page shows reports of the last 21 days.
+# Example:
+# 2026-09-21,FishingWithRod,Coho on the lower Vedder,https://www.fishingwithrod.com/fishing_report/lower_mainland.html,coho,Vedder
+date,source,title,url,species,waters

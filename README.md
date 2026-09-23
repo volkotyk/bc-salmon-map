@@ -52,8 +52,29 @@ build/
   species/*.webp        species illustrations (public domain), inlined into the page; fetch_species.py downloads them
   fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (a failed source keeps its previous data)
   reports.json          running-now data (generated; committed when the data change, so git history is the daily snapshot)
+  manual/reports.csv    reports added by hand (see "Add data by hand")
+  manual/testfish.csv   test-fishery or count rows added by hand
   *.py                  geometry fetch + build scripts, assemble.py
 ```
+
+## Add data by hand
+
+Use this for a report or a table that no automatic source covers: a forum post, a message from an angler,
+a count table from another site. The column rules are in the comment lines at the top of each file.
+
+1. Add one row to `build/manual/reports.csv` (a report) or `build/manual/testfish.csv` (daily counts):
+   ```
+   2026-09-21,FishingWithRod,Coho on the lower Vedder,https://www.fishingwithrod.com/...,coho,Vedder
+   ```
+   Species can be English or Ukrainian (`coho` or `кижуч`); waters can be a name (`Vedder`, `Capilano River`),
+   an id from `build/rules.json`, or a tidal subarea (`28-8`). Separate several values with `;`.
+2. Check it locally: `cd build && python fetch_reports.py --strict && python run_all.py --page`.
+   A bad row prints a warning with its line number and is left out.
+3. Commit the CSV and push (or open a pull request: the PR check turns red on a bad row).
+   The next run puts the row into `reports.json` and on the map, marked *added by hand*.
+
+A report shows for 21 days, a count row for 28 days, as the automatic data do. The rows stay in the CSV and in git history.
+Rows for Albion, Whonnock and Qualark are refused, because those sites are collected automatically in other effort units.
 
 Python standard library only for everything that runs in GitHub Actions; `build/requirements.txt` is only for rebuilding the geometry.
 
