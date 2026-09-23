@@ -29,7 +29,7 @@ Features:
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
 - "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, Facebook and TikTok have no public search API for this use; add their posts by hand.
-- UA / EN switch (also `#uk` / `#en` in the URL; the choice is remembered). Light and dark themes.
+- UA / EN switch (also `#uk` / `#en` in the URL; the choice is remembered). Light and dark themes: the page follows the system theme; a small sun / moon button next to the language switch changes it, and the page remembers the choice until it equals the system theme again.
 - Mobile first: on a phone the map fills the screen and the panel is a bottom sheet. Drag the sheet or tap its handle: the short position shows the species and the date, the middle position adds the list, the tall position shows everything. From 768 px wide the panel is a sidebar.
 
 ## Repository layout
