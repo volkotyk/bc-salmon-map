@@ -1,0 +1,949 @@
+<title>Лосось Metro Vancouver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Extra+Condensed:wght@500;600;700&family=Fira+Sans:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap">
+<style>
+/*__LEAFLET_CSS__*/
+:root{
+  --ink:#16272c; --ink-2:#4a5d62; --ink-3:#7b8b8f;
+  --paper:#f4f6f3; --panel:#ffffff; --line:#d7dfdc; --focus:#0b5563;
+  --sea:#c3d6dd; --land:#eceee6; --land-edge:#b9c4bf; --us:#e2e1da; --lake:#b2cdd6; --river:#8fb3c0;
+  --road:#ffffff; --road-case:#c9d0c8; --road-mw:#f2c46a; --road-mw-case:#cf9a3c; --road-minor:#d8ddd5;
+  --label:#3b4c50; --park:#4f7a4a; --halo:#ffffff;
+  --c-chinook:#c2410c; --c-coho:#1d6fb8; --c-both:#7a3e9d; --c-chum:#2e7d4f; --c-pink:#c2367a; --c-sockeye:#a61b1b;
+  --c-release:#b58a00; --c-closed:#95a0a0; --c-fraser:#b42318;
+  --chip-bg:#eef2f0;
+  --tile-filter:none;
+  --f-display:"Fira Sans Extra Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --f-body:"Fira Sans","Segoe UI",Roboto,Arial,sans-serif;
+  --f-mono:"Fira Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ink:#e3ecea; --ink-2:#a9b9b7; --ink-3:#7c8c8b;
+    --paper:#0e1719; --panel:#142124; --line:#26383b; --focus:#6cc3cf;
+    --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
+    --road:#3a4a47; --road-case:#1f2c2a; --road-mw:#8c6b2c; --road-mw-case:#5a4520; --road-minor:#2c3a37;
+    --label:#b7c6c4; --park:#8fbf88; --halo:#0e1719;
+    --c-chinook:#f08a4b; --c-coho:#5aa9e6; --c-both:#c08be0; --c-chum:#6fcf97; --c-pink:#f07fb4; --c-sockeye:#f28b82;
+    --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
+    --chip-bg:#1c2c2f;
+    --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#e3ecea; --ink-2:#a9b9b7; --ink-3:#7c8c8b;
+  --paper:#0e1719; --panel:#142124; --line:#26383b; --focus:#6cc3cf;
+  --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
+  --road:#3a4a47; --road-case:#1f2c2a; --road-mw:#8c6b2c; --road-mw-case:#5a4520; --road-minor:#2c3a37;
+  --label:#b7c6c4; --park:#8fbf88; --halo:#0e1719;
+  --c-chinook:#f08a4b; --c-coho:#5aa9e6; --c-both:#c08be0; --c-chum:#6fcf97; --c-pink:#f07fb4; --c-sockeye:#f28b82;
+  --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
+  --chip-bg:#1c2c2f;
+  --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
+}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font:14px/1.45 var(--f-body)}
+.app{display:grid;grid-template-columns:minmax(320px,400px) 1fr;height:100%}
+.panel{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:20px 20px 28px;display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:600 12px/1.2 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{font:700 34px/1.02 var(--f-display);margin:4px 0 6px;text-wrap:balance;letter-spacing:-.005em}
+.lede{color:var(--ink-2);margin:0;max-width:60ch}
+.lede a,.foot a,.pop a,details a{color:var(--focus)}
+.ctl{display:flex;flex-direction:column;gap:8px}
+.ctl-label{font:600 13px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.species{display:flex;flex-wrap:wrap;gap:6px}
+.species input{position:absolute;opacity:0;pointer-events:none}
+.species label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;background:var(--panel);font-weight:500;user-select:none}
+.species label small{color:var(--ink-3);font-size:11px;font-weight:400}
+.species input:checked+label{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.species input:checked+label small{color:inherit;opacity:.7}
+.species input:focus-visible+label{outline:2px solid var(--focus);outline-offset:2px}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--c)}
+.dot.off{background:none;border:1.5px solid var(--c-closed)}
+.dot.sq{border-radius:2px;opacity:.75}
+.daterow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=date]{font:500 14px var(--f-mono);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+button{font:500 13px var(--f-body);padding:7px 11px;border:1px solid var(--line);border-radius:6px;background:var(--chip-bg);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.summary{font:500 15px/1.35 var(--f-body);margin:0}
+.summary b{font-family:var(--f-mono);font-weight:500}
+.banner{border-left:3px solid var(--c-fraser);background:var(--chip-bg);padding:10px 12px;border-radius:0 6px 6px 0;color:var(--ink);margin:0}
+.groups{display:flex;flex-direction:column;gap:16px}
+.group h2{font:600 15px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 6px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.group ul{list-style:none;margin:0;padding:0}
+.item{display:grid;grid-template-columns:12px 1fr;gap:4px 10px;align-items:start;width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:7px 6px;color:inherit}
+.item:hover{background:var(--chip-bg)}
+.item .dot{margin-top:5px}
+.item .nm{font-weight:600}
+.item .nm small{font:400 12px var(--f-mono);color:var(--ink-3);margin-left:6px}
+.item .lim{grid-column:2;color:var(--ink-2);font-size:13px}
+.item.is-off .nm{color:var(--ink-3);font-weight:500}
+.item.is-off .lim{color:var(--ink-3)}
+details{border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
+details h3{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 0}
+details ul{padding-left:18px;margin:8px 0 0;color:var(--ink-2)}
+details li{margin-bottom:6px}
+.foot{font-size:12px;color:var(--ink-3);margin:0}
+.mapwrap{position:relative;min-height:0}
+#map{position:absolute;inset:0;background:var(--sea)}
+.legend{position:absolute;left:12px;bottom:26px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px)}
+.legend .row{display:flex;align-items:center;gap:8px}
+.legend .sw{width:26px;height:0;border-top:5px solid var(--c);flex:none;border-radius:3px}
+.legend .sw.dash{border-top-style:dashed;border-top-width:3px}
+.legend .sw.thin{border-top-width:2px}
+.legend .sw.fill{height:12px;border:1px solid var(--c);background:color-mix(in srgb,var(--c) 28%,transparent);border-radius:2px}
+.legend .hint{color:var(--ink-3);font-size:11.5px;border-top:1px solid var(--line);padding-top:6px}
+.leaflet-container{font-family:var(--f-body);background:var(--sea)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink);box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.leaflet-popup-content{margin:14px 16px;min-width:240px;max-width:340px;font-size:13px;line-height:1.4}
+.leaflet-container a.leaflet-popup-close-button{color:var(--ink-3)}
+.leaflet-bar a{background:var(--panel);color:var(--ink);border-bottom-color:var(--line)}
+.leaflet-bar a:hover{background:var(--chip-bg);color:var(--ink)}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--panel) 85%,transparent)!important;color:var(--ink-3)}
+.leaflet-control-attribution a{color:var(--ink-2)}
+.leaflet-tooltip{background:var(--panel);color:var(--ink);border-color:var(--line);font:600 13px var(--f-body)}
+.lbl{white-space:nowrap;pointer-events:none;display:none}
+.town{font:500 12px/1 var(--f-body);color:var(--label);text-shadow:0 0 3px var(--halo),0 0 3px var(--halo),0 0 2px var(--halo)}
+.town.r8{font-weight:600;font-size:13px}
+.town.r13{font-size:11px;color:var(--ink-3)}
+.park{font:italic 500 11.5px/1 var(--f-body);color:var(--park);text-shadow:0 0 3px var(--halo),0 0 3px var(--halo)}
+.district{font:600 15px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);text-shadow:0 0 4px var(--halo),0 0 4px var(--halo);opacity:.85}
+.district.us{letter-spacing:.3em}
+.sublbl{font:500 11px/1 var(--f-mono);color:var(--ink-2);text-shadow:0 0 3px var(--halo),0 0 3px var(--halo)}
+.zg8 .m8,.zg9 .m9,.zg10 .m10,.zg11 .m11,.zg12 .m12,.zg13 .m13,.zg14 .m14{display:block}
+.tiles-on .town,.tiles-on .park{display:none!important}
+.tiles-on .leaflet-tile-pane{filter:var(--tile-filter)}
+.pop h3{font:700 20px/1.05 var(--f-display);margin:0 0 2px}
+.pop .tag{display:inline-block;font:500 11.5px var(--f-mono);background:var(--chip-bg);border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin:2px 0 6px}
+.pop .sec{color:var(--ink-2);margin:0 0 8px}
+.pop table{border-collapse:collapse;width:100%;font-size:12.5px}
+.pop td{padding:4px 6px 4px 0;vertical-align:top;border-top:1px solid var(--line)}
+.pop td.d{font-family:var(--f-mono);white-space:nowrap;color:var(--ink-2);font-size:12px}
+.pop tr.now td{font-weight:600;color:var(--ink)}
+.pop tr.now td.d{color:var(--ink)}
+.pop tr.now td:first-child{box-shadow:inset 3px 0 0 var(--c);padding-left:7px}
+.pop .sp{font-weight:600;white-space:nowrap}
+.pop .subh{font:600 12px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:10px 0 2px}
+.pop .note{color:var(--ink-2);margin:8px 0 0;font-size:12.5px}
+.route{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.route .street{color:var(--ink-2)}
+.route .ll{font:500 12px var(--f-mono);color:var(--ink-3);user-select:all}
+.route a{font-weight:600}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto;height:auto}
+  .mapwrap{order:-1;height:62svh;min-height:380px}
+  .panel{border-right:0;border-top:1px solid var(--line);overflow:visible;padding:18px 16px 28px}
+  h1{font-size:30px}
+  .legend{bottom:22px;left:8px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex:none}
+.lang button{border:0;border-radius:0;padding:4px 9px;font:600 12px var(--f-mono);background:var(--panel);color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+</style>
+
+<div class="app">
+  <aside class="panel">
+    <header>
+      <div class="topline">
+        <div class="eyebrow" id="t-eyebrow"></div>
+        <div class="lang" role="group" aria-label="Language / Мова">
+          <button type="button" data-lang="uk" lang="uk">UA</button>
+          <button type="button" data-lang="en" lang="en">EN</button>
+        </div>
+      </div>
+      <h1 id="t-h1"></h1>
+      <p class="lede" id="t-lede"></p>
+    </header>
+
+    <div class="ctl">
+      <span class="ctl-label" id="sp-label"></span>
+      <div class="species" role="radiogroup" aria-labelledby="sp-label" id="species"></div>
+    </div>
+
+    <div class="ctl">
+      <label class="ctl-label" for="date" id="date-label"></label>
+      <div class="daterow">
+        <input type="date" id="date">
+        <button type="button" id="today"></button>
+      </div>
+    </div>
+
+    <p class="summary" id="summary"></p>
+    <p class="banner" id="banner" hidden></p>
+
+    <div class="groups" id="groups"></div>
+
+    <details id="rules"></details>
+
+    <p class="foot" id="foot"></p>
+  </aside>
+
+  <main class="mapwrap">
+    <div id="map" role="application"></div>
+    <div class="legend" id="legend"></div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script id="geo" type="application/json">__GEO__</script>
+<script id="city" type="application/json">__CITY__</script>
+<script>
+(() => {
+const GEO = JSON.parse(document.getElementById('geo').textContent);
+const CITY = JSON.parse(document.getElementById('city').textContent);
+
+// ---------- language ----------
+// Order: #uk / #en in the URL, then the viewer's saved choice, then the browser language.
+const LANGS = ['uk', 'en'];
+const store = {
+  get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* storage may be blocked */ } },
+};
+const fromHash = () => LANGS.find(l => location.hash === '#' + l);
+let LANG = fromHash() || (LANGS.includes(store.get('lang')) ? store.get('lang') : null)
+  || (/^(uk|ru)\b/i.test(navigator.language || '') ? 'uk' : 'en');
+
+// Bilingual value: B('текст', 'text'). tx() resolves it for the current language; plain strings pass through.
+const B = (uk, en) => ({uk, en});
+const tx = v => (v && typeof v === 'object' && 'uk' in v) ? v[LANG] : v;
+
+const MONTHS = {
+  uk: ['січ','лют','бер','кві','тра','чер','лип','сер','вер','жов','лис','гру'],
+  en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+};
+const fmt = md => { const [m, d] = md.split('-').map(Number); return LANG === 'uk' ? `${d} ${MONTHS.uk[m - 1]}` : `${MONTHS.en[m - 1]} ${d}`; };
+const fmtFull = iso => { const [y, m, d] = iso.split('-').map(Number); return LANG === 'uk' ? `${d} ${MONTHS.uk[m - 1]} ${y}` : `${MONTHS.en[m - 1]} ${d}, ${y}`; };
+
+const I18N = {
+  uk: {
+    title: 'Лосось Metro Vancouver',
+    eyebrow: 'B.C. · Lower Mainland · прісні та солоні води',
+    h1: 'Де ловити лосося',
+    lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб побачити найближчу вулицю й прокласти маршрут.',
+    spLabel: 'Вид лосося', dateLabel: 'Дата риболовлі', today: 'Сьогодні', mapLabel: 'Карта водойм Lower Mainland',
+    legendHint: 'Лінії — річки, заливка — морські підзони',
+    legendBoth: 'Чавича + кижуч (Chinook + Coho)', legendChinook: 'Лише чавича (Chinook)', legendCoho: 'Лише кижуч (Coho)',
+    legendKeep: sp => `${sp}: можна взяти`, legendRelease: 'Лише відпустити', legendClosed: 'Закрито на дату', legendFraser: 'Закриття (Fraser)',
+    summary: (acc, fo, ft, to, tt, d, rel) => `${acc} можна взяти у <b>${fo}</b> з ${ft} прісних водойм і в <b>${to}</b> з ${tt} морських підзон на ${d}.` + (rel ? ` Ще в <b>${rel}</b> — лише відпустити.` : ''),
+    banner: (sp, d, rel) => `На ${d} немає водойм, де вид «${sp}» можна залишити. ` + (rel ? `Ловити й відпускати можна в ${rel} місцях.` : 'Прісні води Регіону 2 мають відкриття лише для чавичі (Chinook) і кижуча (Coho).'),
+    canKeep: 'Можна взяти: ', releaseSuffix: ' — відпустити', releaseShort: 'відпустити',
+    releaseOnly: 'Лише відпустити (без утримання)', closedOnDate: 'Закрито на цю дату',
+    closureOn: range => ` (${range})`, closureOff: range => `Закриття діє ${range}; зараз тут діють правила підзони 29-3`,
+    now: 'зараз', yearRound: 'увесь рік',
+    subarea: s => `Підзона ${s}`, partOf293: 'частина підзони 29-3', mouthShort: 'Гирло Fraser',
+    asOf: d => `Статус DFO на ${d}. «Зараз» означає, що DFO не вказує дату завершення.`,
+    boldNote: d => `Жирним — правила, що діють ${d}.`,
+    nearest: (n, dist) => `Найближча дорога: <b>${n}</b> (~${dist})`, m: 'м', km: 'км',
+    routeGoogle: 'Маршрут у Google Maps ↗', openOsm: 'Відкрити в OpenStreetMap ↗',
+    slipway: 'Спуск для човнів', fishingSpot: 'Місце для риболовлі (OSM)',
+    rules: `<summary>Загальні правила</summary>
+      <h3>Усюди</h3><ul>
+        <li>Денний ліміт усіх видів лосося з припливних і прісних вод разом — 4. Ліміти для окремих видів теж діють.</li>
+        <li>Ліміт володіння — подвійний денний.</li>
+        <li>«Заводська» риба (hatchery marked) — чавича (Chinook) або кижуч (Coho) із загоєним шрамом на місці жирового плавця. Дику рибу з таким лімітом треба відпустити.</li>
+        <li>Назви видів: чавича — Chinook, кижуч — Coho, кета — Chum, горбуша — Pink, нерка — Sockeye.</li></ul>
+      <h3>Прісні води Регіону 2</h3><ul>
+        <li>Лосося ловлять лише в світлу пору доби.</li>
+        <li>Риболовлю заборонено ближче 100 м до державних споруд для підрахунку, пропуску або вирощування риби.</li>
+        <li>Річний ліміт чавичі (Chinook) понад 50 см з усіх прісних вод — 10 риб.</li>
+        <li>Басейн Squamish (Squamish, Cheakamus, Mamquam, Ashlu): разом не більше 1 заводського кижуча (Coho) на день.</li>
+        <li>Мінімальний розмір: кижуч (Coho) — 25 см; чавича (Chinook), кета (Chum), горбуша (Pink), нерка (Sockeye) — 30 см. Довжину міряють від кінчика носа до розвилки хвоста.</li>
+        <li>«Доросла чавича» (adult Chinook) — понад 50 см. Понад 62 см — на Fraser і Chehalis з 1 вересня до 31 грудня, а також на Chilliwack/Vedder (з Sumas) і Capilano.</li></ul>
+      <h3>Солона вода: Area 28 і 29</h3><ul>
+        <li>Потрібна BC Tidal Waters Sport Fishing Licence. Щоб залишити лосося, на ліцензії має бути Salmon Conservation Stamp.</li>
+        <li>Кожну залишену чавичу (Chinook) одразу запишіть у ліцензію, у NRLS або в застосунок FishingBC.</li>
+        <li>Річний ліміт чавичі (Chinook) з усіх припливних вод — 10.</li>
+        <li>Лише гачок без зазубрини, цілий рік. З 1 вересня до 31 березня — лише гачок з одним вістрям і відстанню від вістря до цівки не більше 22 мм.</li>
+        <li>Мінімальний розмір: чавича (Chinook) — 62 см; кижуч (Coho), кета (Chum), горбуша (Pink), нерка (Sockeye) — 30 см.</li>
+        <li>Статуси DFO для Area 28 і 29 не мають дати завершення. Для будь-якої вибраної дати сторінка показує стан на 1 і 5 вересня 2026. Виняток — сезонні закриття з датами, наприклад гирло Fraser.</li></ul>`,
+    foot: `Джерела: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>, межі підзон — шар DFO PFMA Subareas 1:50 000. Межі ділянок на річках приблизні: точний опис є у вікні водойми. Правила змінюються через fishery notices, тому перевірте джерело перед виїздом. Картографічні дані © учасники OpenStreetMap (ODbL).`,
+  },
+  en: {
+    title: 'Metro Vancouver Salmon Map',
+    eyebrow: 'B.C. · Lower Mainland · fresh and tidal waters',
+    h1: 'Where to fish for salmon',
+    lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to see the nearest road and get directions.',
+    spLabel: 'Species', dateLabel: 'Fishing date', today: 'Today', mapLabel: 'Map of Lower Mainland salmon waters',
+    legendHint: 'Lines: rivers · shaded: tidal subareas',
+    legendBoth: 'Chinook + Coho', legendChinook: 'Chinook only', legendCoho: 'Coho only',
+    legendKeep: sp => `${sp}: retention`, legendRelease: 'Release only', legendClosed: 'Closed on this date', legendFraser: 'Closure (Fraser)',
+    summary: (acc, fo, ft, to, tt, d, rel) => `${acc} retention open in <b>${fo}</b> of ${ft} freshwater waters and <b>${to}</b> of ${tt} tidal subareas on ${d}.` + (rel ? ` Release only in <b>${rel}</b> more.` : ''),
+    banner: (sp, d, rel) => `On ${d} there is no water where ${sp} can be retained. ` + (rel ? `Catch-and-release is allowed in ${rel} places.` : 'Region 2 fresh waters open only for Chinook and Coho.'),
+    canKeep: 'Retention: ', releaseSuffix: ' — release', releaseShort: 'release',
+    releaseOnly: 'Non-retention (release only)', closedOnDate: 'Closed on this date',
+    closureOn: range => ` (${range})`, closureOff: range => `Closure applies ${range}; subarea 29-3 rules apply now`,
+    now: 'now', yearRound: 'year round',
+    subarea: s => `Subarea ${s}`, partOf293: 'part of subarea 29-3', mouthShort: 'Fraser mouth',
+    asOf: d => `DFO status as of ${d}. "Now" means DFO gives no end date.`,
+    boldNote: d => `Bold: rules in force on ${d}.`,
+    nearest: (n, dist) => `Nearest road: <b>${n}</b> (~${dist})`, m: 'm', km: 'km',
+    routeGoogle: 'Directions in Google Maps ↗', openOsm: 'Open in OpenStreetMap ↗',
+    slipway: 'Boat launch', fishingSpot: 'Fishing spot (OSM)',
+    rules: `<summary>General rules</summary>
+      <h3>Everywhere</h3><ul>
+        <li>The daily limit for all Pacific salmon from tidal and fresh waters combined is 4. Individual species limits also apply.</li>
+        <li>The possession limit is twice the daily limit.</li>
+        <li>Hatchery marked salmon: Chinook or Coho with a healed scar in place of the adipose fin. Where a limit says hatchery marked, release wild fish.</li></ul>
+      <h3>Region 2 fresh waters</h3><ul>
+        <li>Salmon fishing is allowed in daylight hours only.</li>
+        <li>No fishing within 100 m of any government facility for counting, passing or rearing fish.</li>
+        <li>Annual limit: 10 Chinook over 50 cm from all fresh waters combined.</li>
+        <li>Squamish watershed (Squamish, Cheakamus, Mamquam, Ashlu): aggregate daily limit of 1 hatchery marked Coho.</li>
+        <li>Minimum size: Coho 25 cm; Chinook, Chum, Pink and Sockeye 30 cm. Measure from the tip of the nose to the tail fork.</li>
+        <li>An adult Chinook is over 50 cm; over 62 cm on the Fraser and Chehalis from Sep 1 to Dec 31, and on the Chilliwack/Vedder (incl. Sumas) and Capilano.</li></ul>
+      <h3>Tidal waters: Areas 28 and 29</h3><ul>
+        <li>You need a BC Tidal Waters Sport Fishing Licence with a valid Salmon Conservation Stamp to retain salmon.</li>
+        <li>Record every retained Chinook immediately on your licence, in NRLS or in the FishingBC app.</li>
+        <li>Annual limit: 10 Chinook from all tidal waters.</li>
+        <li>Barbless hooks year round. From Sep 1 to Mar 31, single-point hooks only, max. 22 mm from point to shank.</li>
+        <li>Minimum size: Chinook 62 cm; Coho, Chum, Pink and Sockeye 30 cm.</li>
+        <li>DFO statuses for Areas 28 and 29 have no end date. For any selected date the page shows the status as of Sep 1 and Sep 5, 2026. Dated seasonal closures, such as the Fraser mouth, follow the selected date.</li></ul>`,
+    foot: `Sources: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>; subarea boundaries from the DFO PFMA Subareas 1:50,000 layer. River section boundaries on the map are approximate; the exact description is in each water's popup. Rules change through fishery notices, so check the source before you go. Map data © OpenStreetMap contributors (ODbL).`,
+  },
+};
+const t = (k, ...a) => { const v = I18N[LANG][k]; return typeof v === 'function' ? v(...a) : v; };
+
+// ---------- species ----------
+const SPECIES = [
+  {id:'all',     uk:'Усі відкриті', en:'All open'},
+  {id:'chinook', uk:'Чавича',  en:'Chinook'},
+  {id:'coho',    uk:'Кижуч',   en:'Coho'},
+  {id:'chum',    uk:'Кета',    en:'Chum'},
+  {id:'pink',    uk:'Горбуша', en:'Pink'},
+  {id:'sockeye', uk:'Нерка',   en:'Sockeye'},
+];
+const SP_IDS = ['chinook','coho','chum','pink','sockeye'];
+const spById = id => SPECIES.find(s => s.id === id);
+// Ukrainian UI always shows the English DFO name next to the Ukrainian one.
+const spName = id => id === 'all' ? (LANG === 'uk' ? 'Усі види (all salmon)' : 'All salmon')
+  : LANG === 'uk' ? `${spById(id).uk} (${spById(id).en})` : spById(id).en;
+const spLow = id => LANG === 'uk' ? `${spById(id).uk.toLowerCase()} (${spById(id).en})` : spById(id).en;
+const SP_ACC = {
+  uk: {all:'Лосося (salmon)', chinook:'Чавичу (Chinook)', coho:'Кижуча (Coho)', chum:'Кету (Chum)', pink:'Горбушу (Pink)', sockeye:'Нерку (Sockeye)'},
+  en: {all:'Salmon', chinook:'Chinook', coho:'Coho', chum:'Chum', pink:'Pink', sockeye:'Sockeye'},
+};
+
+const DISTRICTS = {
+  sea:   'Sea-to-Sky',
+  sun:   'Sunshine Coast',
+  north: 'North Shore',
+  tri:   B('Tri-Cities і Maple Ridge', 'Tri-Cities & Maple Ridge'),
+  sur:   B('Surrey і Langley', 'Surrey & Langley'),
+  valley:'Fraser Valley',
+  a28:   B('Солона вода · Area 28', 'Tidal waters · Area 28'),
+  a29:   B('Солона вода · Area 29', 'Tidal waters · Area 29'),
+};
+
+const FN = {
+  FN0960:'https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=366086&ID=all',
+  FN0961:'https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=366093&ID=all',
+  FN1008:'https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=367431&ID=all',
+};
+
+// Limit texts are written once in Ukrainian; this table gives the DFO English wording.
+const LIM_EN = {
+  'Заборона наживки': 'Bait ban',
+  'Лише одинарний гачок без зазубрини': 'Single barbless hook only',
+  'Лише відпустити': 'Non-retention (release only)',
+  '1 на день': '1 per day',
+  '1 на день, лише заводська': '1 per day, hatchery marked only',
+  '1 заводська на день': '1 hatchery marked per day',
+  '2 заводські на день': '2 hatchery marked per day',
+  '4 заводські на день': '4 hatchery marked per day',
+  '4 заводські на день, з них ≤2 понад 35 см': '4 hatchery marked per day, only 2 over 35 cm',
+  '4 на день': '4 per day',
+  '4 на день, з них ≤1 понад 50 см': '4 per day, only 1 over 50 cm',
+  '4 на день, з них ≤2 понад 62 см': '4 per day, only 2 over 62 cm',
+  '4 на день, з них ≤1 понад 62 см': '4 per day, only 1 over 62 cm',
+  'Риболовлю на лосося закрито': 'No fishing for salmon',
+  'Риболовлю на лосося закрито до окремого повідомлення': 'No fishing for salmon until further notice',
+  '2 на день, мін. 62 см': '2 per day, min. 62 cm',
+  '2 на день, лише заводські (диких — 0), мін. 30 см': '2 per day, hatchery marked only (wild: 0), min. 30 cm',
+  '2 на день, мін. 30 см': '2 per day, min. 30 cm',
+  '4 на день, мін. 30 см': '4 per day, min. 30 cm',
+  'Лише гачок без зазубрини': 'Barbless hook only',
+  'Лише гачок з одним вістрям, до 22 мм від вістря до цівки': 'Single-point hook only, max. 22 mm point to shank',
+  'Закрито для вилову: навігаційне закриття': 'Closed to harvesting (navigational closure)',
+  'Закрито для всіх видів лосося': 'Closed to all salmon',
+  'Закрито для лосося (ліміт 0)': 'Closed to salmon (limit 0)',
+};
+const lim = s => LANG === 'en' ? (LIM_EN[s] || s) : s;
+
+// Rule: species ('all' = any salmon), MM-DD from/to (a range may wrap past Dec 31), limit text, type, optional section key.
+const R = (sp, from, to, lim, type = 'retain', sec, fn) => ({sp, from, to, lim, type, sec, fn});
+const YEAR = ['04-01', '03-31'];
+const BAIT = R('all', ...YEAR, 'Заборона наживки', 'gear');
+const BARBLESS = R('all', ...YEAR, 'Лише одинарний гачок без зазубрини', 'gear');
+const REL = 'Лише відпустити';
+const TRIBS = B('Разом з притоками.', 'Including tributaries.');
+const SQUAMISH = B('Басейн Squamish: разом не більше 1 заводського кижуча (Coho) на день.',
+                   'Squamish watershed: aggregate daily limit of 1 hatchery marked Coho for all non-tidal waters.');
+
+const TIDAL_OPEN = [
+  R('chinook', ...YEAR, '2 на день, мін. 62 см'),
+  R('coho',    ...YEAR, '2 на день, лише заводські (диких — 0), мін. 30 см'),
+  R('chum',    ...YEAR, '2 на день, мін. 30 см'),
+  R('pink',    ...YEAR, '4 на день, мін. 30 см'),
+  R('sockeye', ...YEAR, REL, 'release'),
+  R('all', ...YEAR, 'Лише гачок без зазубрини', 'gear'),
+  R('all', '09-01', '03-31', 'Лише гачок з одним вістрям, до 22 мм від вістря до цівки', 'gear'),
+];
+const SPONGE = B('Даунригери заборонені в зонах захисту скляних губок Howe Sound.',
+                 'Downriggers are prohibited in the Howe Sound glass sponge reef refuges.');
+const HOOK15 = B('З 1 серпня до 31 грудня заборонено гачок з одним вістрям понад 15 мм від вістря до цівки.',
+                 'Aug 1 – Dec 31: no single-point hook larger than 15 mm from point to shank.');
+
+const WATERS = [
+  {id:'squamish', name:'Squamish River', d:'sea', sec:B('Разом з Powerhouse Channel.', 'Including Powerhouse Channel.'), notes:[SQUAMISH],
+   rules:[BAIT, R('coho','09-15','01-31','1 на день, лише заводська')]},
+  {id:'cheakamus', name:'Cheakamus River', d:'sea', notes:[SQUAMISH],
+   rules:[BAIT, R('coho','09-15','01-31','1 на день, лише заводська')]},
+  {id:'mamquam', name:'Mamquam River', d:'sea', notes:[SQUAMISH],
+   rules:[BAIT, R('coho','09-15','01-31','1 на день, лише заводська')]},
+  {id:'ashlu', name:'Ashlu Creek', d:'sea', notes:[SQUAMISH],
+   rules:[BAIT, R('coho','09-15','01-31','1 заводська на день')]},
+
+  {id:'chapman', name:'Chapman Creek', d:'sun',
+   sec:B('Від знаків межі припливних вод нижче мосту Hwy 101 до точки за 100 м нижче водоспаду (приблизно 550 м вище ЛЕП).',
+         'From the tidal boundary signs below the Hwy 101 bridge to 100 m below the falls (about 550 m upstream of the powerline crossing).'),
+   rules:[R('coho',...YEAR,'4 заводські на день, з них ≤2 понад 35 см'), R('chinook',...YEAR,'4 на день, з них ≤1 понад 50 см')]},
+  {id:'lois', name:'Lois Lake', d:'sun', lake:true,
+   rules:[BARBLESS, R('chinook',...YEAR,'4 на день'), R('coho',...YEAR,'4 на день')]},
+  {id:'khartoum', name:'Khartoum Lake', d:'sun', lake:true,
+   rules:[BARBLESS, R('chinook',...YEAR,'4 на день'), R('coho',...YEAR,'4 на день')]},
+
+  {id:'capilano', name:'Capilano River', d:'north', sec:TRIBS,
+   rules:[R('coho','04-01','06-30','2 заводські на день'), R('coho','07-01','03-31','4 заводські на день'),
+          R('coho','08-01','10-31','Заборона наживки','gear'),
+          R('chinook','08-01','09-04','4 на день, з них ≤2 понад 62 см'), R('chinook','09-05','11-30','4 на день','retain',null,'FN0960'),
+          R('chinook','08-01','10-31','Заборона наживки','gear')]},
+
+  {id:'coquitlam', name:'Coquitlam River', d:'tri',
+   rules:[R('chinook','09-05','09-18','1 заводська на день','retain',null,'FN0961'), R('chinook','09-19','12-31','1 на день','retain',null,'FN1008'),
+          R('coho','09-01','12-31','1 заводська на день')]},
+  {id:'deboville', name:'De Boville Slough', d:'tri', sec:B('Нижче злиття Cedar Creek і Hyde Creek.', 'Downstream of the confluence of Cedar Creek and Hyde Creek.'),
+   rules:[R('coho','10-01','12-31','1 заводська на день')]},
+  {id:'alouette', name:'Alouette River', d:'tri', sec:TRIBS,
+   secs:{a:B('Вище мосту 216th Street до знаків межі в Allco Park', 'Upstream of the 216th Street bridge to the boundary signs at Allco Park'),
+         b:B('Нижче мосту 216th Street до впадіння в Pitt River', 'Downstream of the 216th Street bridge to the Pitt River confluence')},
+   rules:[R('chinook','09-01','11-30','1 на день','retain','a'), R('coho','09-01','09-30',REL,'release','a'),
+          R('coho','10-01','12-31','1 заводська на день','retain','a'), R('coho','10-01','12-31','1 заводська на день','retain','b')]},
+  {id:'n-alouette', name:'North Alouette River', d:'tri', sec:TRIBS,
+   rules:[R('chinook','09-01','11-30','1 на день'), R('coho','09-01','11-30',REL,'release')]},
+  {id:'kanaka', name:'Kanaka Creek', d:'tri', sec:B('Нижче мосту 112th Street.', 'Downstream of the 112th Street bridge.'),
+   rules:[R('coho','11-01','11-30','1 заводська на день')]},
+
+  {id:'serpentine', name:'Serpentine River', d:'sur', sec:B('Нижче 168th Street біля Bothwell Park.', 'Downstream of 168th Street at Bothwell Park.'),
+   rules:[R('chinook','09-01','11-30','1 на день'), R('chinook','12-01','12-31',REL,'release'), R('coho','09-01','12-31','1 заводська на день')]},
+  {id:'nicomekl', name:'Nicomekl River', d:'sur', sec:B('Нижче 208th Street.', 'Downstream of 208th Street.'),
+   rules:[R('chinook','09-01','11-30','1 на день'), R('chinook','12-01','12-31',REL,'release'), R('coho','09-01','12-31','1 заводська на день')]},
+  {id:'little-campbell', name:'Little Campbell River', d:'sur',
+   secs:{a:B('Нижче 12th Avenue, разом з притоками цієї частини', 'Downstream of 12th Avenue, including tributaries to that part'),
+         b:B('Від знаків межі до пішохідного мосту в кінці Stayte Road', 'From the boundary signs to the pedestrian bridge at the foot of Stayte Road')},
+   rules:[R('chinook','08-15','09-15','1 заводська на день','retain','a'), R('chinook','09-16','12-31',REL,'release','a'),
+          R('coho','08-15','09-15',REL,'release','a'), R('coho','09-16','12-31','1 заводська на день','retain','a'),
+          R('all','08-15','09-30','Риболовлю на лосося закрито','closed','b')]},
+
+  {id:'stave', name:'Stave River', d:'valley',
+   sec:B('Від дамби BC Hydro до залізничного мосту CPR. Не ловіть у нерестових каналах Ruskin (східний берег) і Northrop (західний берег).',
+         'From the BC Hydro dam to the CPR bridge. No fishing in the Ruskin (east bank) and Northrop (west bank) spawning channels.'),
+   rules:[R('coho','09-01','12-31','4 заводські на день, з них ≤2 понад 35 см')]},
+  {id:'norrish', name:'Norrish (Suicide) Creek', d:'valley',
+   rules:[R('coho','09-01','12-31','4 заводські на день, з них ≤2 понад 35 см')]},
+  {id:'nicomen', name:B('Nicomen Slough (з Dewdney Slough)', 'Nicomen Slough (incl. Dewdney Slough)'), d:'valley',
+   sec:B('Від злиття з Siddle (Bell\'s) Creek до Fraser River.', 'From the confluence of Siddle (Bell\'s) Creek to the Fraser River.'),
+   rules:[R('coho','09-01','12-31','4 заводські на день, з них ≤2 понад 35 см')]},
+  {id:'harrison', name:'Harrison River', d:'valley',
+   sec:B('Від витоку з Harrison Lake до впадіння у Fraser River (обидві ділянки, до і після мосту Highway 7).',
+         'From the Harrison Lake outlet to the Fraser River (both sections, above and below the Highway 7 bridge).'),
+   rules:[R('coho','09-01','12-31','4 заводські на день')]},
+  {id:'chehalis', name:'Chehalis River', d:'valley',
+   sec:B('Нижче лісовозного мосту за 2,4 км від Chehalis Lake, разом з притоками.', 'Downstream of the logging bridge 2.4 km below Chehalis Lake, including tributaries.'),
+   rules:[R('chinook','06-01','08-31','1 на день'), R('chinook','09-01','12-31','4 на день, з них ≤1 понад 62 см'),
+          R('coho','06-01','08-31',REL,'release'), R('coho','09-01','12-31','4 заводські на день')]},
+  {id:'chilliwack', name:B('Chilliwack / Vedder River (з Sumas River)', 'Chilliwack / Vedder River (incl. Sumas River)'), d:'valley',
+   sec:B('Від знаків за 100 м нижче злиття зі Slesse Creek вниз за течією. Sumas River — від насосної станції Barrow Town до знаків біля Fraser.',
+         'From the signs 100 m below the Slesse Creek confluence downstream. Sumas River: from the Barrow Town Pump Station to the signs near the Fraser.'),
+   rules:[R('chinook','07-01','08-31','1 на день'), R('chinook','09-01','12-31','4 на день, з них ≤2 понад 62 см'),
+          R('coho','07-01','08-31',REL,'release'), R('coho','09-01','12-31','4 заводські на день')]},
+
+  {id:'fraser-closed', name:B('Fraser River (основне русло)', 'Fraser River (mainstem)'), d:'valley', closure:true,
+   sec:B('Вище залізничного мосту CPR у Mission. Нижче мосту — припливна частина, див. Area 29.', 'Upstream of the CPR bridge at Mission. Below the bridge is tidal water, see Area 29.'),
+   rules:[R('all','04-01','03-31','Риболовлю на лосося закрито до окремого повідомлення','closed')]},
+
+  // ---------- tidal: DFO Areas 28 and 29 ----------
+  {id:'a28', name:B('Howe Sound і Burrard Inlet', 'Howe Sound & Burrard Inlet'), d:'a28', tidal:true, asOf:'2026-09-01',
+   subs:['28-1','28-2','28-3','28-4','28-5','28-6','28-7','28-9','28-10','28-11','28-12','28-13','28-14'],
+   subsLabel:B('28-1…28-14, крім 28-8', '28-1…28-14 except 28-8'),
+   rules:TIDAL_OPEN,
+   subNotes:{
+     '28-1':[SPONGE], '28-3':[SPONGE],
+     '28-2':[B('Whytecliff Park: закрито для будь-якої риболовлі цілий рік.', 'Whytecliff Park: closed to all fishing year round.'),
+             B('Mannion Bay (Deep Bay), Bowen Island: закрито для будь-якої риболовлі з 1 вересня до 31 грудня.', 'Mannion Bay (Deep Bay), Bowen Island: closed to all fishing Sep 1 – Dec 31.'), SPONGE],
+     '28-4':[B('Porteau Cove: закрито для будь-якої риболовлі цілий рік (схід від знаків межі).', 'Porteau Cove: closed to all fishing year round (east of the boundary signs).'), SPONGE],
+     '28-6':[B('Point Atkinson: закрито для будь-якої риболовлі цілий рік (ділянка біля Starboat Cove).', 'Point Atkinson: closed to all fishing year round (near Starboat Cove).')],
+     '28-9':[B('Гирло Capilano River (від пірсу 14th Street до Prospect Point і First Narrows Bridge).', 'Capilano River mouth (14th Street pier – Prospect Point – First Narrows Bridge).'), HOOK15],
+     '28-10':[B('Припливна частина Seymour River (від мосту BCR до знаків межі).', 'Tidal Seymour River (BCR bridge to the boundary signs).'), HOOK15,
+              B('Частина Burrard Inlet закрита для вилову через навігаційне закриття.', 'Part of Burrard Inlet is closed to harvesting (navigational closure).')],
+   }},
+  {id:'a28-8', name:'False Creek', d:'a28', tidal:true, asOf:'2026-09-01', subs:['28-8'], subsLabel:'28-8',
+   rules:[R('all',...YEAR,'Закрито для вилову: навігаційне закриття','closed')]},
+
+  {id:'a29', name:'Strait of Georgia', d:'a29', tidal:true, asOf:'2026-09-05',
+   subs:['29-1','29-2','29-3','29-4','29-5','29-8'], subsLabel:'29-1…29-5, 29-8',
+   rules:TIDAL_OPEN,
+   subNotes:{
+     '29-1':[B('Смуга 0,5 милі перед Chapman Creek (Davis Bay, Trail Bay): денний ліміт кижуча (Coho) — 2.', 'Half-mile strip off Chapman Creek (Davis Bay, Trail Bay): Coho daily limit 2.')],
+     '29-3':[B('Усередині підзони є сезонне закриття гирла Fraser (1 серпня – 30 вересня), див. червону зону.', 'This subarea contains the seasonal Fraser mouth closure (Aug 1 – Sep 30), see the red zone.'), SPONGE],
+   }},
+  {id:'a29-mouth', name:B('Гирло Fraser: сезонне закриття', 'Fraser River mouth: seasonal closure'), d:'a29', tidal:true, closure:true, geom:'mouth', asOf:'2026-09-05',
+   subsLabel:B('частина 29-3', 'part of 29-3'),
+   sec:B('Від Point Grey і North Arm Jetty на захід до 123°20.8′ W.', 'From Point Grey and the North Arm Jetty west to 123°20.8′ W.'),
+   rules:[R('all','08-01','09-30','Закрито для всіх видів лосося','closed')]},
+  {id:'a29-closed', name:B('Припливна Fraser, Roberts Bank, Boundary Bay', 'Tidal Fraser, Roberts Bank, Boundary Bay'), d:'a29', tidal:true, asOf:'2026-09-05',
+   subs:['29-6','29-7','29-9','29-10','29-11','29-12','29-13','29-14','29-15','29-16','29-17'], subsLabel:'29-6, 29-7, 29-9…29-17',
+   rules:[R('all',...YEAR,'Закрито для лосося (ліміт 0)','closed')],
+   notes:[B('Припливна частина Fraser (від мосту CPR у Mission до гирла): лосося не можна залишати цілий рік. Вночі (з години після заходу до години перед сходом сонця) закрито для будь-якої риби. З 5 вересня до 6 жовтня заборонена природна наживка. Лише одна волосінь, гачки без зазубрини.',
+            'Tidal Fraser (CPR bridge at Mission to the mouth): no salmon retention year round. Closed to all finfish from one hour after sunset to one hour before sunrise. Natural bait ban Sep 5 – Oct 6. One line only, barbless hooks.')]},
+];
+
+const DISTRICT_LABELS = [
+  ['Sea-to-Sky',-123.55,50.0],['Sunshine Coast',-124.05,49.66],['North Shore',-123.04,49.42],
+  ['Fraser Valley',-121.9,49.43],['Strait of Georgia',-123.72,49.2],['Howe Sound',-123.36,49.56],['USA',-122.25,48.975,'us'],
+];
+
+// ---------- rule logic ----------
+const isActive = (r, md) => r.from <= r.to ? (md >= r.from && md <= r.to) : (md >= r.from || md <= r.to);
+const isYear = r => r.from === '04-01' && r.to === '03-31';
+const fmtRange = (r, asOf) => isYear(r) ? t(asOf ? 'now' : 'yearRound') : `${fmt(r.from)} – ${fmt(r.to)}`;
+const RETAIN = new Set(['both', ...SP_IDS]);
+
+function speciesStatus(w, sp, md) {
+  if (w.rules.some(r => r.sp === 'all' && r.type === 'closed' && !r.sec && isActive(r, md))) return {st:'closed'};
+  const act = w.rules.filter(r => r.sp === sp && isActive(r, md));
+  const ret = act.find(r => r.type === 'retain');
+  if (ret) return {st:'retain', rule:ret};
+  const rel = act.find(r => r.type === 'release');
+  if (rel) return {st:'release', rule:rel};
+  return {st:'closed'};
+}
+
+function closedText(w, md) {
+  const c = w.rules.find(r => r.type === 'closed' && !r.sec && isActive(r, md));
+  return c ? lim(c.lim) : t('closedOnDate');
+}
+
+// Returns {cat, text}: cat drives color; text is the short line for the list.
+function evaluate(w, sel, md) {
+  if (w.closure) {
+    const r = w.rules[0];
+    return isActive(r, md)
+      ? {cat:'fraser', text: lim(r.lim) + (isYear(r) ? '' : t('closureOn', fmtRange(r)))}
+      : {cat:'inactive', text: t('closureOff', fmtRange(r))};
+  }
+  if (sel === 'all') {
+    const st = Object.fromEntries(SP_IDS.map(s => [s, speciesStatus(w, s, md)]));
+    const ret = SP_IDS.filter(s => st[s].st === 'retain');
+    const rel = SP_IDS.filter(s => st[s].st === 'release');
+    const cat = st.chinook.st === 'retain' && st.coho.st === 'retain' ? 'both'
+      : st.chinook.st === 'retain' ? 'chinook' : st.coho.st === 'retain' ? 'coho'
+      : ret.length ? ret[0] : rel.length ? 'release' : 'closed';
+    let text;
+    if (!ret.length && !rel.length) text = closedText(w, md);
+    else if (ret.length <= 2) text = [...ret.map(s => `${spName(s)}: ${lim(st[s].rule.lim)}`), ...rel.map(s => `${spName(s)}: ${t('releaseShort')}`)].join(' · ');
+    else text = t('canKeep') + ret.map(spLow).join(', ') + (rel.length ? ` · ${rel.map(spLow).join(', ')}${t('releaseSuffix')}` : '');
+    return {cat, text};
+  }
+  const s = speciesStatus(w, sel, md);
+  if (s.st === 'retain') return {cat: sel, text: lim(s.rule.lim)};
+  if (s.st === 'release') return {cat:'release', text: t('releaseOnly')};
+  return {cat:'closed', text: closedText(w, md)};
+}
+
+// ---------- theme-aware colors ----------
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const CAT_VAR = {chinook:'--c-chinook', coho:'--c-coho', both:'--c-both', chum:'--c-chum', pink:'--c-pink', sockeye:'--c-sockeye',
+                 release:'--c-release', closed:'--c-closed', inactive:'--c-closed', fraser:'--c-fraser'};
+const catColor = cat => css(CAT_VAR[cat]);
+
+// ---------- map and panes ----------
+const map = L.map('map', {
+  zoomSnap: .25, minZoom: 7.5, maxZoom: 17, attributionControl: true,
+  maxBounds: [[48.6, -125.3], [50.7, -120.8]], maxBoundsViscosity: .8,
+});
+map.attributionControl.setPrefix(false).addAttribution('© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · DFO');
+[['base', 350], ['roads', 360], ['tidal', 380], ['water', 410], ['poi', 420]].forEach(([n, z]) => { map.createPane(n).style.zIndex = z; });
+const R_BASE = L.svg({pane:'base', padding:.5});
+const R_ROADS = L.canvas({pane:'roads', padding:.3});
+const R_TIDAL = L.svg({pane:'tidal', padding:.5});
+const R_WATER = L.svg({pane:'water', padding:.5});
+const R_POI = L.svg({pane:'poi', padding:.3});
+
+const base = {
+  land: L.geoJSON(GEO.land, {renderer:R_BASE, pane:'base', interactive:false}).addTo(map),
+  us:   L.geoJSON(GEO.us,   {renderer:R_BASE, pane:'base', interactive:false}).addTo(map),
+  lakes:L.geoJSON({type:'FeatureCollection', features: GEO.lakes.map(g => ({type:'Feature', geometry:g}))}, {renderer:R_BASE, pane:'base', interactive:false}).addTo(map),
+  fraser:L.geoJSON(GEO.fraser, {renderer:R_BASE, pane:'base', interactive:false}).addTo(map),
+};
+
+// ---------- roads (decoded from delta-encoded integer coordinates, 1e-5 degrees) ----------
+const ROAD_CLASSES = ['motorway','trunk','primary','secondary','tertiary','minor'];
+const ROAD_MINZ = {motorway:7.5, trunk:7.5, primary:9, secondary:10.5, tertiary:12, minor:13};
+const roadIndex = [];                                    // {name, pts:[[lat,lng]...], bb:[s,w,n,e]}
+const roadLines = Object.fromEntries(ROAD_CLASSES.map(c => [c, []]));
+for (const [ci, ni, flat] of CITY.roads) {
+  let x = 0, y = 0; const pts = [];
+  let s = 90, w = 180, n = -90, e = -180;
+  for (let i = 0; i < flat.length; i += 2) {
+    x += flat[i]; y += flat[i + 1];
+    const lng = x / 1e5, lat = y / 1e5;
+    pts.push([lat, lng]);
+    if (lat < s) s = lat; if (lat > n) n = lat; if (lng < w) w = lng; if (lng > e) e = lng;
+  }
+  roadIndex.push({name: ni >= 0 ? CITY.names[ni] : null, pts, bb:[s, w, n, e]});
+  roadLines[ROAD_CLASSES[ci]].push(pts);
+}
+const roadLayers = {};
+for (const cls of ROAD_CLASSES) {
+  const opts = {renderer:R_ROADS, pane:'roads', interactive:false, lineCap:'round', lineJoin:'round', smoothFactor:1};
+  roadLayers[cls] = {casing: cls === 'minor' ? null : L.polyline(roadLines[cls], opts), line: L.polyline(roadLines[cls], opts)};
+}
+const ROAD_W = {motorway:[5, 3.2], trunk:[4.5, 2.8], primary:[4, 2.4], secondary:[3.4, 2], tertiary:[2.8, 1.6], minor:[0, 1.2]};
+function styleRoads() {
+  for (const cls of ROAD_CLASSES) {
+    const mw = cls === 'motorway' || cls === 'trunk';
+    const {casing, line} = roadLayers[cls];
+    if (casing) casing.setStyle({color: css(mw ? '--road-mw-case' : '--road-case'), weight: ROAD_W[cls][0], opacity:1});
+    line.setStyle({color: css(mw ? '--road-mw' : cls === 'minor' ? '--road-minor' : '--road'), weight: ROAD_W[cls][1], opacity:1});
+  }
+}
+// Draw order: every casing first, then lines from minor to motorway, so major roads sit on top.
+let tilesOn = false;
+function syncRoads() {
+  const z = map.getZoom();
+  const order = [...ROAD_CLASSES].reverse();
+  for (const cls of order) {
+    const want = !tilesOn && z >= ROAD_MINZ[cls];
+    const {casing, line} = roadLayers[cls];
+    for (const l of [casing, line]) if (l) { if (want && !map.hasLayer(l)) l.addTo(map); if (!want && map.hasLayer(l)) map.removeLayer(l); }
+  }
+  for (const cls of order) { const l = roadLayers[cls].line; if (map.hasLayer(l)) l.bringToFront(); }
+  for (const cls of order) { const c = roadLayers[cls].casing; if (c && map.hasLayer(c)) c.bringToBack(); }
+}
+
+// ---------- labels: places, parks, districts, subareas ----------
+const PLACE_RANK = {city:8, town:9, village:11, suburb:11, hamlet:12, neighbourhood:13};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const label = (lat, lng, html) => L.marker([lat, lng], {interactive:false, keyboard:false, pane:'markerPane',
+  icon: L.divIcon({className:'', html, iconSize:null, iconAnchor:[0, 6]})}).addTo(map);
+for (const [name, type, lng, lat] of CITY.places) {
+  const r = PLACE_RANK[type];
+  label(lat, lng, `<span class="lbl town m${r} r${r}">${esc(name)}</span>`);
+}
+for (const [name, lng, lat] of CITY.parks) label(lat, lng, `<span class="lbl park m13">${esc(name)}</span>`);
+DISTRICT_LABELS.forEach(([n, lng, lat, cls]) => label(lat, lng, `<span class="lbl district m8 ${cls || ''}">${n}</span>`));
+Object.entries(GEO.subpts).forEach(([lab, [lng, lat]]) => label(lat, lng, `<span class="lbl sublbl m10">${lab}</span>`));
+
+function syncZoomClasses() {
+  const z = map.getZoom(), el = map.getContainer();
+  for (let k = 8; k <= 14; k++) el.classList.toggle('zg' + k, z >= k - .01);
+}
+
+// ---------- points of interest: boat launches and fishing spots ----------
+let skipMapClick = 0;
+const poiLayer = L.layerGroup();
+const poiTitle = (kind, name) => t(kind === 'slipway' ? 'slipway' : 'fishingSpot') + (name ? ': ' + name : '');
+for (const [kind, name, lng, lat] of CITY.poi) {
+  const m = L.circleMarker([lat, lng], {renderer:R_POI, pane:'poi', radius:4.5, weight:1.5});
+  m._kind = kind;
+  m.bindTooltip(() => esc(poiTitle(kind, name)), {direction:'top', offset:[0, -4]});
+  m.on('click', e => { skipMapClick = Date.now(); openPointPopup(e.latlng, poiTitle(kind, name)); });
+  poiLayer.addLayer(m);
+}
+function stylePoi() {
+  poiLayer.eachLayer(m => m.setStyle({color:css('--halo'), fillColor: m._kind === 'slipway' ? css('--focus') : css('--park'), fillOpacity:1}));
+}
+const syncPoi = () => { const want = map.getZoom() >= 11; if (want !== map.hasLayer(poiLayer)) want ? poiLayer.addTo(map) : map.removeLayer(poiLayer); };
+
+// ---------- fishing waters ----------
+const layers = {};
+WATERS.forEach(w => {
+  if (w.tidal) {
+    const fc = w.geom === 'mouth'
+      ? {type:'Feature', properties:{label:'29-3'}, geometry:GEO.mouth}
+      : {type:'FeatureCollection', features: w.subs.map(s => ({type:'Feature', properties:{label:s}, geometry:GEO.subs[s]}))};
+    const poly = L.geoJSON(fc, {renderer:R_TIDAL, pane:'tidal', onEachFeature:(f, l) => {
+      l.bindTooltip(() => esc(`${w.geom === 'mouth' ? t('mouthShort') : f.properties.label} · ${tx(w.name)}`), {sticky:true, direction:'top', offset:[0, -8]});
+      l.on('click', e => { skipMapClick = Date.now(); openPopup(w, e.latlng, f.properties.label); });
+    }}).addTo(map);
+    layers[w.id] = {poly};
+    return;
+  }
+  const g = GEO.waters[w.id];
+  const halo = L.geoJSON(g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
+  const line = L.geoJSON(g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
+  const hit = L.geoJSON(g, {renderer:R_WATER, pane:'water', style:{weight:18, opacity:0, fillOpacity:w.lake ? .01 : 0}}).addTo(map);
+  hit.bindTooltip(() => esc(tx(w.name)), {sticky:true, direction:'top', offset:[0, -8]});
+  hit.on('click', e => { skipMapClick = Date.now(); openPopup(w, e.latlng); });
+  layers[w.id] = {halo, line, hit};
+});
+layers['a29-mouth'].poly.bringToFront();
+
+function styleWater(w, cat) {
+  const L_ = layers[w.id];
+  const color = catColor(cat);
+  const closed = cat === 'closed' || cat === 'inactive';
+  if (w.tidal) {
+    L_.poly.setStyle({
+      color, weight: cat === 'fraser' ? 2 : 1.2, opacity: cat === 'inactive' ? .55 : .9,
+      dashArray: (cat === 'fraser' || cat === 'release' || closed) ? '5 4' : null,
+      fillColor: color, fillOpacity: cat === 'inactive' ? 0 : cat === 'fraser' ? .32 : closed ? .08 : cat === 'release' ? .15 : .22,
+    });
+    return;
+  }
+  const fr = cat === 'fraser';
+  const weight = fr ? 3.5 : closed ? 2.5 : 5;
+  L_.halo.setStyle({color:css('--halo'), weight: weight + 3, opacity: closed ? .5 : .9, fill:false, lineCap:'round', lineJoin:'round'});
+  L_.line.setStyle({
+    color, weight, opacity:1, lineCap: fr ? 'butt' : 'round', lineJoin:'round',
+    dashArray: fr ? '8 6' : cat === 'release' ? '7 6' : null,
+    fillColor: color, fillOpacity: w.lake ? (closed ? .25 : .6) : 0,
+  });
+  if (!closed) L_.line.bringToFront();
+}
+
+// ---------- nearest street + route link ----------
+function nearestRoad(ll) {
+  for (const pad of [.012, .06]) { const r = nearestRoadWithin(ll, pad); if (r) return r; }
+  return null;
+}
+function nearestRoadWithin(ll, pad) {
+  const k = Math.cos(ll.lat * Math.PI / 180);
+  let best = null, bd = Infinity;
+  for (const r of roadIndex) {
+    if (!r.name) continue;
+    const [s, w, n, e] = r.bb;
+    if (ll.lat < s - pad || ll.lat > n + pad || ll.lng < w - pad / k || ll.lng > e + pad / k) continue;
+    for (let i = 1; i < r.pts.length; i++) {
+      const ax = r.pts[i - 1][1] * k, ay = r.pts[i - 1][0], bx = r.pts[i][1] * k, by = r.pts[i][0];
+      const px = ll.lng * k, py = ll.lat, dx = bx - ax, dy = by - ay;
+      const q = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1)));
+      const d = (ax + q * dx - px) ** 2 + (ay + q * dy - py) ** 2;
+      if (d < bd) { bd = d; best = r; }
+    }
+  }
+  return best ? {name: best.name, m: Math.sqrt(bd) * 111320} : null;
+}
+function routeBlock(ll) {
+  const lat = ll.lat.toFixed(5), lng = ll.lng.toFixed(5);
+  const r = nearestRoad(ll);
+  const dist = r && (r.m < 1000 ? `${Math.round(r.m / 10) * 10} ${t('m')}` : `${(r.m / 1000).toFixed(1)} ${t('km')}`);
+  const street = r ? `<span class="street">${t('nearest', esc(r.name), dist)}</span>` : '';
+  return `<div class="route">${street}<span class="ll">${lat}, ${lng}</span>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" rel="noopener">${t('routeGoogle')}</a>
+    <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}" target="_blank" rel="noopener">${t('openOsm')}</a></div>`;
+}
+let reopen = null, activePopup = null;                // re-renders the open popup after a language switch
+function openPointPopup(ll, title) {
+  reopen = () => openPointPopup(ll, title);
+  activePopup = L.popup({maxWidth:320, autoPanPadding:[24, 24]}).setLatLng(ll)
+    .setContent(`<div class="pop">${title ? `<h3>${esc(title)}</h3>` : ''}${routeBlock(ll)}</div>`).openOn(map);
+}
+map.on('click', e => { if (Date.now() - skipMapClick > 80) openPointPopup(e.latlng, ''); });
+
+// ---------- popup ----------
+const RULE_CAT = r => r.type === 'retain' ? r.sp : r.type === 'release' ? 'release' : r.type === 'closed' ? 'fraser' : null;
+
+function rulesTable(rules, md, asOf) {
+  const rows = rules.map(r => {
+    const now = isActive(r, md);
+    const cat = RULE_CAT(r);
+    const fn = r.fn ? ` <a href="${FN[r.fn]}" target="_blank" rel="noopener">${r.fn}</a>` : '';
+    return `<tr class="${now ? 'now' : ''}" style="--c:${now && cat ? catColor(cat) : 'transparent'}">
+      <td class="sp">${esc(spName(r.sp))}</td><td class="d">${fmtRange(r, asOf)}</td><td>${esc(lim(r.lim))}${fn}</td></tr>`;
+  }).join('');
+  return `<table>${rows}</table>`;
+}
+
+function openPopup(w, latlng, sub) {
+  reopen = () => openPopup(w, latlng, sub);
+  const md = state.md;
+  let body = '';
+  if (w.secs) {
+    for (const [k, lab] of Object.entries(w.secs)) body += `<div class="subh">${esc(tx(lab))}</div>` + rulesTable(w.rules.filter(r => r.sec === k), md);
+    const common = w.rules.filter(r => !r.sec);
+    if (common.length) body = rulesTable(common, md) + body;
+  } else body = rulesTable(w.rules, md, w.asOf);
+  const notes = [...(w.notes || []), ...((w.subNotes && sub && w.subNotes[sub]) || [])].map(n => `<p class="note">${esc(tx(n))}</p>`).join('');
+  const tag = w.tidal ? `<span class="tag">${w.geom === 'mouth' ? t('partOf293') : esc(t('subarea', sub))}</span>` : '';
+  const asOf = w.asOf ? `<p class="note">${esc(t('asOf', fmtFull(w.asOf)))}</p>` : '';
+  const ll = latlng || anchorPoint(w);
+  const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}
+    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${asOf}
+    <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
+  activePopup = L.popup({maxWidth:360, autoPanPadding:[24, 24]}).setLatLng(ll).setContent(html).openOn(map);
+}
+
+// A point on the feature itself (not just the bounds centre, which can fall on dry land for a curved river).
+function anchorPoint(w) {
+  if (w.tidal) {
+    if (w.geom === 'mouth') return layers[w.id].poly.getBounds().getCenter();
+    const [lng, lat] = GEO.subpts[w.subs[0]]; return L.latLng(lat, lng);
+  }
+  const c = layers[w.id].line.getBounds().getCenter();
+  let best = c, bd = Infinity;
+  const walk = a => Array.isArray(a) ? a.forEach(walk) : (() => { const d = a.distanceTo(c); if (d < bd) { bd = d; best = a; } })();
+  layers[w.id].line.eachLayer(l => walk(l.getLatLngs()));
+  return best;
+}
+
+// ---------- controls ----------
+const state = {sp:'all', md:'09-22'};
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+
+function renderSpecies() {
+  $('species').innerHTML = SPECIES.map(s => {
+    const dot = `<span class="dot" style="--c:var(${s.id === 'all' ? '--c-both' : CAT_VAR[s.id]})"></span>`;
+    const text = LANG === 'uk' ? `${s.uk}${s.id === 'all' ? '' : ` <small>(${s.en})</small>`}` : s.en;
+    return `<input type="radio" name="sp" id="sp-${s.id}" value="${s.id}" ${s.id === state.sp ? 'checked' : ''}>
+      <label for="sp-${s.id}">${dot}${text}</label>`;
+  }).join('');
+}
+
+function legend() {
+  const rows = state.sp === 'all'
+    ? [['both', t('legendBoth')], ['chinook', t('legendChinook')], ['coho', t('legendCoho')]]
+    : [[state.sp, t('legendKeep', spName(state.sp))]];
+  rows.push(['release', t('legendRelease'), 'dash'], ['closed', t('legendClosed'), 'thin'], ['fraser', t('legendFraser'), 'dash']);
+  $('legend').innerHTML = rows.map(([c, text, k]) => `<div class="row"><span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>${esc(text)}</div>`).join('')
+    + `<div class="hint">${esc(t('legendHint'))}</div>`;
+}
+
+function render() {
+  const {sp, md} = state;
+  const res = WATERS.map(w => ({w, ...evaluate(w, sp, md)}));
+  res.forEach(({w, cat}) => styleWater(w, cat));
+  layers['a29-mouth'].poly.bringToFront();
+
+  const fresh = res.filter(r => !r.w.tidal && !r.w.closure);
+  const tidal = res.filter(r => r.w.tidal && !r.w.closure);
+  const nSubs = rs => rs.reduce((a, r) => a + r.w.subs.length, 0);
+  const fo = fresh.filter(r => RETAIN.has(r.cat)).length;
+  const to = nSubs(tidal.filter(r => RETAIN.has(r.cat)));
+  const rel = fresh.filter(r => r.cat === 'release').length + nSubs(tidal.filter(r => r.cat === 'release'));
+  $('summary').innerHTML = t('summary', SP_ACC[LANG][sp], fo, fresh.length, to, nSubs(tidal), fmt(md), rel);
+  const none = fo + to === 0;
+  $('banner').hidden = !none;
+  if (none) $('banner').textContent = t('banner', spName(sp), fmt(md), rel);
+
+  const ORDER = {both:0, chinook:0, coho:0, chum:0, pink:0, sockeye:0, release:1, inactive:2, closed:2, fraser:3};
+  $('groups').innerHTML = Object.entries(DISTRICTS).map(([d, title]) => {
+    const items = res.filter(r => r.w.d === d)
+      .sort((a, b) => (ORDER[a.cat] - ORDER[b.cat]) || tx(a.w.name).localeCompare(tx(b.w.name)));
+    return `<section class="group"><h2>${esc(tx(title))}</h2><ul>${items.map(({w, cat, text}) => {
+      const off = cat === 'closed' || cat === 'inactive';
+      return `<li><button type="button" class="item ${off ? 'is-off' : ''}" data-id="${w.id}">
+        <span class="dot ${off ? 'off' : ''} ${w.tidal ? 'sq' : ''}" style="--c:var(${CAT_VAR[cat]})"></span>
+        <span class="nm">${esc(tx(w.name))}${w.subsLabel ? ` <small>${esc(tx(w.subsLabel))}</small>` : ''}</span><span class="lim">${esc(text)}</span></button></li>`;
+    }).join('')}</ul></section>`;
+  }).join('');
+  legend();
+  map.closePopup();
+}
+
+function applyLang(lang, save) {
+  LANG = lang;
+  if (save) store.set('lang', lang);
+  document.documentElement.lang = lang;
+  document.title = t('title');
+  $('t-eyebrow').textContent = t('eyebrow');
+  $('t-h1').textContent = t('h1');
+  $('t-lede').textContent = t('lede');
+  $('sp-label').textContent = t('spLabel');
+  $('date-label').textContent = t('dateLabel');
+  $('today').textContent = t('today');
+  $('map').setAttribute('aria-label', t('mapLabel'));
+  const open = $('rules').open;
+  $('rules').innerHTML = t('rules');
+  $('rules').open = open;
+  $('foot').innerHTML = t('foot');
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  const wasOpen = activePopup && map.hasLayer(activePopup) && reopen;
+  renderSpecies();
+  render();
+  if (wasOpen) wasOpen();
+}
+
+$('species').addEventListener('change', e => { state.sp = e.target.value; render(); });
+$('date').addEventListener('change', e => { if (e.target.value) { state.md = e.target.value.slice(5); render(); } });
+$('today').addEventListener('click', () => { $('date').value = todayISO(); state.md = $('date').value.slice(5); render(); });
+document.querySelector('.lang').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  applyLang(b.dataset.lang, true);
+  if (fromHash() && fromHash() !== LANG) location.hash = LANG;   // a stale #uk/#en would win on reload
+});
+window.addEventListener('hashchange', () => { const l = fromHash(); if (l && l !== LANG) applyLang(l, true); });
+$('groups').addEventListener('click', e => {
+  const b = e.target.closest('.item'); if (!b) return;
+  const w = WATERS.find(x => x.id === b.dataset.id);
+  const L_ = layers[w.id];
+  const bounds = (L_.poly || L_.line).getBounds();
+  map.flyToBounds(bounds, {padding:[60, 60], maxZoom:13, duration:.6});
+  // flyToBounds may not emit 'moveend' when the view does not change, so a timer is the fallback.
+  let shown = false;
+  const show = () => { if (!shown) { shown = true; openPopup(w, null, w.subs && w.subs[0]); } };
+  map.once('moveend', show);
+  setTimeout(show, 900);
+  if (window.matchMedia('(max-width:760px)').matches) $('map').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+// ---------- basemap: real tiles when the host allows them, built-in vector map otherwise ----------
+// The claude.ai artifact sandbox blocks external images, so tiles fail there and the vector layers stay.
+// On a normal web host (GitHub Pages), OpenStreetMap standard tiles load and replace the vector base.
+// OSM tile policy: visible attribution (already in the attribution control) and a valid Referer (browser default).
+// Dark theme: OSM has no dark style, so CSS inverts the tile pane (see .tiles-on rules).
+const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19});
+tiles.once('tileload', () => {
+  tilesOn = true;
+  map.getContainer().classList.add('tiles-on');
+  map.getPane('base').style.display = 'none';
+  syncRoads();
+});
+tiles.on('tileerror', () => { if (!tilesOn && map.hasLayer(tiles)) map.removeLayer(tiles); });
+tiles.addTo(map);
+
+function styleBase() {
+  base.land.setStyle({stroke:true, color:css('--land-edge'), weight:.6, fillColor:css('--land'), fillOpacity:1});
+  base.us.setStyle({stroke:true, color:css('--land-edge'), weight:.6, fillColor:css('--us'), fillOpacity:1});
+  base.lakes.setStyle({stroke:true, color:css('--river'), weight:.6, fillColor:css('--lake'), fillOpacity:1});
+  base.fraser.setStyle({color:css('--river'), weight:4, opacity:1, lineCap:'round'});
+  styleRoads();
+  stylePoi();
+}
+
+// Repaint map colors when the viewer switches theme.
+const repaint = () => { styleBase(); render(); };
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', repaint);
+new MutationObserver(repaint).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+map.on('zoomend', () => { syncZoomClasses(); syncRoads(); syncPoi(); });
+
+$('date').value = todayISO();
+state.md = $('date').value.slice(5);
+styleBase();
+applyLang(LANG, false);
+const all = L.featureGroup(WATERS.filter(w => !w.tidal && !w.closure).map(w => layers[w.id].line));
+map.fitBounds(all.getBounds(), {padding:[20, 20]});
+syncZoomClasses(); syncRoads(); syncPoi();
+new ResizeObserver(() => map.invalidateSize()).observe($('map'));
+})();
+</script>

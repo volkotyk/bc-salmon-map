@@ -1,0 +1,60 @@
+"""Add DFO tidal subareas (Areas 28, 29) and the Mouth of the Fraser closure to geo.json."""
+import json
+from shapely.geometry import shape, mapping, Polygon, Point
+from shapely.ops import unary_union
+
+geo = json.load(open("geo.json"))
+land = unary_union([shape(geo["land"]), shape(geo["us"])])
+sub = json.load(open("sub.geojson"))
+
+
+def rnd(g, nd=4):
+    def r(c):
+        if isinstance(c[0], (int, float)):
+            return [round(c[0], nd), round(c[1], nd)]
+        return [r(x) for x in c]
+    m = mapping(g)
+    return {"type": m["type"], "coordinates": r(m["coordinates"])}
+
+
+subs, pts = {}, {}
+for f in sub["features"]:
+    lab = f["properties"]["LABEL"]
+    g = shape(f["geometry"]).buffer(0)
+    # Trim the 1:50K polygon to the OSM shoreline; keep river arms that the OSM coastline does not enter.
+    water = g.difference(land)
+    if water.area < 0.5 * g.area:
+        water = g
+    water = water.simplify(0.0003)
+    subs[lab] = rnd(water)
+    p = water.representative_point()
+    pts[lab] = [round(p.x, 4), round(p.y, 4)]
+
+
+def dm(d, m):
+    return d + m / 60
+
+
+# Mouth of the Fraser River Salmon Closure: vertices from the DFO Area 29 description.
+mouth = Polygon([(-dm(123, 20.404), dm(49, 17.519)), (-dm(123, 15.867), dm(49, 17.400)),
+                 (-dm(123, 15.860), dm(49, 15.995)), (-dm(123, 15.860), dm(49, 15.936)),
+                 (-dm(123, 16.772), dm(49, 15.443)), (-dm(123, 16.779), dm(49, 15.437)),
+                 (-dm(123, 17.117), dm(49, 13.258)), (-dm(123, 20.797), dm(49, 13.349))])
+
+geo["subs"] = subs
+geo["subpts"] = pts
+geo["mouth"] = rnd(mouth, 5)
+
+# Which subarea holds each named spot closure (used for popup notes).
+SPOTS = {"Whytecliff Park": (-123.292, 49.371), "Point Atkinson": (-123.264, 49.330),
+         "Porteau Cove": (-123.236, 49.558), "Mannion Bay": (-123.330, 49.382),
+         "Capilano mouth": (-123.137, 49.318), "Seymour mouth": (-123.030, 49.301),
+         "Chapman ribbon": (-123.73, 49.44)}
+for n, xy in SPOTS.items():
+    p = Point(xy)
+    best = min(subs, key=lambda k: shape(subs[k]).distance(p))
+    print(n, "->", best, round(shape(subs[best]).distance(p), 4))
+
+s = json.dumps(geo, separators=(",", ":"))
+open("geo.json", "w").write(s)
+print("bytes", len(s))
