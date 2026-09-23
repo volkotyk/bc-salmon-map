@@ -20,6 +20,7 @@ An interactive map of where you can fish for Pacific salmon in the BC Lower Main
 Features:
 
 - Filter by species: Chinook, Coho, Chum, Pink, Sockeye (Ukrainian names always show the English DFO name).
+- Species identification card: pick a species to see drawings of the sea phase and the spawning phase, plus the key marks (gums, tail spots, colours).
 - Pick a date: the map and list show the rules in force on that day, including ranges that cross New Year.
 - Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure.
 - Click any water for the full rule table, notes and fishery-notice links.
@@ -43,6 +44,7 @@ build/
   leaflet.css           Leaflet 1.9.4 CSS (inlined at build time; Leaflet JS loads from cdnjs)
   geo.json              map geometry: land, rivers, lakes, tidal subareas
   sub.geojson           DFO PFMA subareas for Areas 28–29 (raw)
+  species/*.webp        species illustrations (public domain), inlined into the page; fetch_species.py downloads them
   *.py                  geometry fetch + build scripts, assemble.py
 ```
 
@@ -82,9 +84,9 @@ python run_all.py --offline  # rebuild from raw files already downloaded
 python run_all.py --page     # only re-assemble index.html after editing template.html
 ```
 
-`index.html` (single file, ~0.6 MB, no backend) is a build output and is not committed. GitHub Actions assembles and publishes it.
+`index.html` (single file, ~0.9 MB with the inlined species drawings, no backend) is a build output and is not committed. GitHub Actions assembles and publishes it.
 
-Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `build_geo.py` → `build_tidal.py` → `assemble.py`.
+Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species drawing changes; its output `species/*.webp` is committed.
 
 ### Local preview
 
@@ -118,6 +120,7 @@ Free static hosts that work the same way: GitHub Pages, Cloudflare Pages, Netlif
 - DFO Pacific Fishery Management Subareas 1:50K: https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/Pacific/DFO_BC_PFMA_SUBAREAS_50K_V3_1/MapServer
 - OpenStreetMap contributors (ODbL 1.0), via the Overpass API: coastline, rivers, lakes
 - Basemap tiles: © OpenStreetMap contributors, served by the OpenStreetMap Foundation
+- Species illustrations (public domain, via Wikimedia Commons): U.S. Government Printing Office pamphlet *Lake Washington Ship Canal Fish Ladder* (1996) for Chinook, Coho and Sockeye; Timothy Knepp, U.S. Fish and Wildlife Service, for spawning Pink and Chum; A. Hoen & Co. plate in Evermann & Goldsborough, *The Fishes of Alaska* (1907), for sea-phase Pink. There is no public-domain sea-phase Chum drawing, so the card describes it in text.
 
 ## Licence
 

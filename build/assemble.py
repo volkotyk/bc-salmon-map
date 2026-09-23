@@ -1,4 +1,4 @@
-"""Inline Leaflet CSS, geo.json, rules.json and status.json into template.html.
+"""Inline Leaflet CSS, geo.json, rules.json, status.json and species/*.webp into template.html.
 
 CHECKED_AT (ISO time of the last successful DFO check) is taken from the environment when set.
 
@@ -6,17 +6,20 @@ Writes:
   ../index.html        standalone page for GitHub Pages or any static host
   out/artifact.html    body-only variant for the claude.ai artifact host, which adds its own <html>/<head>
 """
-import json, os
+import base64, glob, json, os
 
-t = open("template.html", encoding="utf-8").read()
+t =open("template.html", encoding="utf-8").read()
 css = open("leaflet.css", encoding="utf-8").read()
 geo = open("geo.json", encoding="utf-8").read()
 rules = open("rules.json", encoding="utf-8").read().replace("</", r"<\/")  # <\/ is valid JSON and keeps </script> out
 status = json.load(open("status.json", encoding="utf-8"))
 status["checkedAt"] = os.environ.get("CHECKED_AT") or None
 status = json.dumps(status, ensure_ascii=False).replace("</", r"<\/")
+# Species illustrations as data URIs: the page stays one file and works offline after the first load.
+species = json.dumps({os.path.basename(p)[:-5]: "data:image/webp;base64," + base64.b64encode(open(p, "rb").read()).decode()
+                      for p in sorted(glob.glob("species/*.webp"))})
 body = (t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo)
-        .replace("__RULES__", rules).replace("__STATUS__", status))
+        .replace("__RULES__", rules).replace("__STATUS__", status).replace("__SPECIES__", species))
 
 os.makedirs("out", exist_ok=True)
 open("out/artifact.html", "w", encoding="utf-8").write(body)

@@ -58,6 +58,16 @@ h1{font:700 34px/1.02 var(--f-display);margin:4px 0 6px;text-wrap:balance;letter
 .species input:checked+label{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .species input:checked+label small{color:inherit;opacity:.7}
 .species input:focus-visible+label{outline:2px solid var(--focus);outline-offset:2px}
+.sp-hint{font-size:12.5px;color:var(--ink-3);margin:0}
+.spcard{border:1px solid var(--line);border-radius:8px;padding:8px 12px 10px}
+.spcard summary{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.sp-fig{margin:10px 0 0}
+.sp-fig img{display:block;width:100%;aspect-ratio:2.6/1;object-fit:contain;background:#fff;border-radius:6px}
+.sp-fig figcaption{font-size:12px;color:var(--ink-3);margin-top:3px}
+.spcard ul{padding-left:18px;margin:10px 0 0;color:var(--ink-2);font-size:13px}
+.spcard li{margin-bottom:4px}
+.spcard li b{color:var(--ink);font-weight:600}
+.spcard .note{font-size:12px;color:var(--ink-3);margin:8px 0 0}
 .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--c)}
 .dot.off{background:none;border:1.5px solid var(--c-closed)}
 .dot.sq{border-radius:2px;opacity:.75}
@@ -166,6 +176,8 @@ details li{margin-bottom:6px}
     <div class="ctl">
       <span class="ctl-label" id="sp-label"></span>
       <div class="species" role="radiogroup" aria-labelledby="sp-label" id="species"></div>
+      <p class="sp-hint" id="sp-hint"></p>
+      <details class="spcard" id="spcard" hidden><summary id="spcard-title"></summary><div id="spcard-body"></div></details>
     </div>
 
     <div class="ctl">
@@ -199,6 +211,7 @@ details li{margin-bottom:6px}
 <script id="geo" type="application/json">__GEO__</script>
 <script id="data-rules" type="application/json">__RULES__</script>
 <script id="data-status" type="application/json">__STATUS__</script>
+<script id="data-species" type="application/json">__SPECIES__</script>
 <script>
 (() => {
 const GEO = JSON.parse(document.getElementById('geo').textContent);
@@ -250,6 +263,11 @@ const I18N = {
     asOf: d => `Статус DFO на ${d}. «Зараз» означає, що DFO не вказує дату завершення.`,
     boldNote: d => `Жирним — правила, що діють ${d}.`,
     routeGoogle: 'Маршрут у Google Maps ↗', openOsm: 'Відкрити в OpenStreetMap ↗',
+    spHint: 'Натисніть на вид, щоб побачити, як він виглядає.',
+    spCardTitle: sp => `Як розпізнати: ${sp}`,
+    phaseOcean: 'У морі (Area 28 і 29) і на початку ходу в річку', phaseSpawn: 'Нерестовий самець у річці',
+    spCardNote: 'Заводська риба (hatchery marked) не має жирового плавця — маленького плавця на спині біля хвоста. На його місці є загоєний шрам. Ілюстрації показують самців; у самиць нерестові ознаки слабші.',
+    spCredit: 'Ілюстрації: уряд США (Lake Washington Ship Canal Fish Ladder, 1996), T. Knepp / USFWS, Evermann і Goldsborough (1907). Суспільне надбання.',
     rules: `<summary>Загальні правила</summary>
       <h3>Усюди</h3><ul>
         <li>Денний ліміт усіх видів лосося з припливних і прісних вод разом — 4. Ліміти для окремих видів теж діють.</li>
@@ -297,6 +315,11 @@ const I18N = {
     asOf: d => `DFO status as of ${d}. "Now" means DFO gives no end date.`,
     boldNote: d => `Bold: rules in force on ${d}.`,
     routeGoogle: 'Directions in Google Maps ↗', openOsm: 'Open in OpenStreetMap ↗',
+    spHint: 'Tap a species to see what it looks like.',
+    spCardTitle: sp => `How to identify: ${sp}`,
+    phaseOcean: 'At sea (Areas 28 and 29) and early in the river run', phaseSpawn: 'Spawning male in the river',
+    spCardNote: 'A hatchery marked fish has no adipose fin (the small fin on the back near the tail); a healed scar is in its place. The drawings show males; females have weaker spawning features.',
+    spCredit: 'Illustrations: U.S. Government (Lake Washington Ship Canal Fish Ladder, 1996), T. Knepp / USFWS, Evermann and Goldsborough (1907). Public domain.',
     rules: `<summary>General rules</summary>
       <h3>Everywhere</h3><ul>
         <li>The daily limit for all Pacific salmon from tidal and fresh waters combined is 4. Individual species limits also apply.</li>
@@ -340,6 +363,44 @@ const spLow = id => LANG === 'uk' ? `${spById(id).uk.toLowerCase()} (${spById(id
 const SP_ACC = {
   uk: {all:'Лосося (salmon)', chinook:'Чавичу (Chinook)', coho:'Кижуча (Coho)', chum:'Кету (Chum)', pink:'Горбушу (Pink)', sockeye:'Нерку (Sockeye)'},
   en: {all:'Salmon', chinook:'Chinook', coho:'Coho', chum:'Chum', pink:'Pink', sockeye:'Sockeye'},
+};
+
+// Identification card. Images come from build/species/<id>-<phase>.webp (see fetch_species.py).
+// Marks are trusted markup (only <b>). Chum has no public-domain sea-phase drawing, so its text describes it.
+const SPECIES_IMG = JSON.parse(document.getElementById('data-species').textContent);
+const SPECIES_MARKS = {
+  chinook: [
+    B('<b>Чорні ясна</b> біля основи зубів; увесь рот темний.', '<b>Black gums</b> at the base of the teeth; the whole mouth is dark.'),
+    B('Великі неправильні чорні плями на спині й на <b>обох лопатях хвоста</b>.', 'Large irregular black spots on the back and on <b>both lobes of the tail</b>.'),
+    B('Найбільший із п’яти видів.', 'The largest of the five species.'),
+    B('Кижуч (Coho) схожий, але в нього світлі ясна, а плями лише на верхній лопаті хвоста.', 'Coho looks similar, but has light gums and spots on the upper tail lobe only.'),
+  ],
+  coho: [
+    B('<b>Світлі ясна</b> (білі або сірі), хоча рот темний.', '<b>Light gums</b> (white or grey), although the mouth is dark.'),
+    B('Дрібні чорні плями на спині й лише на <b>верхній лопаті хвоста</b>.', 'Small black spots on the back and on the <b>upper tail lobe only</b>.'),
+    B('Широка основа хвоста.', 'Wide base of the tail.'),
+    B('На нересті: червоні боки, темні спина й голова, у самців гачкувата щелепа.', 'Spawning: red sides, dark back and head, males have a hooked jaw.'),
+  ],
+  chum: [
+    B('<b>Немає чітких чорних плям</b> на спині й хвості.', '<b>No distinct black spots</b> on the back or tail.'),
+    B('Хвіст зі сріблястими смужками.', 'Silver streaks on the tail.'),
+    B('У морі: сріблястий, інколи з ледь помітними вертикальними смугами.', 'At sea: silver, sometimes with faint vertical bars.'),
+    B('На нересті: зелені й фіолетові вертикальні смуги («тигровий» візерунок), великі зуби в самців, білі кінчики черевних і анального плавців.', 'Spawning: green and purple vertical bars ("calico"), large teeth in males, white tips on the pelvic and anal fins.'),
+    B('Нерка (Sockeye) теж без плям. У кети 19–26 коротких товстих зябрових тичинок, у нерки 28–40 довгих і тонких.', 'Sockeye has no spots either. Chum has 19–26 short, thick gill rakers; Sockeye has 28–40 long, thin ones.'),
+  ],
+  pink: [
+    B('Великі <b>овальні</b> чорні плями на спині й на обох лопатях хвоста.', 'Large <b>oval</b> black spots on the back and on both lobes of the tail.'),
+    B('Дуже дрібна луска.', 'Very small scales.'),
+    B('Найменший вид: зазвичай до 2,5 кг.', 'The smallest species: usually up to 2.5 kg.'),
+    B('На нересті в самців великий горб на спині.', 'Spawning males have a large hump on the back.'),
+    B('У Fraser заходить лише в непарні роки.', 'Returns to the Fraser in odd-numbered years only.'),
+  ],
+  sockeye: [
+    B('<b>Немає чітких чорних плям</b> на спині й хвості.', '<b>No distinct black spots</b> on the back or tail.'),
+    B('У морі: металево-синя спина, сріблясті боки, струнке тіло.', 'At sea: metallic blue back, silver sides, slim body.'),
+    B('Багато довгих тонких зябрових тичинок (28–40).', 'Many long, thin gill rakers (28–40).'),
+    B('На нересті: <b>яскраво-червоне тіло й зелена голова</b>.', 'Spawning: <b>bright red body and green head</b>.'),
+  ],
 };
 
 const DISTRICTS = {
@@ -578,6 +639,24 @@ function renderSpecies() {
   }).join('');
 }
 
+// Shows the identification card of the selected species; "All open" shows a hint instead.
+function renderSpCard() {
+  const sp = state.sp, card = $('spcard');
+  $('sp-hint').hidden = sp !== 'all';
+  $('sp-hint').textContent = t('spHint');
+  card.hidden = sp === 'all';
+  if (sp === 'all') return;
+  $('spcard-title').textContent = t('spCardTitle', spName(sp));
+  const fig = ph => SPECIES_IMG[`${sp}-${ph}`] ? `<figure class="sp-fig">
+      <img src="${SPECIES_IMG[`${sp}-${ph}`]}" alt="${esc(`${spName(sp)}: ${t(ph === 'ocean' ? 'phaseOcean' : 'phaseSpawn')}`)}">
+      <figcaption>${esc(t(ph === 'ocean' ? 'phaseOcean' : 'phaseSpawn'))}</figcaption></figure>` : '';
+  $('spcard-body').innerHTML = fig('ocean') + fig('spawn')
+    + `<ul>${SPECIES_MARKS[sp].map(m => `<li>${tx(m)}</li>`).join('')}</ul>`
+    + `<p class="note">${esc(t('spCardNote'))}</p><p class="note">${esc(t('spCredit'))}</p>`;
+}
+$('spcard').open = store.get('spcard') !== '0';
+$('spcard').addEventListener('toggle', () => store.set('spcard', $('spcard').open ? '1' : '0'));
+
 function legend() {
   const rows = state.sp === 'all'
     ? [['both', t('legendBoth')], ['chinook', t('legendChinook')], ['coho', t('legendCoho')]]
@@ -659,12 +738,13 @@ function applyLang(lang, save) {
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   const wasOpen = activePopup && map.hasLayer(activePopup) && reopen;
   renderSpecies();
+  renderSpCard();
   renderStatus();
   render();
   if (wasOpen) wasOpen();
 }
 
-$('species').addEventListener('change', e => { state.sp = e.target.value; render(); });
+$('species').addEventListener('change', e => { state.sp = e.target.value; renderSpCard(); render(); });
 $('date').addEventListener('change', e => { if (e.target.value) { state.md = e.target.value.slice(5); render(); } });
 $('today').addEventListener('click', () => { $('date').value = todayISO(); state.md = $('date').value.slice(5); render(); });
 document.querySelector('.lang').addEventListener('click', e => {
