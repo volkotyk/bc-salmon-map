@@ -151,7 +151,6 @@ button:active{background:var(--line)}
 /* The "show more" fold of the report list: plain text styling, not the section style of the rules <details>. */
 .run details.more{border-top:0;padding-top:0}
 .run details.more summary{font:600 13px var(--f-body);letter-spacing:0;text-transform:none;color:var(--focus);padding:6px 6px;min-height:var(--tap);display:flex;align-items:center}
-.run details.more ul{padding-left:0;margin:0;color:inherit}
 .pop-reps{margin:4px 0 0;padding-left:18px}
 .pop-reps li{margin-bottom:4px}
 .run .lim .dot{display:inline-block;width:8px;height:8px;vertical-align:baseline}
@@ -159,9 +158,16 @@ button:active{background:var(--line)}
 .run-note{color:var(--ink-3);font-size:12px;margin:6px 0 0}
 details{border-top:1px solid var(--line);padding-top:12px}
 summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
-details h3{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 0}
-details ul{padding-left:18px;margin:8px 0 0;color:var(--ink-2)}
-details li{margin-bottom:6px}
+#rules h3{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 0}
+#rules ul{padding-left:18px;margin:8px 0 0;color:var(--ink-2)}
+#rules li{margin-bottom:6px}
+/* Foldable blocks (fold() in the script) look like the rules summary. The heading inside keeps the outline for screen readers. */
+.fold[open]>summary{margin-bottom:6px}
+.fold>summary :is(h2,h3){display:inline;font:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0;border:0}
+.fold .fold{border-top:0;padding-top:0;margin-top:10px}
+.fold .fold>summary{font-size:13px;letter-spacing:.06em;color:var(--ink-3)}
+.pop .fold{margin-top:10px;padding-top:8px}
+.pop .fold>summary{font-size:13px}
 .foot{font-size:12px;color:var(--ink-3);margin:0}
 .status{font:12.5px/1.45 var(--f-body);color:var(--ink-2);margin:0;padding:10px 12px;background:var(--chip-bg);border-radius:6px}
 .status b{font-weight:600;color:var(--ink)}
@@ -785,14 +791,17 @@ function openPopup(w, latlng, sub) {
   const ll = latlng || anchorPoint(w);
   const need = licensed(w) ? '' : `<p class="banner">${esc(t('needLicence', !!w.tidal))}</p>`;
   // Recent shop reports that name this water: under the rules, because the rules are what applies.
-  const reps = reportsFor(w), repHtml = reps.length ? `<div class="subh">${esc(t('popReports'))}</div><ul class="pop-reps">`
+  const reps = reportsFor(w), repHtml = reps.length ? fold('pop-reps', esc(t('popReports')), '<ul class="pop-reps">'
     + reps.map(r => `<li>${extLink(r.url, `${esc(r.src)} · ${fmtIso(r.date)}`)}${manualTag(r)}${r.manual ? `: ${esc(r.title)}` : ''}`
       + (r.sp.length ? ` — ${esc(t('mentioned'))}${r.sp.map(sp => esc(spLow(sp))).join(', ')}` : '') + '</li>').join('')
-    + `</ul><p class="note">${esc(t('popReportsNote'))}</p>` : '';
+    + `</ul><p class="note">${esc(t('popReportsNote'))}</p>`) : '';
   const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}${need}
     ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${repHtml}${asOf}
     <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
-  activePopup = L.popup(popupOpts(360)).setLatLng(ll).setContent(html).openOn(map);
+  // A node, not a string: activePopup.update() after a fold toggle then keeps the node and its fold state.
+  const node = document.createElement('div');
+  node.innerHTML = html;
+  activePopup = L.popup(popupOpts(360)).setLatLng(ll).setContent(node.firstElementChild).openOn(map);
 }
 
 // A point on the feature itself (not just the bounds centre, which can fall on dry land for a curved river).
@@ -850,6 +859,18 @@ function renderSpCard() {
 }
 $('spcard').open = store.get('spcard') !== '0';
 $('spcard').addEventListener('toggle', () => store.set('spcard', $('spcard').open ? '1' : '0'));
+
+// A foldable block: open by default. The page remembers the blocks that the viewer folds, also across re-renders.
+const folded = new Set((store.get('folded') || '').split(',').filter(Boolean));
+const fold = (id, title, body) => `<details class="fold" data-fold="${id}"${folded.has(id) ? '' : ' open'}><summary>${title}</summary>${body}</details>`;
+// 'toggle' does not bubble, so listen in the capture phase.
+document.addEventListener('toggle', e => {
+  const id = e.target.dataset && e.target.dataset.fold;
+  if (!id) return;
+  e.target.open ? folded.delete(id) : folded.add(id);
+  store.set('folded', [...folded].join(','));
+  if (e.target.closest('.leaflet-popup') && activePopup) activePopup.update();   // new height: re-check maxHeight and the position
+}, true);
 
 function legend() {
   const rows = state.sp === 'all'
@@ -955,12 +976,13 @@ function renderRun() {
       ${waters(r).length ? `<span class="wl">${esc(t('watersIn'))}${waters(r).map(w => `<button type="button" class="wlink" data-id="${w.id}">${esc(tx(w.name))}</button>`).join('')}</span>` : ''}</span></li>`);
   // The newest SHOP_SHOW reports stay open; the rest fold under "show N more". The pins and popups keep all of them.
   const moreOpen = !!($('run').querySelector('details.more') || {}).open;   // keep the choice across a language switch
-  $('run').innerHTML = `<h2>${esc(t('runTitle'))}</h2>`
-    + (rows ? `<p class="run-lede">${esc(t('runLede'))}</p><ul>${rows}</ul>` : '')
-    + (reps.length ? `<h3>${esc(t('shopTitle'))} <span class="cnt">(${reps.length})</span></h3><ul>${reps.slice(0, SHOP_SHOW).join('')}</ul>`
+  $('run').innerHTML = fold('run', `<h2>${esc(t('runTitle'))}</h2>`,
+    (rows ? `<p class="run-lede">${esc(t('runLede'))}</p><ul>${rows}</ul>` : '')
+    + (reps.length ? fold('shops', `<h3>${esc(t('shopTitle'))} <span class="cnt">(${reps.length})</span></h3>`,
+      `<ul>${reps.slice(0, SHOP_SHOW).join('')}</ul>`
       + (reps.length > SHOP_SHOW ? `<details class="more"${moreOpen ? ' open' : ''}><summary>${esc(t('showMore', reps.length - SHOP_SHOW))}</summary>`
-        + `<ul>${reps.slice(SHOP_SHOW).join('')}</ul></details>` : '') : '')
-    + `<p class="run-note">${esc(t('runNote', REPORTS.generated ? fmtFull(REPORTS.generated.slice(0, 10)) : '—'))}</p>`;
+        + `<ul>${reps.slice(SHOP_SHOW).join('')}</ul></details>` : '')) : '')
+    + `<p class="run-note">${esc(t('runNote', REPORTS.generated ? fmtFull(REPORTS.generated.slice(0, 10)) : '—'))}</p>`);
 }
 
 function render() {
@@ -989,12 +1011,12 @@ function render() {
     const items = res.filter(r => r.w.d === d)
       .sort((a, b) => (ORDER[a.cat] - ORDER[b.cat]) || tx(a.w.name).localeCompare(tx(b.w.name)));
     if (!items.length) return '';                       // a district outside the viewer's licence
-    return `<section class="group"><h2>${esc(tx(title))}</h2><ul>${items.map(({w, cat, text}) => {
+    return `<section class="group">${fold('grp-' + d, `<h2>${esc(tx(title))}</h2>`, `<ul>${items.map(({w, cat, text}) => {
       const off = cat === 'closed' || cat === 'inactive';
       return `<li><button type="button" class="item ${off ? 'is-off' : ''}" data-id="${w.id}">
         <span class="dot ${off ? 'off' : ''} ${w.tidal ? 'sq' : ''}" style="--c:var(${CAT_VAR[cat]})"></span>
         <span class="nm">${esc(tx(w.name))}${w.subsLabel ? ` <small>${esc(tx(w.subsLabel))}</small>` : ''}</span><span class="lim">${esc(text)}</span></button></li>`;
-    }).join('')}</ul></section>`;
+    }).join('')}</ul>`)}</section>`;
   }).join('');
   legend();
   map.closePopup();
