@@ -1,12 +1,12 @@
 """Rebuild the map from scratch, or only re-assemble the page.
 
-  python run_all.py            fetch OSM + DFO data, rebuild geo.json, write ../index.html
+  python run_all.py            fetch OSM + DFO data and reports, rebuild geo.json, write ../index.html
   python run_all.py --offline  skip downloads, reuse the raw files already in this folder
-  python run_all.py --page     only re-assemble ../index.html from template.html + geo.json
+  python run_all.py --page     only re-assemble ../index.html from template.html + geo.json + reports.json
 """
 import subprocess, sys
 
-FETCH = ["osm.py", "fetch_coast.py", "fetch_subareas.py"]
+FETCH = ["osm.py", "fetch_coast.py", "fetch_subareas.py", "fetch_reports.py"]
 BUILD = ["build_geo.py", "build_tidal.py"]
 PAGE = ["assemble.py"]
 

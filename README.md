@@ -15,6 +15,7 @@ An interactive map of where you can fish for Pacific salmon in the BC Lower Main
 | Rivers and lakes (lines) | 23 waters of DFO **Region 2 – Lower Mainland** with salmon openings, limits, gear rules, sections | DFO freshwater salmon table |
 | Tidal subareas (shaded) | All 31 subareas of DFO **Areas 28 and 29**: Howe Sound, Burrard Inlet, Strait of Georgia, tidal Fraser | DFO tidal pages + DFO PFMA subarea boundaries |
 | Seasonal closure | Mouth of the Fraser River salmon closure (Aug 1 – Sep 30), drawn from the DFO coordinates | DFO Area 29 page |
+| Running now (panel) | Daily catch of the Fraser test fisheries: Albion for Chinook, Chum and Coho, Whonnock and Qualark for Sockeye (and Pink in pink years). Each row: last sample, 7-day total, trend, 28-day bar strip. The newest tackle shop reports with the species and map waters they name; a water button flies the map to that water | [DFO Albion test fishery](https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html), [PSC test fishing results](https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/) (PDF tables), [Pacific Angler Friday Fishing Report](https://www.pacificangler.ca/blogs/learn), Reddit [r/fishingBC](https://www.reddit.com/r/fishingBC/) and [r/chilliwack](https://www.reddit.com/r/chilliwack/) (public feeds) |
 | Base map | Real OpenStreetMap tiles when the host allows them; otherwise a built-in outline map (coastline, lakes, rivers) | OpenStreetMap |
 
 Features:
@@ -27,13 +28,15 @@ Features:
 - Click any water for the full rule table, notes and fishery-notice links.
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
+- "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, Facebook and TikTok have no public search API for this use; add their posts by hand.
 - UA / EN switch (also `#uk` / `#en` in the URL; the choice is remembered). Light and dark themes.
 - Mobile first: on a phone the map fills the screen and the panel is a bottom sheet. Drag the sheet or tap its handle: the short position shows the species and the date, the middle position adds the list, the tall position shows everything. From 768 px wide the panel is a sidebar.
 
 ## Repository layout
 
 ```
-.github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, build index.html, deploy to Pages
+.github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, fetch the running-now data, build index.html, deploy to Pages
+.github/workflows/pr-preview.yml   pull requests: fetch the running-now data (strict), build index.html, attach it as the site-preview artifact; no deploy
 dfo/
   update.py             reads the DFO pages, parses the tables, validates, writes build/rules.json + build/status.json
   catalog.py            hand-kept knowledge: DFO names -> map lines, group names, Ukrainian wording
@@ -47,8 +50,31 @@ build/
   geo.json              map geometry: land, rivers, lakes, tidal subareas
   sub.geojson           DFO PFMA subareas for Areas 28–29 (raw)
   species/*.webp        species illustrations (public domain), inlined into the page; fetch_species.py downloads them
+  fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (a failed source keeps its previous data)
+  reports.json          running-now data (generated; committed when the data change, so git history is the daily snapshot)
+  manual/reports.csv    reports added by hand (see "Add data by hand")
+  manual/testfish.csv   test-fishery or count rows added by hand
   *.py                  geometry fetch + build scripts, assemble.py
 ```
+
+## Add data by hand
+
+Use this for a report or a table that no automatic source covers: a forum post, a message from an angler,
+a count table from another site. The column rules are in the comment lines at the top of each file.
+
+1. Add one row to `build/manual/reports.csv` (a report) or `build/manual/testfish.csv` (daily counts):
+   ```
+   2026-09-21,FishingWithRod,Coho on the lower Vedder,https://www.fishingwithrod.com/...,coho,Vedder
+   ```
+   Species can be English or Ukrainian (`coho` or `кижуч`); waters can be a name (`Vedder`, `Capilano River`),
+   an id from `build/rules.json`, or a tidal subarea (`28-8`). Separate several values with `;`.
+2. Check it locally: `cd build && python fetch_reports.py --strict && python run_all.py --page`.
+   A bad row prints a warning with its line number and is left out.
+3. Commit the CSV and push (or open a pull request: the PR check turns red on a bad row).
+   The next run puts the row into `reports.json` and on the map, marked *added by hand*.
+
+A report shows for 21 days, a count row for 28 days, as the automatic data do. The rows stay in the CSV and in git history.
+Rows for Albion, Whonnock and Qualark are refused, because those sites are collected automatically in other effort units.
 
 Python standard library only for everything that runs in GitHub Actions; `build/requirements.txt` is only for rebuilding the geometry.
 
@@ -88,7 +114,7 @@ python run_all.py --page     # only re-assemble index.html after editing templat
 
 `index.html` (single file, ~0.9 MB with the inlined species drawings, no backend) is a build output and is not committed. GitHub Actions assembles and publishes it.
 
-Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species drawing changes; its output `species/*.webp` is committed.
+Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `fetch_reports.py` (running-now panel) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species drawing changes; its output `species/*.webp` is committed.
 
 ### Local preview
 

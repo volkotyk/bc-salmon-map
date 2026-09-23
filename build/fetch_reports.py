@@ -1,0 +1,519 @@
+"""Fetch the "what is running now" data for the page panel. Standard library only.
+
+Two kinds of source:
+  test fishery   daily catch per species of the test nets on the Fraser:
+                 DFO Albion (Fort Langley; Chinook, Chum, Coho) from the DFO FOS report,
+                 PSC Whonnock (Maple Ridge) and Qualark (near Yale; Sockeye, Pink) from PSC PDF tables
+  shop reports   weekly fishing reports of tackle shops (Atom feed): title, date, link,
+                 species and map waters named in the text
+
+Writes reports.json next to this script. The file is committed: git history keeps a daily snapshot,
+and a local build has data without the network. A source that fails keeps its data from the previous
+snapshot and is logged as a warning; the script never fails the deploy, because the map must deploy
+without this panel. With GITHUB_OUTPUT set, it writes changed=true when the data (not only the time
+stamp) differ from the previous snapshot. Only titles, dates, links and tags are kept: the report
+text stays on the shop site.
+
+  python fetch_reports.py            deploy mode: warnings only
+  python fetch_reports.py --strict   PR check: exit code 1 when a source failed
+"""
+import csv, html, json, os, re, sys, time, urllib.parse, urllib.request, zlib
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE / "reports.json"
+UA = "bc-salmon-map-reports/1.0 (+https://github.com/volkotyk/bc-salmon-map)"
+
+FOS = "https://www-ops2.pac.dfo-mpo.gc.ca/fos2_Internet/Testfish/rptCSbD.cfm?stat=CPTFM"
+ALBION_PAGE = "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html"
+ALBION = [
+    # species, FOS fishery sub-id (net), FOS species code
+    ("chinook", 242, 124),   # 8" chinook net
+    ("chum",    227, 112),   # 6.75" chum net, from Sep 1
+    ("coho",    227, 115),   # coho caught in the chum net
+]
+PSC_PAGE = "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/"
+PSC = [
+    # site, PDF (links from PSC_PAGE); both PDFs have the same table layout
+    ("Whonnock", "https://www.psc.org/download/112/daily-test-fishing/3179/whonnock-gillnet.pdf"),
+    ("Qualark",  "https://www.psc.org/download/112/daily-test-fishing/11828/qualark-gillnet.pdf"),
+]
+KEEP_DAYS = 28            # test-fishery history kept in the page
+
+FEEDS = [
+    # source name, Atom feed, title filter (other blog posts are sales and news)
+    ("Pacific Angler", "https://www.pacificangler.ca/blogs/learn.atom", re.compile(r"fishing report", re.I)),
+]
+KEEP_REPORTS = 3          # newest reports kept per feed
+
+# Reddit: the public Atom feed of the newest posts (no API key). Most posts are questions, so a post
+# counts as a report only when it names a map water, salmon, and a catch or fish-condition word, and
+# its title is not a question. Posts stay in the snapshot for KEEP_DAYS, also after they leave the feed.
+REDDIT = ["fishingBC", "chilliwack"]
+REDDIT_FEED = "https://www.reddit.com/r/{}/new.rss?limit=100"
+SALMON_RE = re.compile(r"\bsalmon\b", re.I)
+# "catch" alone is left out: questions use it too ("hoping to catch a coho").
+CATCH_RE = re.compile(r"\b(?:caught|landed|hooked|fish on|limit(?:ed)? out|beached|bit(?:e|ing)|slow|dead|"
+                      r"skunked|no fish|plenty|lots of|school of|rolling|jumping|fresh (?:fish|run)|run is)\b", re.I)
+QUESTION_RE = re.compile(r"\?\s*$|\bvs\.?\b|\blooking for\b|^(?:how|where|what|which|when|why|any|anyone|is|are|does|do|"
+                         r"should|can|could|thoughts|help|i'?m looking|tips?|advice|recommend\w*|beginner|first time|best)\b", re.I)
+
+# Species names as anglers write them. "Pink" and "spring" alone are also a colour and a season.
+SPECIES = {
+    "chinook": r"chinook|springs|spring salmon",
+    "coho":    r"coho",
+    "chum":    r"chum|chums|dog salmon",
+    "pink":    r"pinks|pink salmon|humpies",
+    "sockeye": r"sockeye",
+}
+# Water names in report text -> map keys: a water id of build/rules.json, or a DFO tidal subarea
+# ("28-8"), because the ids of tidal groups follow the DFO table order and can change.
+# main() warns about keys that rules.json lacks. Town and lake names are excluded:
+# "Squamish", "Coquitlam" or "Harrison Lake" alone are not the river.
+WATERS = {
+    "chilliwack":      r"vedder|chilliwack river",
+    "capilano":        r"capilano",
+    "squamish":        r"squamish river|the squamish",
+    "cheakamus":       r"cheakamus",
+    "mamquam":         r"mamquam",
+    "ashlu":           r"ashlu",
+    "chapman":         r"chapman creek",
+    "lois":            r"lois lake",
+    "khartoum":        r"khartoum lake",
+    "coquitlam":       r"coquitlam river",
+    "deboville":       r"de ?boville",
+    "alouette":        r"alouette river|the alouette",
+    "kanaka":          r"kanaka creek",
+    "serpentine":      r"serpentine",
+    "nicomekl":        r"nicomekl",
+    "little-campbell": r"little campbell",
+    "stave":           r"stave river|the stave",
+    "norrish":         r"norrish|suicide creek",
+    "nicomen":         r"nicomen|dewdney slough",
+    "harrison":        r"harrison river|the harrison",
+    "chehalis":        r"chehalis river|the chehalis",
+    "a29-mouth":       r"fraser mouth|mouth of the fraser",
+    "28-1":            r"howe sound",
+    "28-10":           r"burrard inlet",
+    "28-8":            r"false creek",
+}
+tags = lambda table: {k: re.compile(rf"\b(?:{v})\b", re.I) for k, v in table.items()}
+SPECIES_RE, WATERS_RE = tags(SPECIES), tags(WATERS)
+
+
+def fetch(url, data=None):
+    last = None
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(url, data=data, headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.read()
+        except Exception as e:          # network hiccup: retry, then let the caller skip the source
+            last = e
+            if attempt == 2:
+                break
+            # 429 Too Many Requests (Reddit): wait as the server asks (Retry-After), up to a minute.
+            limited = getattr(e, "code", 0) == 429
+            asked = (e.headers.get("Retry-After") or "") if limited and e.headers else ""
+            time.sleep(min(60, int(asked)) if asked.isdigit() else (20 if limited else 5) * (attempt + 1))
+    raise RuntimeError(f"cannot fetch {url}: {last}")
+
+
+def fetch_text(url, data=None):
+    return fetch(url, data).decode("utf-8", "replace")
+
+
+def text_of(fragment):
+    s = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", fragment, flags=re.S | re.I)
+    s = html.unescape(re.sub(r"<[^>]+>", " ", s)).replace("\xa0", " ")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def day(date_iso, catch, effort, per=1):
+    # CPUE: catch per unit of net effort. The unit differs per source, so compare a series only with itself.
+    return [date_iso, catch, round(catch * per / effort, 2)]
+
+
+# ---------- DFO Albion: FOS "Catch Summary by Date" HTML table ----------
+FOS_DAY = re.compile(r"\d{2} [A-Z][a-z]{2} \d{4}$")
+num = lambda s: float(s.replace(",", "") or 0)
+
+
+def albion(year, fsub, species_code):
+    body = urllib.parse.urlencode({"lboYears": year, "lboFsub": fsub, "lboSpecies": species_code,
+                                   "cmdRunReport": "Run Report"}).encode()
+    page = fetch_text(FOS, body)
+    if "Catch Summary Table" not in page:
+        raise RuntimeError("FOS report layout changed: no 'Catch Summary Table'")
+    days = []
+    # A day row has 10 cells: date, net length (can be empty), then catch, sets, effort, CPUE
+    # for vessel 1 and the same four for vessel 2. Statweek subtotal rows do not start with a date.
+    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", page, flags=re.S | re.I):
+        cells = [text_of(c) for c in re.findall(r"<td[^>]*>(.*?)</td>", row, flags=re.S | re.I)]
+        if len(cells) != 10 or not FOS_DAY.match(cells[0]):
+            continue
+        catch, effort = int(num(cells[2]) + num(cells[6])), num(cells[4]) + num(cells[8])
+        if effort:                      # effort 0: no net in the water that day
+            # Fish per 1000 fathom-minutes, as in the DFO table.
+            days.append(day(datetime.strptime(cells[0], "%d %b %Y").date().isoformat(), catch, effort, 1000))
+    if not days and "Statweek" in page:
+        raise RuntimeError("FOS report has week totals but no day rows: the table layout changed")
+    return sorted(days)
+
+
+# ---------- PSC Whonnock / Qualark: PDF table (Microsoft Access report) ----------
+# The PDF has one Flate stream per page; each cell is a BT..ET block with a Tm position and
+# WinAnsi literal strings in a TJ array. That is enough to rebuild the table rows by y and x.
+PDF_ESC = re.compile(rb"\\([nrtbf()\\]|[0-7]{1,3})")
+PDF_ESC_MAP = {b"n": b"\n", b"r": b"\r", b"t": b"\t", b"b": b"\b", b"f": b"\f", b"(": b"(", b")": b")", b"\\": b"\\"}
+ROW_TOL = 3               # PDF units: a cell can sit 1-2 units off the rest of its row
+
+
+def pdf_rows(data):
+    """Rows of text cells, top to bottom on each page: [[page, y, [(x, text), ...]], ...]."""
+    rows, page = [], 0
+    for m in re.finditer(rb"<<([^<>]*?/FlateDecode[^<>]*?)>>\s*stream\r?\n", data):
+        start = m.end()
+        try:
+            stream = zlib.decompress(data[start:data.find(b"endstream", start)])
+        except zlib.error:
+            continue
+        if b"BT" not in stream:
+            continue                    # fonts, metadata
+        page += 1
+        items = []
+        for bt in re.findall(rb"BT(.*?)ET", stream, re.S):
+            tm = re.search(rb"([-\d.]+) ([-\d.]+) Tm", bt)
+            if tm:
+                s = b"".join(PDF_ESC.sub(lambda e: PDF_ESC_MAP.get(e.group(1)) or bytes([int(e.group(1), 8) & 255]), x)
+                             for x in re.findall(rb"\(((?:\\.|[^\\)])*)\)", bt))
+                items.append((float(tm.group(2)), float(tm.group(1)), s.decode("cp1252").strip()))
+        for y, x, t in sorted(items, key=lambda i: (-i[0], i[1])):
+            if rows and rows[-1][0] == page and rows[-1][1] - y <= ROW_TOL:
+                rows[-1][2].append((x, t))
+            else:
+                rows.append([page, y, [(x, t)]])
+    for r in rows:
+        r[2].sort()
+    return rows
+
+
+PSC_GROUPS = ["Assessment", "Sockeye", "Pink", "Chinook", "Chinook (Rel.)", "Coho", "Sthd", "Chum", "Other"]
+PSC_HEAD = ["Date", "Vessels", "Sets", "Effort", "Adult", "Jack", "All", "Adult", "Jack", "Adult", "Jack",
+            "All", "Rel.", "All", "All", "All"]
+PSC_EFFORT = 3
+PSC_COLS = {"sockeye": (4, 5), "pink": (6,)}      # PSC_HEAD columns: sockeye adult + jack, pink all
+PSC_DAY = re.compile(r"\d{2}-[A-Z][a-z]{2}-\d{2}$")
+
+
+def psc(url):
+    rows = pdf_rows(fetch(url))
+    if not any([t for _, t in cells] == PSC_GROUPS for _, _, cells in rows):
+        raise RuntimeError("PSC table layout changed: species header row not found")
+    starts, out = None, {sp: [] for sp in PSC_COLS}
+    for _, _, cells in rows:
+        texts = [t for _, t in cells]
+        if texts == PSC_HEAD:
+            starts = [x for x, _ in cells]      # left edge of each column on this page
+            continue
+        if starts is None or not PSC_DAY.match(texts[0]):
+            continue
+        vals = {}
+        for x, t in cells[1:]:
+            # Numbers are right-aligned, so a value starts at or right of its column's left edge.
+            vals[max((i for i, s in enumerate(starts) if s <= x + 2), default=0)] = num(t)
+        effort = vals.get(PSC_EFFORT, 0)
+        if not effort:                  # no set that day
+            continue
+        iso = datetime.strptime(texts[0], "%d-%b-%y").date().isoformat()
+        for sp, cols in PSC_COLS.items():
+            out[sp].append(day(iso, int(sum(vals.get(c, 0) for c in cols)), effort))
+    if starts is None or not any(out.values()):
+        raise RuntimeError("PSC table layout changed: no column header or no day rows")
+    return {sp: sorted(d) for sp, d in out.items()}
+
+
+def series(today, site, sp, src, url, days, **extra):
+    """A series of the page, or None: only the last KEEP_DAYS days, and only while the species runs there."""
+    since, week = (today - timedelta(days=KEEP_DAYS)).isoformat(), (today - timedelta(days=7)).isoformat()
+    days = [d for d in days if d[0] >= since]
+    print(f"{site} {sp}: {len(days)} days since {since}, {sum(d[1] for d in days)} fish")
+    # No fish in the last 7 days: the species is not running there now (a stray fish weeks ago is not a run).
+    if not any(d[1] for d in days if d[0] > week):
+        return None
+    return {"id": f"{slug(site)}-{sp}", "sp": sp, "site": site, "src": src, "url": url, "days": days, **extra}
+
+
+slug = lambda s: re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+
+def test_fishery(today, prev):
+    old = prev.get("testfish", [])
+    out = []                            # downstream to upstream
+
+    def add(site, sp, src, url, days):
+        s = series(today, site, sp, src, url, days)
+        if s:
+            out.append(s)
+
+    def keep(msg, match):
+        # A failed source keeps the series of the previous snapshot; their dates show their age.
+        kept = [s for s in old if match(s["id"])]
+        warn(f"{msg} (kept {len(kept)} series of the previous snapshot)")
+        out.extend(kept)
+
+    for sp, fsub, code in ALBION:
+        try:
+            add("Albion", sp, "DFO", ALBION_PAGE, albion(today.year, fsub, code))
+        except Exception as e:
+            keep(f"Albion {sp}: {e}", lambda i, sp=sp: i == f"albion-{sp}")
+    for site, url in PSC:
+        try:
+            for sp, days in psc(url).items():
+                add(site, sp, "PSC", PSC_PAGE, days)
+        except Exception as e:
+            keep(f"{site}: {e}", lambda i, p=f"{site.lower()}-": i.startswith(p))
+    return out
+
+
+# ---------- tackle shop reports: Atom feeds ----------
+ATOM = "{http://www.w3.org/2005/Atom}"
+
+
+def shop_reports(name, url, title_re):
+    root = ET.fromstring(fetch(url))
+    out = []
+    for e in root.iter(ATOM + "entry"):
+        title = re.sub(r"\s+", " ", e.findtext(ATOM + "title", "")).strip()
+        if not title_re.search(title):
+            continue
+        link = next((l.get("href") for l in e.iter(ATOM + "link") if l.get("rel", "alternate") == "alternate"), None)
+        stamp = e.findtext(ATOM + "published") or e.findtext(ATOM + "updated") or ""
+        body = text_of(e.findtext(ATOM + "content", ""))
+        if not (link and link.startswith("https://") and re.match(r"\d{4}-\d{2}-\d{2}", stamp)):
+            continue
+        out.append({"src": name, "title": title, "url": link, "date": stamp[:10],   # local date of the post
+                    "sp": [k for k, rx in SPECIES_RE.items() if rx.search(body)],
+                    "w": [k for k, rx in WATERS_RE.items() if rx.search(body)]})
+    out.sort(key=lambda r: r["date"], reverse=True)
+    return out[:KEEP_REPORTS]
+
+
+def reddit_reports(sub, today):
+    root = ET.fromstring(fetch(REDDIT_FEED.format(sub)))
+    since, out = (today - timedelta(days=KEEP_DAYS)).isoformat(), []
+    for e in root.iter(ATOM + "entry"):
+        title = re.sub(r"\s+", " ", e.findtext(ATOM + "title", "")).strip()
+        link = next((l.get("href") for l in e.iter(ATOM + "link")), None)
+        stamp = (e.findtext(ATOM + "published") or e.findtext(ATOM + "updated") or "")[:10]
+        # The feed body ends with "submitted by /u/<name> [link] [comments]": the name is not kept.
+        body = re.sub(r"submitted by\s+/u/\S+.*$", "", text_of(e.findtext(ATOM + "content", "")))
+        text = f"{title} {body}"
+        w = [k for k, rx in WATERS_RE.items() if rx.search(text)]
+        sp = [k for k, rx in SPECIES_RE.items() if rx.search(text)]
+        if not (link and link.startswith("https://") and stamp >= since and w and (sp or SALMON_RE.search(text))
+                and CATCH_RE.search(text) and not QUESTION_RE.search(title)):
+            continue
+        out.append({"src": f"Reddit r/{sub}", "title": title[:140], "url": link, "date": stamp, "sp": sp, "w": w, "reddit": True})
+    return out
+
+
+def reddit(prev, today):
+    since, out = (today - timedelta(days=KEEP_DAYS)).isoformat(), []
+    for i, sub in enumerate(REDDIT):
+        if i:
+            time.sleep(5)               # two requests a few seconds apart: well inside Reddit's rate limit
+        src = f"Reddit r/{sub}"
+        old = [r for r in prev.get("reports", []) if r.get("src") == src and r.get("date", "") >= since]
+        try:
+            got = reddit_reports(sub, today)
+        except Exception as e:
+            warn(f"{src}: {e} (kept {len(old)} posts of the previous snapshot)")
+            got = []
+        # Keep the posts of earlier runs too: a busy subreddit pushes a post out of the feed in days.
+        urls = {r["url"] for r in got}
+        merged = got + [r for r in old if r["url"] not in urls]
+        print(f"{src}: {len(got)} matching posts in the feed, {len(merged)} kept")
+        out += merged
+    return out
+
+
+def reports(prev):
+    out = []
+    for name, url, title_re in FEEDS:
+        try:
+            got = shop_reports(name, url, title_re)
+        except Exception as e:
+            kept = [r for r in prev.get("reports", []) if r.get("src") == name and not r.get("manual")]
+            warn(f"{name}: {e} (kept {len(kept)} reports of the previous snapshot)")
+            out += kept
+            continue
+        print(f"{name}: {len(got)} reports")
+        out += got
+    return sorted(out, key=lambda r: r["date"], reverse=True)
+
+
+# ---------- manual data: build/manual/*.csv, written by hand and committed ----------
+# The script only reads these files. A bad row is a warning and is left out (PR check: red).
+MANUAL = HERE / "manual"
+SP_NAMES = {"chinook": "chinook", "spring": "chinook", "чавича": "chinook", "coho": "coho", "кижуч": "coho",
+            "chum": "chum", "кета": "chum", "pink": "pink", "горбуша": "pink", "sockeye": "sockeye", "нерка": "sockeye"}
+AUTO_SITES = {"albion", "whonnock", "qualark"}      # collected automatically, in other effort units
+
+
+def read_csv(name):
+    """Rows of build/manual/<name> as (line number, dict). Lines that start with # are comments."""
+    path = MANUAL / name
+    if not path.exists():
+        return []
+    lines = [(n, ln) for n, ln in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), 1)
+             if ln.strip() and not ln.lstrip().startswith("#")]
+    if not lines:
+        return []
+    rows = csv.DictReader([ln for _, ln in lines])
+    return [(n, {k.strip(): (v or "").strip() for k, v in row.items() if k}) for (n, _), row in zip(lines[1:], rows)]
+
+
+def manual_date(where, value, today):
+    try:
+        d = datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        warn(f"{where}: date {value!r} is not YYYY-MM-DD")
+        return None
+    if d > today + timedelta(days=1):
+        warn(f"{where}: date {value} is in the future")
+        return None
+    return d
+
+
+def manual_species(where, value):
+    sp = SP_NAMES.get(value.strip().lower())
+    if not sp:
+        warn(f"{where}: unknown species {value!r} (use chinook, coho, chum, pink, sockeye)")
+    return sp
+
+
+def manual_water(where, value, waters, known):
+    """A map key for a water name: a key itself, a water name of rules.json, or a name the report tags know."""
+    v = value.strip()
+    # A tidal group id ("a28-2") follows the DFO table order, so a tidal group is stored as its first subarea.
+    stable = lambda w: w["subs"][0] if w.get("tidal") and w.get("subs") else w["id"]
+    for w in waters:
+        names = w["name"].values() if isinstance(w["name"], dict) else [w["name"]]
+        if v == w["id"] or v.lower() in (n.lower() for n in names):
+            return stable(w)
+    if v in known:                      # a subarea label
+        return v
+    k = next((k for k, rx in WATERS_RE.items() if rx.search(v)), None)
+    if not k:
+        warn(f"{where}: unknown water {v!r} (use a water id or name from build/rules.json, or a subarea like 28-8)")
+    return k
+
+
+def manual_reports(today, waters, known):
+    since, out = today - timedelta(days=KEEP_DAYS), []
+    for n, r in read_csv("reports.csv"):
+        where = f"manual/reports.csv line {n}"
+        d = manual_date(where, r.get("date", ""), today)
+        title, src, url = r.get("title", ""), r.get("source", ""), r.get("url", "")
+        if not (title and src):
+            warn(f"{where}: title and source are required")
+            continue
+        if url and not url.startswith("https://"):
+            warn(f"{where}: url must start with https://")
+            continue
+        if not d or d < since:
+            continue
+        split = lambda s: [x for x in re.split(r"\s*[;,]\s*", s) if x]    # "coho; chum" or "coho, chum"
+        sp = [s for s in (manual_species(where, x) for x in split(r.get("species", ""))) if s]
+        w = [k for k in (manual_water(where, x, waters, known) for x in split(r.get("waters", ""))) if k]
+        out.append({"src": src, "title": title, "url": url, "date": d.isoformat(),
+                    "sp": list(dict.fromkeys(sp)), "w": list(dict.fromkeys(w)), "manual": True})
+    print(f"manual reports: {len(out)} in the last {KEEP_DAYS} days")
+    return out
+
+
+def manual_testfish(today):
+    groups = {}                         # (site, species) -> {"src", "url", "rows": {date: (catch, effort)}}
+    for n, r in read_csv("testfish.csv"):
+        where = f"manual/testfish.csv line {n}"
+        site, d = r.get("site", ""), manual_date(where, r.get("date", ""), today)
+        sp = manual_species(where, r.get("species", ""))
+        if not (site and sp and d):
+            continue
+        if slug(site) in AUTO_SITES:
+            warn(f"{where}: {site} is collected automatically; add other sites only")
+            continue
+        try:
+            catch = int(r.get("catch", ""))
+            effort = float(r["effort"]) if r.get("effort") else None
+            if catch < 0 or (effort is not None and effort <= 0):
+                raise ValueError
+        except ValueError:
+            warn(f"{where}: catch must be a whole number >= 0, effort empty or > 0")
+            continue
+        g = groups.setdefault((site, sp), {"src": r.get("source") or "manual", "url": "", "rows": {}})
+        if r.get("url", "").startswith("https://"):
+            g["url"] = g["url"] or r["url"]
+        if d.isoformat() in g["rows"]:
+            warn(f"{where}: {site} {sp} {d} is already in the file; the later row wins")
+        g["rows"][d.isoformat()] = (catch, effort)
+    out = []
+    for (site, sp), g in groups.items():
+        rows = sorted(g["rows"].items())
+        # CPUE needs the effort of every day; otherwise the trend compares the catch itself.
+        per_effort = all(e for _, (_, e) in rows)
+        days = [day(iso, c, e) if per_effort else [iso, c, float(c)] for iso, (c, e) in rows]
+        s = series(today, site, sp, g["src"], g["url"], days, manual=True)
+        if s:
+            out.append(s)
+    return out
+
+
+def dump(data):
+    """Indented JSON for readable git diffs, with each flat list (a day row, species or water tags) on one line."""
+    s = json.dumps(data, ensure_ascii=False, indent=1)
+    flat = lambda m: re.sub(r"\s*\n\s*", " ", m.group(0)).replace("[ ", "[").replace(" ]", "]") if "\n" in m.group(0) else m.group(0)
+    return re.sub(r"\[[^\[\]{}]*\]", flat, s) + "\n"
+
+
+warnings = []
+
+
+def warn(msg):
+    # GitHub Actions shows ::warning:: lines on the run summary.
+    warnings.append(msg)
+    print(f"::warning::fetch_reports: {msg}", file=sys.stderr)
+
+
+def main():
+    waters = json.loads((HERE / "rules.json").read_text(encoding="utf-8"))["waters"]
+    known = {w["id"] for w in waters} | {s for w in waters for s in w.get("subs") or []}
+    if WATERS.keys() - known:
+        warn(f"WATERS keys missing from rules.json: {sorted(WATERS.keys() - known)}")
+    try:
+        prev = json.loads(OUT.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        prev = {}
+    today = datetime.now(timezone(timedelta(hours=-8))).date()     # Pacific standard time is close enough for a date
+    auto = reports(prev) + reddit(prev, today)
+    manual = [r for r in manual_reports(today, waters, known) if r["url"] not in {a["url"] for a in auto} or not r["url"]]
+    data = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
+            "testfish": test_fishery(today, prev) + manual_testfish(today),
+            "reports": sorted(auto + manual, key=lambda r: r["date"], reverse=True)}
+    OUT.write_text(dump(data), encoding="utf-8", newline="\n")
+    # The snapshot is committed. "changed" ignores the time stamp, so a run that finds no new data makes no commit.
+    changed = {k: v for k, v in data.items() if k != "generated"} != {k: v for k, v in prev.items() if k != "generated"}
+    print(f"{OUT.name}: {len(data['testfish'])} test-fishery series, {len(data['reports'])} reports, "
+          f"{'changed' if changed else 'no data change'}")
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+            f.write(f"changed={'true' if changed else 'false'}\n")
+    if "--strict" in sys.argv and warnings:
+        sys.exit(f"--strict: {len(warnings)} source(s) failed")
+
+
+if __name__ == "__main__":
+    main()

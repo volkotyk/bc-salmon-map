@@ -1,0 +1,14 @@
+# Manual test-fishery or count data. One row per site, species and day. Lines that start with # are comments.
+# site     the place, for example Mission or Brownsville (required). Albion, Whonnock and Qualark are
+#          collected automatically, so rows for them are refused.
+# species  chinook, coho, chum, pink, sockeye (or чавича, кижуч, кета, горбуша, нерка) (required)
+# date     YYYY-MM-DD (required)
+# catch    fish counted that day, a whole number (required)
+# effort   net effort that day, in the source's own unit (optional). Give it on every row of a site
+#          and species, or on none: without it the trend compares the catch itself.
+# source   who published the data, for example DFO or PSC (optional; empty = manual)
+# url      https:// link to the table (optional)
+# The page shows the last 28 days, and only while the species had fish in the last 7 days.
+# Example:
+# Mission,sockeye,2026-09-20,120,,PSC,https://www.psc.org/publications/fraser-panel-in-season-information/
+site,species,date,catch,effort,source,url

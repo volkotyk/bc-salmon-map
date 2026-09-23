@@ -1,0 +1,508 @@
+{
+ "generated": "2026-09-23T22:50Z",
+ "testfish": [
+  {
+   "id": "albion-chinook",
+   "sp": "chinook",
+   "site": "Albion",
+   "src": "DFO",
+   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
+   "days": [
+    ["2026-08-26", 20, 1.1],
+    ["2026-08-27", 6, 0.37],
+    ["2026-08-28", 12, 0.73],
+    ["2026-08-29", 1, 0.06],
+    ["2026-08-30", 6, 0.37],
+    ["2026-08-31", 6, 0.38],
+    ["2026-09-01", 23, 1.39],
+    ["2026-09-02", 8, 0.51],
+    ["2026-09-03", 8, 0.5],
+    ["2026-09-04", 6, 0.38],
+    ["2026-09-05", 1, 0.06],
+    ["2026-09-06", 0, 0.0],
+    ["2026-09-07", 8, 0.48],
+    ["2026-09-08", 18, 1.11],
+    ["2026-09-10", 8, 0.5],
+    ["2026-09-12", 14, 0.86],
+    ["2026-09-14", 9, 0.54],
+    ["2026-09-16", 11, 0.68],
+    ["2026-09-18", 11, 0.69],
+    ["2026-09-20", 7, 0.44],
+    ["2026-09-22", 1, 0.06]
+   ]
+  },
+  {
+   "id": "albion-chum",
+   "sp": "chum",
+   "site": "Albion",
+   "src": "DFO",
+   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
+   "days": [
+    ["2026-09-09", 9, 0.75],
+    ["2026-09-11", 25, 2.08],
+    ["2026-09-13", 29, 2.42],
+    ["2026-09-15", 71, 5.12],
+    ["2026-09-17", 35, 2.78],
+    ["2026-09-19", 41, 3.25],
+    ["2026-09-21", 97, 7.15]
+   ]
+  },
+  {
+   "id": "albion-coho",
+   "sp": "coho",
+   "site": "Albion",
+   "src": "DFO",
+   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
+   "days": [
+    ["2026-09-09", 7, 0.58],
+    ["2026-09-11", 2, 0.17],
+    ["2026-09-13", 2, 0.17],
+    ["2026-09-15", 10, 0.72],
+    ["2026-09-17", 2, 0.16],
+    ["2026-09-19", 11, 0.87],
+    ["2026-09-21", 5, 0.37]
+   ]
+  },
+  {
+   "id": "whonnock-sockeye",
+   "sp": "sockeye",
+   "site": "Whonnock",
+   "src": "PSC",
+   "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
+   "days": [
+    ["2026-08-26", 66, 5.13],
+    ["2026-08-27", 27, 2.34],
+    ["2026-08-28", 17, 1.55],
+    ["2026-08-29", 22, 1.98],
+    ["2026-08-30", 7, 0.66],
+    ["2026-08-31", 8, 0.77],
+    ["2026-09-01", 35, 3.1],
+    ["2026-09-02", 6, 0.56],
+    ["2026-09-03", 7, 0.66],
+    ["2026-09-04", 9, 0.8],
+    ["2026-09-05", 5, 0.49],
+    ["2026-09-06", 2, 0.19],
+    ["2026-09-07", 1, 0.1],
+    ["2026-09-08", 7, 0.64],
+    ["2026-09-09", 3, 0.27],
+    ["2026-09-10", 6, 0.52],
+    ["2026-09-11", 10, 0.88],
+    ["2026-09-12", 19, 1.57],
+    ["2026-09-13", 26, 2.03],
+    ["2026-09-14", 12, 0.98],
+    ["2026-09-15", 55, 4.14],
+    ["2026-09-16", 16, 1.34],
+    ["2026-09-17", 16, 1.34],
+    ["2026-09-18", 14, 1.25],
+    ["2026-09-19", 41, 3.17],
+    ["2026-09-20", 79, 4.91],
+    ["2026-09-21", 28, 1.97],
+    ["2026-09-22", 50, 3.42]
+   ]
+  },
+  {
+   "id": "qualark-sockeye",
+   "sp": "sockeye",
+   "site": "Qualark",
+   "src": "PSC",
+   "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
+   "days": [
+    ["2026-08-26", 43, 89.58],
+    ["2026-08-27", 38, 95.0],
+    ["2026-08-28", 16, 33.33],
+    ["2026-08-29", 13, 40.62],
+    ["2026-08-30", 18, 37.5],
+    ["2026-08-31", 7, 17.5],
+    ["2026-09-01", 8, 16.67],
+    ["2026-09-02", 23, 47.92],
+    ["2026-09-03", 24, 50.0],
+    ["2026-09-04", 9, 24.32],
+    ["2026-09-05", 14, 32.56],
+    ["2026-09-06", 5, 11.63],
+    ["2026-09-07", 4, 12.5],
+    ["2026-09-08", 4, 8.33],
+    ["2026-09-09", 2, 4.17],
+    ["2026-09-10", 2, 8.33],
+    ["2026-09-11", 2, 5.0],
+    ["2026-09-12", 2, 5.0],
+    ["2026-09-13", 6, 15.0],
+    ["2026-09-14", 14, 29.17],
+    ["2026-09-15", 7, 18.42],
+    ["2026-09-16", 6, 12.5],
+    ["2026-09-17", 35, 72.92],
+    ["2026-09-18", 35, 72.92],
+    ["2026-09-19", 42, 105.0],
+    ["2026-09-20", 24, 50.0],
+    ["2026-09-21", 7, 43.75]
+   ]
+  }
+ ],
+ "reports": [
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A limit of salmon for the day (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28257426837270841/",
+   "date": "2026-09-23",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "First hatchery-marked fish of the year (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28257845117229013/",
+   "date": "2026-09-23",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram · Bon Chovy Charters",
+   "title": "Good weather and some nice fish on the water off Vancouver",
+   "url": "https://www.instagram.com/bonchovyfishingcharters/p/DdmCQhlG0Nd/",
+   "date": "2026-09-22",
+   "sp": [],
+   "w": [],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "Big chinook (spring) caught on a small bead on the Vedder",
+   "url": "https://www.instagram.com/p/DdmOONjtUxR/",
+   "date": "2026-09-22",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram · Pacific Angler",
+   "title": "44 lb chinook landed on a guided charter off Vancouver",
+   "url": "https://www.instagram.com/pacificangler/reel/Ddk2CMms7z6/",
+   "date": "2026-09-21",
+   "sp": ["chinook"],
+   "w": [],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "A fish caught and released on the Vedder",
+   "url": "https://www.instagram.com/p/Ddj52g9yNK4/",
+   "date": "2026-09-21",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "No bites for chinook at Allison Pool on roe, a few fish seen",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28241802665499925/",
+   "date": "2026-09-21",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "A salmon fishing day on the Vedder with several salmon (video)",
+   "url": "https://www.tiktok.com/@markatal/video/7687776168346684693",
+   "date": "2026-09-20",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Fish on at the Vedder River (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7687770752111693076",
+   "date": "2026-09-20",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "By boat in low water: 4 coho hooked, 3 hatchery coho landed",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28214483078231884/",
+   "date": "2026-09-20",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "About 20 chum caught the day before, many of them foul-hooked",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28203977229282469/",
+   "date": "2026-09-19",
+   "sp": ["chum"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: September 18, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-18-2026",
+   "date": "2026-09-18",
+   "sp": ["chinook", "coho"],
+   "w": ["chilliwack", "capilano", "squamish", "cheakamus", "harrison", "a29-mouth"]
+  },
+  {
+   "src": "Instagram",
+   "title": "Chum hooked and released on the Vedder, no chinook or coho for the group",
+   "url": "https://www.instagram.com/p/Ddaj4DOu9b-/",
+   "date": "2026-09-17",
+   "sp": ["chum"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A small sockeye nearly got away (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28177064988640360/",
+   "date": "2026-09-17",
+   "sp": ["sockeye"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Water low and murky on Sep 16",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28176786815334844/",
+   "date": "2026-09-17",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A good hatchery fish the day before (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28157703310576528/",
+   "date": "2026-09-17",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram · Berry's Bait",
+   "title": "Sand Heads chinook fishery still going strong",
+   "url": "https://www.instagram.com/berrysbait/p/DdW2xtjsxD1/",
+   "date": "2026-09-16",
+   "sp": ["chinook"],
+   "w": ["29-3"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Chinook hooked on the Vedder River (video)",
+   "url": "https://www.tiktok.com/@ebifisher/video/7686227244183817479",
+   "date": "2026-09-16",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Fish on at the Vedder River (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7686292339584666900",
+   "date": "2026-09-16",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Video report of river conditions for Sep 15",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28161156556897870/",
+   "date": "2026-09-15",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Bright fresh fish from the derby weekend (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28147858628227663/",
+   "date": "2026-09-15",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook",
+   "title": "A walk along the Coquitlam River: a couple of weeks too early, no spawning salmon seen yet",
+   "url": "",
+   "date": "2026-09-14",
+   "sp": [],
+   "w": ["coquitlam"],
+   "manual": true
+  },
+  {
+   "src": "Reddit r/fishingBC",
+   "title": "School of chinook beach themselves on the vedder.",
+   "url": "https://www.reddit.com/r/fishingBC/comments/1wfhc5c/school_of_chinook_beach_themselves_on_the_vedder/",
+   "date": "2026-09-13",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "reddit": true
+  },
+  {
+   "src": "Instagram",
+   "title": "Fall Chinook Derby day on the Vedder: fish on (video)",
+   "url": "https://www.instagram.com/p/DdOyJgFKY1n/",
+   "date": "2026-09-13",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Lower river: a coho lost on a spinner, then plenty of salmon on the float",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28133534226326770/",
+   "date": "2026-09-13",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "First chinook trip of the year was a success, fish released",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28130242953322564/",
+   "date": "2026-09-13",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "Chinook day on the Vedder: many fish, a big female landed",
+   "url": "https://www.instagram.com/p/DdNJLCPPcez/",
+   "date": "2026-09-12",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: September 11, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-11-2026",
+   "date": "2026-09-11",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack", "capilano", "a29-mouth"]
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "An early hatchery fish (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28102210282792498/",
+   "date": "2026-09-11",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Two hen salmon kept in the morning (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28058992033780990/",
+   "date": "2026-09-11",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Fish on at the Vedder River (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7683734656469978389",
+   "date": "2026-09-09",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Video update on the river for Sep 5-7",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28064056743274519/",
+   "date": "2026-09-09",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "An early hatchery coho (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28064403699906490/",
+   "date": "2026-09-08",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Salmon hooked trolling at about 90 ft off Sand Heads",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28063995853280608/",
+   "date": "2026-09-08",
+   "sp": [],
+   "w": ["29-3"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Chinook caught (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28051768977836629/",
+   "date": "2026-09-07",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: September 4, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-4-2026",
+   "date": "2026-09-04",
+   "sp": ["chinook", "coho"],
+   "w": ["a29-mouth"]
+  },
+  {
+   "src": "Instagram",
+   "title": "Coho limit from a Vancouver beach on a rainy day, many fish jumping",
+   "url": "https://www.instagram.com/p/Dc31zQvFkYO/",
+   "date": "2026-09-04",
+   "sp": ["coho"],
+   "w": [],
+   "manual": true
+  },
+  {
+   "src": "Reddit r/FishingBC",
+   "title": "Few salmon seen on the Vedder on Sep 1 (low water before the rain)",
+   "url": "https://www.reddit.com/r/fishingBC/comments/1w67gld/ambleside_vs_vedder_for_salmon/",
+   "date": "2026-09-03",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Several salmon seen moving upstream at the Vedder Crossing bridge",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/27999733299706864/",
+   "date": "2026-09-03",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram · Pacific Angler",
+   "title": "Fall chinook opener: guides found good fish off Vancouver",
+   "url": "https://www.instagram.com/pacificangler/p/DczQNA7gW5t/",
+   "date": "2026-09-02",
+   "sp": ["chinook"],
+   "w": [],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "Chinook opening day (Sep 1) at Sand Heads",
+   "url": "https://www.instagram.com/p/DczVAt_IG-e/",
+   "date": "2026-09-02",
+   "sp": ["chinook"],
+   "w": ["29-3"],
+   "manual": true
+  }
+ ]
+}

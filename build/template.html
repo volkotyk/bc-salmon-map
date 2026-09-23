@@ -60,7 +60,7 @@ body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body);-webki
 .sheet-drag .panel,.sheet-drag .legend,.sheet-drag .leaflet-bottom{transition:none}
 .sheet-drag .panel{user-select:none}
 .intro{display:contents}
-.eyebrow,.lede{order:1}
+.eyebrow,.lede,#run{order:1}          /* phone: the list stays in the half sheet; "running now" comes after it */
 #rules,.status,.foot{order:2}
 .head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .eyebrow{font:600 12px/1.2 var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0}
@@ -123,6 +123,38 @@ button:active{background:var(--line)}
 .item .lim{grid-column:2;color:var(--ink-2);font-size:13px}
 .item.is-off .nm{color:var(--ink-3);font-weight:500}
 .item.is-off .lim{color:var(--ink-3)}
+.run ul{margin-bottom:4px}
+.run .item:hover{background:none}
+.run h3{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:10px 0 2px}
+.run a{color:var(--focus)}
+.run .nm a{font-weight:600}
+.run .nm small{font-family:var(--f-body)}
+.run .nm small a{font-weight:400}
+.run .wl{display:block;margin-top:2px}
+.wlink{font:500 12px var(--f-body);padding:1px 8px;margin:3px 4px 0 0;border-radius:999px}
+.spark{display:block;grid-column:2;margin-top:4px;max-width:100%}
+.spark line{stroke:var(--line);stroke-width:1}
+.spark path{fill:var(--c);opacity:.35}
+.spark path.now{opacity:1}
+.spark path.z{fill:var(--ink-3);opacity:.6}
+/* Report pin: a speech bubble whose sharp corner (bottom left) sits on the water. iconAnchor [0, 24] = that corner. */
+.rep-pin{box-sizing:border-box;display:flex;align-items:center;gap:3px;height:24px;padding:0 7px;border:1.5px solid var(--focus);border-radius:12px 12px 12px 2px;
+  background:var(--panel);color:var(--focus);font:700 11px/1 var(--f-mono);white-space:nowrap;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.rep-pin svg{width:12px;height:12px;flex:none}
+.rep-pin::after{content:'';position:absolute;inset:-10px}  /* a finger-sized hit area around the small bubble */
+.rep-pin.in-legend{display:inline-flex;position:static;flex:none;height:18px;padding:0 5px;cursor:default;box-shadow:none}
+.rep-pin.in-legend::after{content:none}
+.man{font-style:italic;color:var(--ink-3)}
+.run h3 .cnt{font-family:var(--f-mono);letter-spacing:0}
+/* The "show more" fold of the report list: plain text styling, not the section style of the rules <details>. */
+.run details.more{border-top:0;padding-top:0}
+.run details.more summary{font:600 13px var(--f-body);letter-spacing:0;text-transform:none;color:var(--focus);padding:6px 6px;min-height:var(--tap);display:flex;align-items:center}
+.run details.more ul{padding-left:0;margin:0;color:inherit}
+.pop-reps{margin:4px 0 0;padding-left:18px}
+.pop-reps li{margin-bottom:4px}
+.run .lim .dot{display:inline-block;width:8px;height:8px;vertical-align:baseline}
+.run-lede,.run-note{color:var(--ink-2);font-size:13px;margin:0 0 6px}
+.run-note{color:var(--ink-3);font-size:12px;margin:6px 0 0}
 details{border-top:1px solid var(--line);padding-top:12px}
 summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-transform:uppercase}
 details h3{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:14px 0 0}
@@ -202,7 +234,7 @@ details li{margin-bottom:6px}
   .grip{display:none}
   .panel-body{overflow-y:auto;touch-action:auto;padding:20px 20px 28px;gap:18px}
   .intro{display:flex;flex-direction:column;gap:4px}
-  .eyebrow,.lede,#rules,.status,.foot{order:0}
+  .eyebrow,.lede,#run,#rules,.status,.foot{order:0}
   .lede{margin-top:4px}
   h1{font-size:34px;line-height:1.02}
   .ctl-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
@@ -259,6 +291,8 @@ details li{margin-bottom:6px}
         <details class="spcard" id="spcard" hidden><summary id="spcard-title"></summary><div id="spcard-body"></div></details>
       </div>
 
+      <section class="group run" id="run" hidden></section>
+
       <div class="groups" id="groups"></div>
 
       <details id="rules"></details>
@@ -280,9 +314,12 @@ details li{margin-bottom:6px}
 <script id="data-rules" type="application/json">__RULES__</script>
 <script id="data-status" type="application/json">__STATUS__</script>
 <script id="data-species" type="application/json">__SPECIES__</script>
+<script id="reports" type="application/json">__REPORTS__</script>
 <script>
 (() => {
 const GEO = JSON.parse(document.getElementById('geo').textContent);
+// Built by build/fetch_reports.py; empty ({}) when the build had no network for it.
+const REPORTS = (() => { try { return JSON.parse(document.getElementById('reports').textContent); } catch { return {}; } })();
 
 // ---------- language ----------
 // Order: #uk / #en in the URL, then the viewer's saved choice, then the browser language.
@@ -343,6 +380,18 @@ const I18N = {
     phaseOcean: 'У морі (Area 28 і 29) і на початку ходу в річку', phaseSpawn: 'Нерестовий самець у річці',
     spCardNote: 'Заводська риба (hatchery marked) не має жирового плавця — маленького плавця на спині біля хвоста. На його місці є загоєний шрам. Ілюстрації показують самців; у самиць нерестові ознаки слабші.',
     spCredit: 'Ілюстрації: уряд США (Lake Washington Ship Canal Fish Ladder, 1996), T. Knepp / USFWS, Evermann і Goldsborough (1907). Суспільне надбання.',
+    runTitle: 'Зараз у Fraser',
+    runLede: 'Тестовий лов DFO і PSC: скільки лосося сітка ловить за день. Це показує хід риби вгору по Fraser, а не кльов у конкретному місці. Стовпчики — улов за 28 днів; яскраві — останні 7 днів.',
+    runLine: (d, n, wk) => `${d}: ${n} шт. · за 7 днів: ${wk} шт.`,
+    runInNet: 'у сітці для кети',
+    trend: {up: '↑ більше, ніж тижнем раніше', down: '↓ менше, ніж тижнем раніше', flat: '→ як тижнем раніше'},
+    sparkLabel: (sp, site, max, d) => `${sp}, ${site}: улов за 28 днів, найбільше ${max} шт. (${d})`,
+    sparkDay: (d, n) => `${d}: ${n} шт.`,
+    shopTitle: 'Звіти магазинів і рибалок', mentioned: 'Згадано: ', watersIn: 'Водойми: ', showMore: n => `Показати ще ${n}`,
+    pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`}`,
+    popReports: 'Свіжі звіти', popReportsNote: 'Звіт — думка його автора. Діють правила з таблиці вище.',
+    legendPin: 'Водойма у свіжому звіті', manualTag: 'додано вручну',
+    runNote: g => `Дані DFO попередні (unverified). Звіт — думка його автора: згадка виду не означає, що цей вид можна залишити. Правила дивіться на карті. Оновлено ${g}.`,
     rules: `<summary>Загальні правила</summary>
       <h3>Усюди</h3><ul>
         <li>Денний ліміт усіх видів лосося з припливних і прісних вод разом — 4. Ліміти для окремих видів теж діють.</li>
@@ -402,6 +451,18 @@ const I18N = {
     phaseOcean: 'At sea (Areas 28 and 29) and early in the river run', phaseSpawn: 'Spawning male in the river',
     spCardNote: 'A hatchery marked fish has no adipose fin (the small fin on the back near the tail); a healed scar is in its place. The drawings show males; females have weaker spawning features.',
     spCredit: 'Illustrations: U.S. Government (Lake Washington Ship Canal Fish Ladder, 1996), T. Knepp / USFWS, Evermann and Goldsborough (1907). Public domain.',
+    runTitle: 'Running now in the Fraser',
+    runLede: 'DFO and PSC test fisheries: how many salmon the test net catches per day. It shows fish moving up the Fraser, not the bite at a given spot. Bars: catch over 28 days; bright bars are the last 7 days.',
+    runLine: (d, n, wk) => `${d}: ${n} fish · last 7 days: ${wk}`,
+    runInNet: 'in the chum net',
+    trend: {up: '↑ more than the week before', down: '↓ fewer than the week before', flat: '→ same as the week before'},
+    sparkLabel: (sp, site, max, d) => `${sp}, ${site}: catch over 28 days, highest ${max} fish (${d})`,
+    sparkDay: (d, n) => `${d}: ${n} fish`,
+    shopTitle: 'Shop and angler reports', mentioned: 'Mentions: ', watersIn: 'Waters: ', showMore: n => `Show ${n} more`,
+    pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent report' : `${n} recent reports`}`,
+    popReports: 'Recent reports', popReportsNote: 'A report is its author\'s opinion. The rules in the table above apply.',
+    legendPin: 'Water named in a recent report', manualTag: 'added by hand',
+    runNote: g => `DFO data are preliminary (unverified). A report is its author's opinion: a species in a report does not mean you can retain it. Check the rules on the map. Updated ${g}.`,
     rules: `<summary>General rules</summary>
       <h3>Everywhere</h3><ul>
         <li>The daily limit for all Pacific salmon from tidal and fresh waters combined is 4. Individual species limits also apply.</li>
@@ -698,8 +759,13 @@ function openPopup(w, latlng, sub) {
   const asOf = w.asOf ? `<p class="note">${esc(t('asOf', fmtFull(w.asOf)))}</p>` : '';
   const ll = latlng || anchorPoint(w);
   const need = licensed(w) ? '' : `<p class="banner">${esc(t('needLicence', !!w.tidal))}</p>`;
+  // Recent shop reports that name this water: under the rules, because the rules are what applies.
+  const reps = reportsFor(w), repHtml = reps.length ? `<div class="subh">${esc(t('popReports'))}</div><ul class="pop-reps">`
+    + reps.map(r => `<li>${extLink(r.url, `${esc(r.src)} · ${fmtIso(r.date)}`)}${manualTag(r)}${r.manual ? `: ${esc(r.title)}` : ''}`
+      + (r.sp.length ? ` — ${esc(t('mentioned'))}${r.sp.map(sp => esc(spLow(sp))).join(', ')}` : '') + '</li>').join('')
+    + `</ul><p class="note">${esc(t('popReportsNote'))}</p>` : '';
   const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}${need}
-    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${asOf}
+    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${repHtml}${asOf}
     <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
   activePopup = L.popup(popupOpts(360)).setLatLng(ll).setContent(html).openOn(map);
 }
@@ -768,7 +834,108 @@ function legend() {
   if (state.lic !== 'all') rows.push(['other', t('legendOther'), 'dot2']);
   $('legend-title').textContent = t('legendTitle');
   $('legend-body').innerHTML = rows.map(([c, text, k]) => `<div class="row"><span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>${esc(text)}</div>`).join('')
+    + (pins.getLayers().length ? `<div class="row"><span class="rep-pin in-legend">${PIN_SVG}</span>${esc(t('legendPin'))}</div>` : '')
     + `<div class="hint">${esc(t('legendHint'))}</div>`;
+}
+
+// ---------- running now: Fraser test fisheries + tackle shop reports ----------
+// Shows only current data: a series with no sample in RUN_MAX_AGE days (off season) is left out.
+const RUN_MAX_AGE = 14, SHOP_MAX_AGE = 21, SHOP_SHOW = 5;
+const SITES = {Albion:'Albion (Fort Langley)', Whonnock:'Whonnock (Maple Ridge)', Qualark:B('Qualark (біля Yale)', 'Qualark (near Yale)')};
+const isoShift = (iso, n) => { const [y, m, d] = iso.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); };
+const fmtIso = iso => fmt(iso.slice(5));
+
+// Mean CPUE of the last 7 days against the 7 days before; null when a week has no sample.
+function trend(days, last) {
+  const mean = (from, to) => { const v = days.filter(d => d[0] > from && d[0] <= to).map(d => d[2]);
+    return v.length ? v.reduce((a, b) => a + b) / v.length : null; };
+  const now = mean(isoShift(last, -7), last), before = mean(isoShift(last, -14), isoShift(last, -7));
+  if (now === null || before === null) return null;
+  if (before === 0) return now > 0 ? 'up' : 'flat';
+  return now / before > 1.25 ? 'up' : now / before < .8 ? 'down' : 'flat';
+}
+
+// 28-day bar strip. One slot per calendar day up to today, so all rows share one time axis.
+// A day without a sample stays empty; a sample with no fish is a short gray tick on the baseline.
+// Each series has its own height scale: the strip shows the shape of the run, the text gives the numbers.
+const SPARK_DAYS = 28, SLOT = 8, BAR = 6, SPARK_H = 28;
+function spark(s, today, recent) {
+  const W = SPARK_DAYS * SLOT, first = isoShift(today, 1 - SPARK_DAYS);
+  const top = Math.max(...s.days.map(d => d[1]));
+  const peak = s.days.filter(d => d[1] === top).pop();
+  let bars = '';
+  s.days.forEach(([iso, n]) => {
+    const i = Math.round((Date.parse(iso) - Date.parse(first)) / 864e5);
+    if (i < 0 || i >= SPARK_DAYS) return;
+    const x = i * SLOT + (SLOT - BAR) / 2, h = n ? Math.max(2, n / top * (SPARK_H - 1)) : 2, y = SPARK_H - h, r = Math.min(2, h / 2);
+    // Rounded top, square base on the baseline.
+    const d = `M${x},${SPARK_H}V${y + r}Q${x},${y} ${x + r},${y}H${x + BAR - r}Q${x + BAR},${y} ${x + BAR},${y + r}V${SPARK_H}Z`;
+    bars += `<g><title>${esc(t('sparkDay', fmtIso(iso), n))}</title><rect x="${i * SLOT}" width="${SLOT}" height="${SPARK_H}" fill="transparent"/>`
+      + `<path d="${d}" class="${!n ? 'z' : iso > recent ? 'now' : ''}"/></g>`;
+  });
+  const label = t('sparkLabel', spName(s.sp), tx(SITES[s.site] || s.site), top, fmtIso(peak[0]));
+  return `<svg class="spark" width="${W}" height="${SPARK_H}" viewBox="0 0 ${W} ${SPARK_H}" role="img" aria-label="${esc(label)}" style="--c:var(${CAT_VAR[s.sp]})">`
+    + `<line x1="0" x2="${W}" y1="${SPARK_H - .5}" y2="${SPARK_H - .5}"/>${bars}</svg>`;
+}
+
+// ---------- report pins: a bubble on each water that a recent shop report names ----------
+// A report key is a water id or a tidal subarea ("28-8"). One pin per water; a tidal pin sits at the
+// label point of the first named subarea, any other pin on the water's own line (anchorPoint).
+// A manual report may have no url; any url it has must be https.
+const freshShops = () => (REPORTS.reports || []).filter(r => r.date >= isoShift(todayISO(), -SHOP_MAX_AGE) && (!r.url || /^https:\/\//.test(r.url)));
+const extLink = (url, html) => url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${html} ↗</a>` : html;
+const manualTag = x => x.manual ? ` · <span class="man">${esc(t('manualTag'))}</span>` : '';
+const waterOf = k => WATERS.find(w => w.id === k || (w.subs || []).includes(k));
+const reportsFor = w => freshShops().filter(r => (r.w || []).some(k => waterOf(k) === w));
+const PIN_SVG = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 3h8M2 6h8M2 9h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+map.createPane('pins').style.zIndex = 620;             // above the map labels (600), below tooltips and popups
+const pins = L.layerGroup().addTo(map);
+function renderPins() {
+  pins.clearLayers();
+  const first = new Map();                             // water -> the first key that names it
+  freshShops().forEach(r => (r.w || []).forEach(k => { const w = waterOf(k); if (w && !first.has(w)) first.set(w, k); }));
+  first.forEach((k, w) => {
+    const n = reportsFor(w).length, sub = GEO.subpts[k] ? k : w.subs && w.subs[0];
+    const ll = GEO.subpts[k] ? L.latLng(GEO.subpts[k][1], GEO.subpts[k][0]) : anchorPoint(w);
+    const m = L.marker(ll, {pane:'pins', keyboard:true, riseOnHover:true, title:t('pinTitle', tx(w.name), n),
+      icon: L.divIcon({className:'rep-pin', html:PIN_SVG + (n > 1 ? `<b>${n}</b>` : ''), iconSize:null, iconAnchor:[0, 24]})});
+    m.on('add', () => m.getElement().setAttribute('aria-label', t('pinTitle', tx(w.name), n)));
+    m.on('click', () => { skipMapClick = Date.now(); openPopup(w, ll, sub); });
+    pins.addLayer(m);
+  });
+}
+
+function renderRun() {
+  renderPins();
+  const today = todayISO();
+  const series = (REPORTS.testfish || []).filter(s => s.days.length && s.days[s.days.length - 1][0] >= isoShift(today, -RUN_MAX_AGE));
+  const shops = freshShops();
+  $('run').hidden = !series.length && !shops.length;
+  if ($('run').hidden) return;
+  const dot = sp => `<span class="dot" style="--c:var(${CAT_VAR[sp]})"></span>`;
+  const rows = series.map(s => {
+    const [last, n] = s.days[s.days.length - 1];
+    const recent = isoShift(last, -7);                     // the same 7 days as the total and the bright bars
+    const wk = s.days.filter(d => d[0] > recent).reduce((a, d) => a + d[1], 0);
+    const tr = trend(s.days, last);
+    const site = extLink(s.url, `${esc(tx(SITES[s.site] || s.site))} · ${esc(s.src)}`)
+      + (s.id === 'albion-coho' ? ` · ${esc(t('runInNet'))}` : '') + manualTag(s);
+    return `<li class="item">${dot(s.sp)}<span class="nm">${esc(spName(s.sp))} <small>${site}</small></span>
+      <span class="lim">${esc(t('runLine', fmtIso(last), n, wk))}${tr ? `<br>${esc(t('trend')[tr])}` : ''}</span>${spark(s, today, recent)}</li>`;
+  }).join('');
+  // A key is a water id or a tidal subarea; unknown keys are skipped, and two keys of one group show once.
+  const waters = r => [...new Set((r.w || []).map(k => WATERS.find(w => w.id === k || (w.subs || []).includes(k))).filter(Boolean))];
+  const reps = shops.map(r => `<li class="item"><span></span><span class="nm">${extLink(r.url, esc(r.title))}</span>
+      <span class="lim">${esc(r.src)}${manualTag(r)} · ${fmtIso(r.date)}${r.sp.length ? ` · ${esc(t('mentioned'))}${r.sp.map(sp => `${dot(sp)} ${esc(spLow(sp))}`).join(', ')}` : ''}
+      ${waters(r).length ? `<span class="wl">${esc(t('watersIn'))}${waters(r).map(w => `<button type="button" class="wlink" data-id="${w.id}">${esc(tx(w.name))}</button>`).join('')}</span>` : ''}</span></li>`);
+  // The newest SHOP_SHOW reports stay open; the rest fold under "show N more". The pins and popups keep all of them.
+  const moreOpen = !!($('run').querySelector('details.more') || {}).open;   // keep the choice across a language switch
+  $('run').innerHTML = `<h2>${esc(t('runTitle'))}</h2>`
+    + (rows ? `<p class="run-lede">${esc(t('runLede'))}</p><ul>${rows}</ul>` : '')
+    + (reps.length ? `<h3>${esc(t('shopTitle'))} <span class="cnt">(${reps.length})</span></h3><ul>${reps.slice(0, SHOP_SHOW).join('')}</ul>`
+      + (reps.length > SHOP_SHOW ? `<details class="more"${moreOpen ? ' open' : ''}><summary>${esc(t('showMore', reps.length - SHOP_SHOW))}</summary>`
+        + `<ul>${reps.slice(SHOP_SHOW).join('')}</ul></details>` : '') : '')
+    + `<p class="run-note">${esc(t('runNote', REPORTS.generated ? fmtFull(REPORTS.generated.slice(0, 10)) : '—'))}</p>`;
 }
 
 function render() {
@@ -954,6 +1121,7 @@ function applyLang(lang, save) {
   renderSpCard();
   renderLicence();
   renderStatus();
+  renderRun();
   render();
   layoutSheet();
   if (wasOpen) wasOpen();
@@ -969,9 +1137,10 @@ document.querySelector('.lang').addEventListener('click', e => {
   if (fromHash() && fromHash() !== LANG) location.hash = LANG;   // a stale #uk/#en would win on reload
 });
 window.addEventListener('hashchange', () => { const l = fromHash(); if (l && l !== LANG) applyLang(l, true); });
-$('groups').addEventListener('click', e => {
-  const b = e.target.closest('.item'); if (!b) return;
-  const w = WATERS.find(x => x.id === b.dataset.id);
+$('groups').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) focusWater(b.dataset.id); });
+$('run').addEventListener('click', e => { const b = e.target.closest('.wlink'); if (b) focusWater(b.dataset.id); });
+function focusWater(id) {
+  const w = WATERS.find(x => x.id === id);
   const L_ = layers[w.id];
   const bounds = (L_.poly || L_.line).getBounds();
   setSheet('peek');
@@ -982,7 +1151,7 @@ $('groups').addEventListener('click', e => {
   const show = () => { if (!shown) { shown = true; map.stop(); openPopup(w, null, w.subs && w.subs[0]); } };
   map.once('moveend', show);
   setTimeout(show, 900);
-});
+}
 // Fit padding that keeps a feature clear of the map controls and, on a phone, of the peeking sheet.
 const mapPadding = p => WIDE.matches ? {padding:[p, p]} : {paddingTopLeft:[p / 2, p + 10], paddingBottomRight:[p / 2, sheet.peek + p / 2]};
 

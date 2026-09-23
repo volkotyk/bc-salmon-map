@@ -5,12 +5,16 @@ name: Update DFO rules and deploy
 #      If DFO shows something the parser does not understand, rules.json stays as it was,
 #      build/status.json gets "pending", and an issue is opened (once per new problem).
 #   2. Changed rules / status / snapshots are committed back to main.
-#   3. index.html is assembled with the check time and published to GitHub Pages.
+#   3. build/fetch_reports.py gets the "running now" panel data (DFO and PSC test fisheries,
+#      tackle shop reports, Reddit). A failed source is a warning and keeps its previous data.
+#      When the data changed, build/reports.json is committed: git history is the daily snapshot.
+#   4. index.html is assembled with the check time and published to GitHub Pages.
 on:
   push:
     branches: [main]
   schedule:
     - cron: '23 15 * * *'   # 15:23 UTC = 08:23 Pacific daylight time
+    - cron: '41 16 * * *'   # 16:41 UTC: second run, because PSC posts the test-fishery PDFs at about 16:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -50,6 +54,22 @@ jobs:
           gh label create dfo-update --color B42318 --description "DFO rules need a manual check" --force
           tail -n +2 dfo/out/issue.md > body.md
           gh issue create --title "$(head -n 1 dfo/out/issue.md)" --body-file body.md --label dfo-update
+
+      - id: reports
+        name: Fetch the running-now data (a failed source keeps its previous data)
+        working-directory: build
+        run: python3 fetch_reports.py
+
+      # The daily snapshot of the running-now data. A failed push does not stop the deploy:
+      # the next run finds the same difference and commits it.
+      - if: steps.reports.outputs.changed == 'true'
+        name: Commit the running-now snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build/reports.json
+          git commit -m "Running-now data $(date -u +%F)"
+          git pull --rebase --quiet && git push || echo "::warning::reports.json snapshot not pushed; the next run retries"
 
       - name: Assemble the page
         working-directory: build

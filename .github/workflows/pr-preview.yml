@@ -1,0 +1,61 @@
+name: PR preview
+
+# For every pull request to main: fetch the running-now data from a GitHub runner (the same network
+# as the deploy), assemble the page, and attach it to the run as the "site-preview" artifact.
+# Nothing is deployed and nothing is committed. The run fails when a data source fails
+# (fetch_reports.py --strict), but the page is still built so you can look at it.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Fetch the running-now data (strict)
+        working-directory: build
+        run: python3 fetch_reports.py --strict
+
+      - if: ${{ !cancelled() }}
+        name: Assemble the page
+        working-directory: build
+        run: python3 run_all.py --page
+
+      - if: ${{ !cancelled() }}
+        name: Write the run summary
+        working-directory: build
+        run: |
+          python3 - >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          import json, os
+          d = json.load(open("reports.json", encoding="utf-8")) if os.path.exists("reports.json") else {}
+          print("## Running-now data from a GitHub runner\n")
+          print(f"Generated: `{d.get('generated', 'no reports.json')}`\n")
+          print("| Site | Species | Days | Last sample | Catch | Fish in 28 days |\n|---|---|---|---|---|---|")
+          for s in d.get("testfish", []):
+              last = s["days"][-1]
+              print(f"| {s['site']} ({s['src']}) | {s['sp']} | {len(s['days'])} | {last[0]} | {last[1]} | {sum(x[1] for x in s['days'])} |")
+          print("\n| Report | Date | Species | Waters |\n|---|---|---|---|")
+          for r in d.get("reports", []):
+              print(f"| [{r['title']}]({r['url']}) | {r['date']} | {', '.join(r['sp'])} | {', '.join(r['w'])} |")
+          print("\nDownload the `site-preview` artifact, unzip it, run `python -m http.server` in that folder "
+                "and open http://localhost:8000/.")
+          EOF
+
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: site-preview
+          path: |
+            index.html
+            build/reports.json
+          retention-days: 7
