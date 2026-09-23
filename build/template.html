@@ -8,8 +8,7 @@
   --ink:#16272c; --ink-2:#4a5d62; --ink-3:#7b8b8f;
   --paper:#f4f6f3; --panel:#ffffff; --line:#d7dfdc; --focus:#0b5563;
   --sea:#c3d6dd; --land:#eceee6; --land-edge:#b9c4bf; --us:#e2e1da; --lake:#b2cdd6; --river:#8fb3c0;
-  --road:#ffffff; --road-case:#c9d0c8; --road-mw:#f2c46a; --road-mw-case:#cf9a3c; --road-minor:#d8ddd5;
-  --label:#3b4c50; --park:#4f7a4a; --halo:#ffffff;
+  --label:#3b4c50; --halo:#ffffff;
   --c-chinook:#c2410c; --c-coho:#1d6fb8; --c-both:#7a3e9d; --c-chum:#2e7d4f; --c-pink:#c2367a; --c-sockeye:#a61b1b;
   --c-release:#b58a00; --c-closed:#95a0a0; --c-fraser:#b42318;
   --chip-bg:#eef2f0;
@@ -24,8 +23,7 @@
     --ink:#e3ecea; --ink-2:#a9b9b7; --ink-3:#7c8c8b;
     --paper:#0e1719; --panel:#142124; --line:#26383b; --focus:#6cc3cf;
     --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
-    --road:#3a4a47; --road-case:#1f2c2a; --road-mw:#8c6b2c; --road-mw-case:#5a4520; --road-minor:#2c3a37;
-    --label:#b7c6c4; --park:#8fbf88; --halo:#0e1719;
+    --label:#b7c6c4; --halo:#0e1719;
     --c-chinook:#f08a4b; --c-coho:#5aa9e6; --c-both:#c08be0; --c-chum:#6fcf97; --c-pink:#f07fb4; --c-sockeye:#f28b82;
     --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
     --chip-bg:#1c2c2f;
@@ -37,8 +35,7 @@
   --ink:#e3ecea; --ink-2:#a9b9b7; --ink-3:#7c8c8b;
   --paper:#0e1719; --panel:#142124; --line:#26383b; --focus:#6cc3cf;
   --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
-  --road:#3a4a47; --road-case:#1f2c2a; --road-mw:#8c6b2c; --road-mw-case:#5a4520; --road-minor:#2c3a37;
-  --label:#b7c6c4; --park:#8fbf88; --halo:#0e1719;
+  --label:#b7c6c4; --halo:#0e1719;
   --c-chinook:#f08a4b; --c-coho:#5aa9e6; --c-both:#c08be0; --c-chum:#6fcf97; --c-pink:#f07fb4; --c-sockeye:#f28b82;
   --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
   --chip-bg:#1c2c2f;
@@ -114,15 +111,10 @@ details li{margin-bottom:6px}
 .leaflet-control-attribution a{color:var(--ink-2)}
 .leaflet-tooltip{background:var(--panel);color:var(--ink);border-color:var(--line);font:600 13px var(--f-body)}
 .lbl{white-space:nowrap;pointer-events:none;display:none}
-.town{font:500 12px/1 var(--f-body);color:var(--label);text-shadow:0 0 3px var(--halo),0 0 3px var(--halo),0 0 2px var(--halo)}
-.town.r8{font-weight:600;font-size:13px}
-.town.r13{font-size:11px;color:var(--ink-3)}
-.park{font:italic 500 11.5px/1 var(--f-body);color:var(--park);text-shadow:0 0 3px var(--halo),0 0 3px var(--halo)}
 .district{font:600 15px/1 var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);text-shadow:0 0 4px var(--halo),0 0 4px var(--halo);opacity:.85}
 .district.us{letter-spacing:.3em}
 .sublbl{font:500 11px/1 var(--f-mono);color:var(--ink-2);text-shadow:0 0 3px var(--halo),0 0 3px var(--halo)}
 .zg8 .m8,.zg9 .m9,.zg10 .m10,.zg11 .m11,.zg12 .m12,.zg13 .m13,.zg14 .m14{display:block}
-.tiles-on .town,.tiles-on .park{display:none!important}
 .tiles-on .leaflet-tile-pane{filter:var(--tile-filter)}
 .pop h3{font:700 20px/1.05 var(--f-display);margin:0 0 2px}
 .pop .tag{display:inline-block;font:500 11.5px var(--f-mono);background:var(--chip-bg);border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin:2px 0 6px}
@@ -137,7 +129,6 @@ details li{margin-bottom:6px}
 .pop .subh{font:600 12px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:10px 0 2px}
 .pop .note{color:var(--ink-2);margin:8px 0 0;font-size:12.5px}
 .route{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:12.5px}
-.route .street{color:var(--ink-2)}
 .route .ll{font:500 12px var(--f-mono);color:var(--ink-3);user-select:all}
 .route a{font-weight:600}
 @media (max-width:760px){
@@ -199,11 +190,9 @@ details li{margin-bottom:6px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script id="geo" type="application/json">__GEO__</script>
-<script id="city" type="application/json">__CITY__</script>
 <script>
 (() => {
 const GEO = JSON.parse(document.getElementById('geo').textContent);
-const CITY = JSON.parse(document.getElementById('city').textContent);
 
 // ---------- language ----------
 // Order: #uk / #en in the URL, then the viewer's saved choice, then the browser language.
@@ -232,7 +221,7 @@ const I18N = {
     title: 'Лосось Metro Vancouver',
     eyebrow: 'B.C. · Lower Mainland · прісні та солоні води',
     h1: 'Де ловити лосося',
-    lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб побачити найближчу вулицю й прокласти маршрут.',
+    lede: 'Оберіть вид і дату. Лінії на карті — річки й озера Регіону 2, заливка — морські підзони Area 28 і 29. Натисніть будь-де на карті, щоб прокласти туди маршрут.',
     spLabel: 'Вид лосося', dateLabel: 'Дата риболовлі', today: 'Сьогодні', mapLabel: 'Карта водойм Lower Mainland',
     legendTitle: 'Легенда', legendHint: 'Лінії — річки, заливка — морські підзони',
     legendBoth: 'Чавича + кижуч (Chinook + Coho)', legendChinook: 'Лише чавича (Chinook)', legendCoho: 'Лише кижуч (Coho)',
@@ -246,9 +235,7 @@ const I18N = {
     subarea: s => `Підзона ${s}`, partOf293: 'частина підзони 29-3', mouthShort: 'Гирло Fraser',
     asOf: d => `Статус DFO на ${d}. «Зараз» означає, що DFO не вказує дату завершення.`,
     boldNote: d => `Жирним — правила, що діють ${d}.`,
-    nearest: (n, dist) => `Найближча дорога: <b>${n}</b> (~${dist})`, m: 'м', km: 'км',
     routeGoogle: 'Маршрут у Google Maps ↗', openOsm: 'Відкрити в OpenStreetMap ↗',
-    slipway: 'Спуск для човнів', fishingSpot: 'Місце для риболовлі (OSM)',
     rules: `<summary>Загальні правила</summary>
       <h3>Усюди</h3><ul>
         <li>Денний ліміт усіх видів лосося з припливних і прісних вод разом — 4. Ліміти для окремих видів теж діють.</li>
@@ -275,7 +262,7 @@ const I18N = {
     title: 'Metro Vancouver Salmon Map',
     eyebrow: 'B.C. · Lower Mainland · fresh and tidal waters',
     h1: 'Where to fish for salmon',
-    lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to see the nearest road and get directions.',
+    lede: 'Pick a species and a date. Lines are Region 2 rivers and lakes; shaded areas are tidal subareas of Areas 28 and 29. Click anywhere on the map to get directions there.',
     spLabel: 'Species', dateLabel: 'Fishing date', today: 'Today', mapLabel: 'Map of Lower Mainland salmon waters',
     legendTitle: 'Legend', legendHint: 'Lines: rivers · shaded: tidal subareas',
     legendBoth: 'Chinook + Coho', legendChinook: 'Chinook only', legendCoho: 'Coho only',
@@ -289,9 +276,7 @@ const I18N = {
     subarea: s => `Subarea ${s}`, partOf293: 'part of subarea 29-3', mouthShort: 'Fraser mouth',
     asOf: d => `DFO status as of ${d}. "Now" means DFO gives no end date.`,
     boldNote: d => `Bold: rules in force on ${d}.`,
-    nearest: (n, dist) => `Nearest road: <b>${n}</b> (~${dist})`, m: 'm', km: 'km',
     routeGoogle: 'Directions in Google Maps ↗', openOsm: 'Open in OpenStreetMap ↗',
-    slipway: 'Boat launch', fishingSpot: 'Fishing spot (OSM)',
     rules: `<summary>General rules</summary>
       <h3>Everywhere</h3><ul>
         <li>The daily limit for all Pacific salmon from tidal and fresh waters combined is 4. Individual species limits also apply.</li>
@@ -585,12 +570,10 @@ const map = L.map('map', {
   maxBounds: [[48.6, -125.3], [50.7, -120.8]], maxBoundsViscosity: .8,
 });
 map.attributionControl.setPrefix(false).addAttribution('© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · DFO');
-[['base', 350], ['roads', 360], ['tidal', 380], ['water', 410], ['poi', 420]].forEach(([n, z]) => { map.createPane(n).style.zIndex = z; });
+[['base', 350], ['tidal', 380], ['water', 410]].forEach(([n, z]) => { map.createPane(n).style.zIndex = z; });
 const R_BASE = L.svg({pane:'base', padding:.5});
-const R_ROADS = L.canvas({pane:'roads', padding:.3});
 const R_TIDAL = L.svg({pane:'tidal', padding:.5});
 const R_WATER = L.svg({pane:'water', padding:.5});
-const R_POI = L.svg({pane:'poi', padding:.3});
 
 const base = {
   land: L.geoJSON(GEO.land, {renderer:R_BASE, pane:'base', interactive:false}).addTo(map),
@@ -599,61 +582,11 @@ const base = {
   fraser:L.geoJSON(GEO.fraser, {renderer:R_BASE, pane:'base', interactive:false}).addTo(map),
 };
 
-// ---------- roads (decoded from delta-encoded integer coordinates, 1e-5 degrees) ----------
-const ROAD_CLASSES = ['motorway','trunk','primary','secondary','tertiary','minor'];
-const ROAD_MINZ = {motorway:7.5, trunk:7.5, primary:9, secondary:10.5, tertiary:12, minor:13};
-const roadIndex = [];                                    // {name, pts:[[lat,lng]...], bb:[s,w,n,e]}
-const roadLines = Object.fromEntries(ROAD_CLASSES.map(c => [c, []]));
-for (const [ci, ni, flat] of CITY.roads) {
-  let x = 0, y = 0; const pts = [];
-  let s = 90, w = 180, n = -90, e = -180;
-  for (let i = 0; i < flat.length; i += 2) {
-    x += flat[i]; y += flat[i + 1];
-    const lng = x / 1e5, lat = y / 1e5;
-    pts.push([lat, lng]);
-    if (lat < s) s = lat; if (lat > n) n = lat; if (lng < w) w = lng; if (lng > e) e = lng;
-  }
-  roadIndex.push({name: ni >= 0 ? CITY.names[ni] : null, pts, bb:[s, w, n, e]});
-  roadLines[ROAD_CLASSES[ci]].push(pts);
-}
-const roadLayers = {};
-for (const cls of ROAD_CLASSES) {
-  const opts = {renderer:R_ROADS, pane:'roads', interactive:false, lineCap:'round', lineJoin:'round', smoothFactor:1};
-  roadLayers[cls] = {casing: cls === 'minor' ? null : L.polyline(roadLines[cls], opts), line: L.polyline(roadLines[cls], opts)};
-}
-const ROAD_W = {motorway:[5, 3.2], trunk:[4.5, 2.8], primary:[4, 2.4], secondary:[3.4, 2], tertiary:[2.8, 1.6], minor:[0, 1.2]};
-function styleRoads() {
-  for (const cls of ROAD_CLASSES) {
-    const mw = cls === 'motorway' || cls === 'trunk';
-    const {casing, line} = roadLayers[cls];
-    if (casing) casing.setStyle({color: css(mw ? '--road-mw-case' : '--road-case'), weight: ROAD_W[cls][0], opacity:1});
-    line.setStyle({color: css(mw ? '--road-mw' : cls === 'minor' ? '--road-minor' : '--road'), weight: ROAD_W[cls][1], opacity:1});
-  }
-}
-// Draw order: every casing first, then lines from minor to motorway, so major roads sit on top.
+// ---------- labels: districts, subareas ----------
 let tilesOn = false;
-function syncRoads() {
-  const z = map.getZoom();
-  const order = [...ROAD_CLASSES].reverse();
-  for (const cls of order) {
-    const want = !tilesOn && z >= ROAD_MINZ[cls];
-    const {casing, line} = roadLayers[cls];
-    for (const l of [casing, line]) if (l) { if (want && !map.hasLayer(l)) l.addTo(map); if (!want && map.hasLayer(l)) map.removeLayer(l); }
-  }
-  for (const cls of order) { const l = roadLayers[cls].line; if (map.hasLayer(l)) l.bringToFront(); }
-  for (const cls of order) { const c = roadLayers[cls].casing; if (c && map.hasLayer(c)) c.bringToBack(); }
-}
-
-// ---------- labels: places, parks, districts, subareas ----------
-const PLACE_RANK = {city:8, town:9, village:11, suburb:11, hamlet:12, neighbourhood:13};
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const label = (lat, lng, html) => L.marker([lat, lng], {interactive:false, keyboard:false, pane:'markerPane',
   icon: L.divIcon({className:'', html, iconSize:null, iconAnchor:[0, 6]})}).addTo(map);
-for (const [name, type, lng, lat] of CITY.places) {
-  const r = PLACE_RANK[type];
-  label(lat, lng, `<span class="lbl town m${r} r${r}">${esc(name)}</span>`);
-}
-for (const [name, lng, lat] of CITY.parks) label(lat, lng, `<span class="lbl park m13">${esc(name)}</span>`);
 DISTRICT_LABELS.forEach(([n, lng, lat, cls]) => label(lat, lng, `<span class="lbl district m8 ${cls || ''}">${n}</span>`));
 Object.entries(GEO.subpts).forEach(([lab, [lng, lat]]) => label(lat, lng, `<span class="lbl sublbl m10">${lab}</span>`));
 
@@ -662,23 +595,8 @@ function syncZoomClasses() {
   for (let k = 8; k <= 14; k++) el.classList.toggle('zg' + k, z >= k - .01);
 }
 
-// ---------- points of interest: boat launches and fishing spots ----------
-let skipMapClick = 0;
-const poiLayer = L.layerGroup();
-const poiTitle = (kind, name) => t(kind === 'slipway' ? 'slipway' : 'fishingSpot') + (name ? ': ' + name : '');
-for (const [kind, name, lng, lat] of CITY.poi) {
-  const m = L.circleMarker([lat, lng], {renderer:R_POI, pane:'poi', radius:4.5, weight:1.5});
-  m._kind = kind;
-  m.bindTooltip(() => esc(poiTitle(kind, name)), {direction:'top', offset:[0, -4]});
-  m.on('click', e => { skipMapClick = Date.now(); openPointPopup(e.latlng, poiTitle(kind, name)); });
-  poiLayer.addLayer(m);
-}
-function stylePoi() {
-  poiLayer.eachLayer(m => m.setStyle({color:css('--halo'), fillColor: m._kind === 'slipway' ? css('--focus') : css('--park'), fillOpacity:1}));
-}
-const syncPoi = () => { const want = map.getZoom() >= 11; if (want !== map.hasLayer(poiLayer)) want ? poiLayer.addTo(map) : map.removeLayer(poiLayer); };
-
 // ---------- fishing waters ----------
+let skipMapClick = 0;
 const layers = {};
 WATERS.forEach(w => {
   if (w.tidal) {
@@ -725,34 +643,10 @@ function styleWater(w, cat) {
   if (!closed) L_.line.bringToFront();
 }
 
-// ---------- nearest street + route link ----------
-function nearestRoad(ll) {
-  for (const pad of [.012, .06]) { const r = nearestRoadWithin(ll, pad); if (r) return r; }
-  return null;
-}
-function nearestRoadWithin(ll, pad) {
-  const k = Math.cos(ll.lat * Math.PI / 180);
-  let best = null, bd = Infinity;
-  for (const r of roadIndex) {
-    if (!r.name) continue;
-    const [s, w, n, e] = r.bb;
-    if (ll.lat < s - pad || ll.lat > n + pad || ll.lng < w - pad / k || ll.lng > e + pad / k) continue;
-    for (let i = 1; i < r.pts.length; i++) {
-      const ax = r.pts[i - 1][1] * k, ay = r.pts[i - 1][0], bx = r.pts[i][1] * k, by = r.pts[i][0];
-      const px = ll.lng * k, py = ll.lat, dx = bx - ax, dy = by - ay;
-      const q = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1)));
-      const d = (ax + q * dx - px) ** 2 + (ay + q * dy - py) ** 2;
-      if (d < bd) { bd = d; best = r; }
-    }
-  }
-  return best ? {name: best.name, m: Math.sqrt(bd) * 111320} : null;
-}
+// ---------- route link ----------
 function routeBlock(ll) {
   const lat = ll.lat.toFixed(5), lng = ll.lng.toFixed(5);
-  const r = nearestRoad(ll);
-  const dist = r && (r.m < 1000 ? `${Math.round(r.m / 10) * 10} ${t('m')}` : `${(r.m / 1000).toFixed(1)} ${t('km')}`);
-  const street = r ? `<span class="street">${t('nearest', esc(r.name), dist)}</span>` : '';
-  return `<div class="route">${street}<span class="ll">${lat}, ${lng}</span>
+  return `<div class="route"><span class="ll">${lat}, ${lng}</span>
     <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" rel="noopener">${t('routeGoogle')}</a>
     <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}" target="_blank" rel="noopener">${t('openOsm')}</a></div>`;
 }
@@ -927,7 +821,6 @@ tiles.once('tileload', () => {
   tilesOn = true;
   map.getContainer().classList.add('tiles-on');
   map.getPane('base').style.display = 'none';
-  syncRoads();
 });
 tiles.on('tileerror', () => { if (!tilesOn && map.hasLayer(tiles)) map.removeLayer(tiles); });
 tiles.addTo(map);
@@ -937,8 +830,6 @@ function styleBase() {
   base.us.setStyle({stroke:true, color:css('--land-edge'), weight:.6, fillColor:css('--us'), fillOpacity:1});
   base.lakes.setStyle({stroke:true, color:css('--river'), weight:.6, fillColor:css('--lake'), fillOpacity:1});
   base.fraser.setStyle({color:css('--river'), weight:4, opacity:1, lineCap:'round'});
-  styleRoads();
-  stylePoi();
 }
 
 // Repaint map colors when the viewer switches theme.
@@ -946,7 +837,7 @@ const repaint = () => { styleBase(); render(); };
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', repaint);
 new MutationObserver(repaint).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
 
-map.on('zoomend', () => { syncZoomClasses(); syncRoads(); syncPoi(); });
+map.on('zoomend', syncZoomClasses);
 
 $('date').value = todayISO();
 state.md = $('date').value.slice(5);
@@ -954,7 +845,7 @@ styleBase();
 applyLang(LANG, false);
 const all = L.featureGroup(WATERS.filter(w => !w.tidal && !w.closure).map(w => layers[w.id].line));
 map.fitBounds(all.getBounds(), {padding:[20, 20]});
-syncZoomClasses(); syncRoads(); syncPoi();
+syncZoomClasses();
 new ResizeObserver(() => map.invalidateSize()).observe($('map'));
 const narrow = window.matchMedia('(max-width:760px)');
 $('legend').open = !narrow.matches;

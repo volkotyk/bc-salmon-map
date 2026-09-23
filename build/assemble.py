@@ -1,4 +1,4 @@
-"""Inline Leaflet CSS, geo.json and city.json into template.html.
+"""Inline Leaflet CSS and geo.json into template.html.
 
 Writes:
   ../index.html        standalone page for GitHub Pages or any static host
@@ -9,8 +9,7 @@ import os
 t = open("template.html", encoding="utf-8").read()
 css = open("leaflet.css", encoding="utf-8").read()
 geo = open("geo.json", encoding="utf-8").read()
-city = open("city.json", encoding="utf-8").read().replace("</", "<\\u002f")
-body = t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo).replace("__CITY__", city)
+body = t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo)
 
 os.makedirs("out", exist_ok=True)
 open("out/artifact.html", "w", encoding="utf-8").write(body)

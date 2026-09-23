@@ -1,0 +1,44 @@
+name: Check DFO salmon rules
+
+# Once a day: compare the salmon parts of the three DFO pages with monitor/snapshots/.
+# On a change: commit the new snapshots and open an issue with the diff.
+on:
+  schedule:
+    - cron: '23 15 * * *'   # 15:23 UTC = 08:23 Pacific daylight time
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: dfo-monitor
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: check
+        name: Compare DFO pages with snapshots
+        run: python3 monitor/check_dfo.py
+
+      - if: steps.check.outputs.changed == 'true'
+        name: Commit new snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add monitor/snapshots
+          git commit -m "Update DFO snapshots: ${{ steps.check.outputs.pages }}"
+          git push
+
+      - if: steps.check.outputs.changed == 'true'
+        name: Open an issue with the diff
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create dfo-update --color B42318 --description "DFO salmon rules changed" --force
+          tail -n +2 monitor/out/issue.md > body.md
+          gh issue create --title "$(head -n 1 monitor/out/issue.md)" --body-file body.md --label dfo-update

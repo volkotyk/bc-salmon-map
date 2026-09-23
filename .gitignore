@@ -1,10 +1,6 @@
 # Raw downloads (rebuild with build/run_all.py)
 build/osm.json
 build/coast.json
-build/city_roads.json
-build/city_minor_bbox.json
-build/city_places.json
-build/city_poi.json
 build/out/
 __pycache__/
 *.pyc
@@ -16,3 +12,6 @@ qa-*.html
 
 # Built by GitHub Actions (build/run_all.py --page)
 index.html
+
+# DFO monitor scratch output
+monitor/out/
