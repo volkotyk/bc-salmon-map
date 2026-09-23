@@ -11,7 +11,7 @@
   --paper:#f4f6f3; --panel:#ffffff; --line:#d7dfdc; --focus:#0b5563;
   --sea:#c3d6dd; --land:#eceee6; --land-edge:#b9c4bf; --us:#e2e1da; --lake:#b2cdd6; --river:#8fb3c0;
   --label:#3b4c50; --halo:#ffffff;
-  --c-chinook:#c2410c; --c-coho:#1d6fb8; --c-both:#7a3e9d; --c-chum:#2e7d4f; --c-pink:#c2367a; --c-sockeye:#a61b1b;
+  --c-chinook:#be5b03; --c-coho:#1781da; --c-both:#793d9c; --c-chum:#178560; --c-pink:#e03699; --c-sockeye:#9d0126;
   --c-release:#b58a00; --c-closed:#95a0a0; --c-fraser:#b42318;
   --chip-bg:#eef2f0;
   --tile-filter:none;
@@ -26,7 +26,7 @@
     --paper:#0e1719; --panel:#142124; --line:#26383b; --focus:#6cc3cf;
     --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
     --label:#b7c6c4; --halo:#0e1719;
-    --c-chinook:#f08a4b; --c-coho:#5aa9e6; --c-both:#c08be0; --c-chum:#6fcf97; --c-pink:#f07fb4; --c-sockeye:#f28b82;
+    --c-chinook:#d57403; --c-coho:#2782bb; --c-both:#a572f0; --c-chum:#33ab6c; --c-pink:#ed1baa; --c-sockeye:#d91638;
     --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
     --chip-bg:#1c2c2f;
     --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
@@ -38,7 +38,7 @@
   --paper:#0e1719; --panel:#142124; --line:#26383b; --focus:#6cc3cf;
   --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
   --label:#b7c6c4; --halo:#0e1719;
-  --c-chinook:#f08a4b; --c-coho:#5aa9e6; --c-both:#c08be0; --c-chum:#6fcf97; --c-pink:#f07fb4; --c-sockeye:#f28b82;
+  --c-chinook:#d57403; --c-coho:#2782bb; --c-both:#a572f0; --c-chum:#33ab6c; --c-pink:#ed1baa; --c-sockeye:#d91638;
   --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
   --chip-bg:#1c2c2f;
   --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
@@ -58,7 +58,6 @@ body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body);-webki
 /* Peek and half: the sheet does not scroll; a vertical drag anywhere on it moves the sheet. Full: the content scrolls. */
 .panel-body{flex:1;min-height:0;overflow:hidden;overscroll-behavior:contain;touch-action:none;padding:4px 16px 24px;display:flex;flex-direction:column;gap:12px}
 :root[data-sheet="full"] .panel-body{overflow-y:auto;touch-action:pan-y}
-:root[data-sheet="full"] .species{touch-action:auto}
 .sheet-drag .panel,.sheet-drag .legend,.sheet-drag .leaflet-bottom{transition:none}
 .sheet-drag .panel{user-select:none}
 .intro{display:contents}
@@ -72,8 +71,8 @@ h1{font:700 24px/1.1 var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 .ctl{display:flex;flex-direction:column;gap:8px}
 /* Phones: the species chips and the date value explain themselves, so the labels are for screen readers only. */
 .ctl-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;font:600 13px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
-.species{position:relative;display:flex;gap:8px;overflow-x:auto;touch-action:pan-x;scrollbar-width:none;margin:0 -16px;padding:3px 16px;scroll-padding-inline:16px}
-.species::-webkit-scrollbar{display:none}
+/* The chips wrap to more rows: a row that scrolls sideways hides chips and a mouse cannot scroll it. */
+.species{position:relative;display:flex;flex-wrap:wrap;gap:8px}
 .ctl-label.vis{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
 /* Licence switch: one segmented radio group. */
 .seg{position:relative;display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
@@ -252,7 +251,7 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
   .lede{margin-top:4px}
   h1{font-size:34px;line-height:1.02}
   .ctl-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}
-  .species{flex-wrap:wrap;overflow:visible;touch-action:auto;margin:0;padding:0;gap:6px}
+  .species{gap:6px}
   .species label{padding:0 10px}
   input[type=date]{font-size:14px}
   .legend,.leaflet-bottom{transform:none;transition:none}
@@ -1082,7 +1081,7 @@ function layoutSheet() {
 sheet.grip.addEventListener('click', () => setSheet({peek: 'half', half: 'full', full: 'peek'}[sheet.state]));
 
 // Drag. A full sheet scrolls its content natively, so there only the grip drags it.
-// A horizontal move gives the gesture to the species row, which scrolls sideways.
+// A mostly horizontal move is not a sheet drag.
 // Moves are read on window: a mouse, unlike a finger, has no implicit pointer capture.
 let drag = null;
 sheet.el.addEventListener('pointerdown', e => {
@@ -1144,7 +1143,7 @@ sheet.el.addEventListener('keydown', e => {
 
 // Web fonts, a language switch and the browser toolbar change the sizes.
 const sheetRO = new ResizeObserver(layoutSheet);
-[sheet.el, document.querySelector('.head'), $('date-row')].forEach(el => sheetRO.observe(el));
+[sheet.el, document.querySelector('.head'), $('species'), $('date-row')].forEach(el => sheetRO.observe(el));
 
 function applyLang(lang, save) {
   LANG = lang;
