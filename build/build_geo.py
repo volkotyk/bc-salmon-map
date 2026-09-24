@@ -148,7 +148,7 @@ def fresh_side(fresh, cut, r=0.005):
 ARMS = []  # river parts below a tidal boundary; build_tidal.py adds each one to the nearest tidal subarea
 
 
-def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
+def ml(*names, clip=None, seed=None, cuts=(), tidal=None, tol=0.0002):
     ls = [l for n in names for l in lines.get(n, [])]
     g = unary_union(ls)
     if g.geom_type == "MultiLineString":
@@ -170,7 +170,7 @@ def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
             sea = unary_union([p for p in getattr(sea, "geoms", [sea]) if p.distance(tidal) < 0.0005])
             ARMS.append({"cut": rnd(tidal), "line": None if arm.is_empty else rnd(arm), "up": rnd(up),
                          "sea": None if sea.is_empty else rnd(sea.simplify(0.0001))})
-    return g.simplify(0.0002)
+    return g.simplify(tol)
 
 
 # Section limits from the DFO table (Region 2 page), the tidal boundaries and the "No Fishing" limits of the
@@ -240,12 +240,14 @@ SECS = {
         {"en": "Downstream of the 216th street bridge", "g": section(WATERS["alouette"], P(49.26457, -122.68929), [BR216])},
     ],
 }
-# No-fishing parts that DFO excludes inside an open water. The page draws them as closed lines.
+# No-fishing parts that DFO excludes inside an open water. The page draws them as closed lines. They are short and
+# narrow, so they keep ~1.5 m of detail (tol, 5 decimals) where the long rivers keep ~15 m.
 STAVE_PARK = box(-122.418, 49.186, -122.404, 49.196)
 CLOSED = {
     "stave": [
-        {"name": "Ruskin Spawning Channel", "g": ml("Ruskin Channel", clip=STAVE_PARK)},   # inlet to the boat ramp culvert
-        {"name": "Northrop Spawning Channel", "g": ml("Northrop Channel", "Thompson Creek", clip=STAVE_PARK)},  # with the fishway creek
+        {"name": "Ruskin Spawning Channel", "g": ml("Ruskin Channel", clip=STAVE_PARK, tol=0.00002)},   # inlet to the boat ramp culvert
+        {"name": "Northrop Spawning Channel",                                                          # with the fishway creek
+         "g": ml("Northrop Channel", "Thompson Creek", clip=STAVE_PARK, tol=0.00002)},
     ],
 }
 # Limits that the map draws from an unclear description or unclear data. The page marks each one with a "?" sign;
@@ -272,7 +274,7 @@ out = {
     "waters": {k: rnd(v) for k, v in WATERS.items()},
     "arms": ARMS,
     "secs": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in SECS.items()},
-    "closed": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in CLOSED.items()},
+    "closed": {k: [{**p, "g": rnd(p["g"], 5)} for p in v] for k, v in CLOSED.items()},
     "unsure": [{"id": i, "w": w, "ll": [round(pt.x, 5), round(pt.y, 5)]} for i, w, pt in UNSURE],
 }
 for k, nm in LAKE_WATERS.items():
