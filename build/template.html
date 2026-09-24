@@ -794,6 +794,19 @@ function syncZoomClasses() {
 // ---------- fishing waters ----------
 let skipMapClick = 0;
 const layers = {};
+// A water with sections that have their own rules (rules.json "secs") draws each part (GEO.secs) in its own colour.
+// GEO.secs names a part by the start of its DFO text. When DFO changes that text, the water shows as one line.
+const partsOf = {};
+function sectionParts(w) {
+  const geo = GEO.secs && GEO.secs[w.id];
+  if (!geo || !w.secs) return null;
+  const key = en => Object.keys(w.secs).find(k => w.secs[k].en.toLowerCase().startsWith(en.toLowerCase()));
+  const parts = geo.map(p => ({g: p.g, k: key(p.en), in: p.in && key(p.in)}));
+  return parts.every((p, i) => p.k && (!geo[i].in || p.in)) ? parts : null;
+}
+// The rules of one part: its section's rows apply to the whole part; "in" adds the rows of the enclosing section.
+const partWater = (w, p) => ({...w, rules: w.rules.filter(r => !r.sec || r.sec === p.k || r.sec === p.in)
+  .map(r => r.sec === p.k ? {...r, sec: null} : r)});
 WATERS.forEach(w => {
   if (w.tidal) {
     const fc = w.geom === 'mouth'
@@ -813,30 +826,54 @@ WATERS.forEach(w => {
   hit.bindTooltip(() => esc(tx(w.name)), {sticky:true, direction:'top', offset:[0, -8]});
   hit.on('click', e => { skipMapClick = Date.now(); openPopup(w, e.latlng); });
   layers[w.id] = {halo, line, hit};
+  partsOf[w.id] = sectionParts(w);
+  partsOf[w.id]?.forEach(p => {
+    p.halo = L.geoJSON(p.g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
+    p.line = L.geoJSON(p.g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
+  });
 });
 layers['a29-mouth'].poly.bringToFront();
 
 // 'other': the water needs the licence that the viewer does not have. It stays on the map as a faint outline.
+const rowKey = cat => cat === 'inactive' ? 'closed' : cat;
 function styleWater(w, cat) {
-  const L_ = layers[w.id];
-  rowOf[w.id] = cat === 'inactive' ? 'closed' : cat;
-  const color = catColor(cat);
-  if (cat === 'other') {
-    const faint = {color, weight: w.tidal ? 1 : 2, opacity: .35, dashArray: '2 4', fillColor: color, fillOpacity: w.lake ? .1 : 0};
-    if (w.tidal) { L_.poly.setStyle(faint); return; }
+  const L_ = layers[w.id], parts = partsOf[w.id];
+  if (parts) {
+    // The whole line stays for bounds and anchors; the parts show the colours and have their own legend rows.
+    rowOf[w.id] = null;
     L_.halo.setStyle({opacity: 0, fill: false});
-    L_.line.setStyle({...faint, lineCap: 'round', lineJoin: 'round'});
-    return;
-  }
-  const closed = cat === 'closed' || cat === 'inactive';
-  if (w.tidal) {
-    L_.poly.setStyle({
-      color, weight: cat === 'fraser' ? 2 : 1.2, opacity: cat === 'inactive' ? .55 : .9,
-      dashArray: (cat === 'fraser' || cat === 'release' || closed) ? '5 4' : null,
-      fillColor: color, fillOpacity: cat === 'inactive' ? 0 : cat === 'fraser' ? .32 : closed ? .08 : cat === 'release' ? .15 : .22,
+    L_.line.setStyle({opacity: 0, fill: false});
+    parts.forEach((p, i) => {
+      p.cat = cat === 'other' ? cat : evaluate(partWater(w, p), state.sp, state.md).cat;
+      rowOf[`${w.id}#${i}`] = rowKey(p.cat);
+      styleLine(w, p, p.cat);
     });
     return;
   }
+  rowOf[w.id] = rowKey(cat);
+  if (!w.tidal) return styleLine(w, L_, cat);
+  const color = catColor(cat), closed = cat === 'closed' || cat === 'inactive';
+  if (cat === 'other') {
+    L_.poly.setStyle({color, weight: 1, opacity: .35, dashArray: '2 4', fillColor: color, fillOpacity: 0});
+    return;
+  }
+  L_.poly.setStyle({
+    color, weight: cat === 'fraser' ? 2 : 1.2, opacity: cat === 'inactive' ? .55 : .9,
+    dashArray: (cat === 'fraser' || cat === 'release' || closed) ? '5 4' : null,
+    fillColor: color, fillOpacity: cat === 'inactive' ? 0 : cat === 'fraser' ? .32 : closed ? .08 : cat === 'release' ? .15 : .22,
+  });
+}
+
+// L_: {halo, line} of a fresh water or of one of its parts.
+function styleLine(w, L_, cat) {
+  const color = catColor(cat);
+  if (cat === 'other') {
+    L_.halo.setStyle({opacity: 0, fill: false});
+    L_.line.setStyle({color, weight: 2, opacity: .35, dashArray: '2 4', fillColor: color, fillOpacity: w.lake ? .1 : 0,
+                      lineCap: 'round', lineJoin: 'round'});
+    return;
+  }
+  const closed = cat === 'closed' || cat === 'inactive';
   const fr = cat === 'fraser';
   const weight = fr ? 3.5 : closed ? 2.5 : 5;
   L_.halo.setStyle({color:css('--halo'), weight: weight + 3, opacity: closed ? .5 : .9, fill:false, lineCap:'round', lineJoin:'round'});
@@ -988,7 +1025,9 @@ const eachPath = (l, fn) => l.eachLayer ? l.eachLayer(x => eachPath(x, fn)) : fn
 function applyHidden() {
   // Before the first setView, Leaflet has no paths yet. Nothing is hidden at that time, so a missing path is skipped.
   WATERS.forEach(w => { const off = hiddenRows.has(rowOf[w.id]);
-    Object.values(layers[w.id]).forEach(g => eachPath(g, p => p.getElement()?.classList.toggle('lg-off', off))); });
+    Object.values(layers[w.id]).forEach(g => eachPath(g, p => p.getElement()?.classList.toggle('lg-off', off)));
+    partsOf[w.id]?.forEach((p, i) => { const pOff = hiddenRows.has(rowOf[`${w.id}#${i}`]);
+      [p.halo, p.line].forEach(g => eachPath(g, x => x.getElement()?.classList.toggle('lg-off', pOff))); }); });
   if (hiddenRows.has('pins')) pins.remove(); else pins.addTo(map);
 }
 

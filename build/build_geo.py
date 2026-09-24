@@ -202,6 +202,15 @@ WATERS = {
     "fraser-closed": ml("Fraser River", clip=box(-122.31, 48.9, E, 49.6), seed=P(49.20486, -121.77699),  # Agassiz bridge
                         cuts=[P(49.12606, -122.30047)]),               # Mission Railway Bridge (CPR)
 }
+# Parts of one water that have their own DFO "Specific area" rows (rules.json "secs"). "en" is the start of the
+# DFO text; the page matches it to "secs". "in": the part lies inside that section and takes its rules too.
+BR216 = P(49.24095, -122.62241)                        # Alouette: 216 Street bridge
+SECS = {
+    "alouette": [
+        {"en": "Upstream of the 216th Street bridge", "g": section(WATERS["alouette"], P(49.23919, -122.57956), [BR216])},
+        {"en": "Downstream of the 216th street bridge", "g": section(WATERS["alouette"], P(49.26457, -122.68929), [BR216])},
+    ],
+}
 LAKE_WATERS = {"khartoum": "Khartoum Lake", "lois": "Lois Lake"}
 fraser_all = ml("Fraser River").intersection(BB)
 
@@ -212,6 +221,7 @@ out = {
     "fraser": rnd(fraser_all),
     "waters": {k: rnd(v) for k, v in WATERS.items()},
     "arms": ARMS,
+    "secs": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in SECS.items()},
 }
 for k, nm in LAKE_WATERS.items():
     out["waters"][k] = rnd(lakes[nm].simplify(0.0002))
