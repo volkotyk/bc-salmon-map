@@ -398,7 +398,7 @@ const I18N = {
     licHint: 'Прісні води: BC Freshwater Fishing Licence. Солона (припливна) вода: BC Tidal Waters Sport Fishing Licence.',
     legendOther: 'Потрібна інша ліцензія',
     needLicence: tidal => `Для цієї водойми потрібна ${tidal ? 'BC Tidal Waters Sport Fishing Licence' : 'BC Freshwater Fishing Licence'}.`,
-    canKeep: 'Можна взяти: ', releaseSuffix: ' — відпустити', releaseShort: 'відпустити',
+    canKeep: 'Можна взяти: ', releaseSuffix: ' — відпустити', releaseShort: 'відпустити', noFishing: 'ловити заборонено',
     releaseOnly: 'Лише відпустити (без утримання)', closedOnDate: 'Закрито на цю дату',
     closureOn: range => ` (${range})`, closureOff: range => `Закриття діє ${range}; зараз тут діють правила підзони 29-3`,
     now: 'зараз', yearRound: 'увесь рік',
@@ -470,7 +470,7 @@ const I18N = {
     licHint: 'Fresh waters: BC Freshwater Fishing Licence. Tidal waters: BC Tidal Waters Sport Fishing Licence.',
     legendOther: 'Needs the other licence',
     needLicence: tidal => `This water needs a ${tidal ? 'BC Tidal Waters Sport Fishing Licence' : 'BC Freshwater Fishing Licence'}.`,
-    canKeep: 'Retention: ', releaseSuffix: ' — release', releaseShort: 'release',
+    canKeep: 'Retention: ', releaseSuffix: ' — release', releaseShort: 'release', noFishing: 'no fishing',
     releaseOnly: 'Non-retention (release only)', closedOnDate: 'Closed on this date',
     closureOn: range => ` (${range})`, closureOff: range => `Closure applies ${range}; subarea 29-3 rules apply now`,
     now: 'now', yearRound: 'year round',
@@ -540,7 +540,7 @@ const I18N = {
     licHint: 'Eaux douces : BC Freshwater Fishing Licence. Eaux à marée : BC Tidal Waters Sport Fishing Licence.',
     legendOther: 'Exige l\'autre permis',
     needLicence: tidal => `Pour cette eau, il faut le permis ${tidal ? 'BC Tidal Waters Sport Fishing Licence' : 'BC Freshwater Fishing Licence'}.`,
-    canKeep: 'Conservation : ', releaseSuffix: ' — remise à l\'eau', releaseShort: 'remise à l\'eau',
+    canKeep: 'Conservation : ', releaseSuffix: ' — remise à l\'eau', releaseShort: 'remise à l\'eau', noFishing: 'pêche interdite',
     releaseOnly: 'Remise à l\'eau seulement (aucune conservation)', closedOnDate: 'Fermé à cette date',
     closureOn: range => ` (${range})`, closureOff: range => `Fermeture : ${range}; les règles du sous-secteur 29-3 s'appliquent maintenant`,
     now: 'maintenant', yearRound: 'toute l\'année',
@@ -797,6 +797,7 @@ const layers = {};
 // A water with sections that have their own rules (rules.json "secs") draws each part (GEO.secs) in its own colour.
 // GEO.secs names a part by the start of its DFO text. When DFO changes that text, the water shows as one line.
 const partsOf = {};
+const closedOf = {};                                   // no-fishing parts inside an open water (GEO.closed), always closed
 function sectionParts(w) {
   const geo = GEO.secs && GEO.secs[w.id];
   if (!geo || !w.secs) return null;
@@ -831,6 +832,14 @@ WATERS.forEach(w => {
     p.halo = L.geoJSON(p.g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
     p.line = L.geoJSON(p.g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
   });
+  closedOf[w.id] = (GEO.closed && GEO.closed[w.id] || []).map(c => {
+    const halo = L.geoJSON(c.g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
+    const line = L.geoJSON(c.g, {renderer:R_WATER, pane:'water', interactive:false}).addTo(map);
+    const hit = L.geoJSON(c.g, {renderer:R_WATER, pane:'water', style:{weight:18, opacity:0}}).addTo(map);
+    hit.bindTooltip(() => esc(`${c.name} · ${t('noFishing')}`), {sticky:true, direction:'top', offset:[0, -8]});
+    hit.on('click', e => { skipMapClick = Date.now(); openPopup(w, e.latlng); });
+    return {halo, line, hit};
+  });
 });
 layers['a29-mouth'].poly.bringToFront();
 
@@ -838,6 +847,7 @@ layers['a29-mouth'].poly.bringToFront();
 const rowKey = cat => cat === 'inactive' ? 'closed' : cat;
 function styleWater(w, cat) {
   const L_ = layers[w.id], parts = partsOf[w.id];
+  closedOf[w.id]?.forEach(c => styleLine(w, c, c.cat = cat === 'other' ? cat : 'closed'));
   if (parts) {
     // The whole line stays for bounds and anchors; the parts show the colours and have their own legend rows.
     rowOf[w.id] = null;
@@ -1026,8 +1036,8 @@ function applyHidden() {
   // Before the first setView, Leaflet has no paths yet. Nothing is hidden at that time, so a missing path is skipped.
   WATERS.forEach(w => { const off = hiddenRows.has(rowOf[w.id]);
     Object.values(layers[w.id]).forEach(g => eachPath(g, p => p.getElement()?.classList.toggle('lg-off', off)));
-    partsOf[w.id]?.forEach((p, i) => { const pOff = hiddenRows.has(rowOf[`${w.id}#${i}`]);
-      [p.halo, p.line].forEach(g => eachPath(g, x => x.getElement()?.classList.toggle('lg-off', pOff))); }); });
+    [...partsOf[w.id] || [], ...closedOf[w.id] || []].forEach(p => { const pOff = hiddenRows.has(rowKey(p.cat));
+      [p.halo, p.line, p.hit].forEach(g => g && eachPath(g, x => x.getElement()?.classList.toggle('lg-off', pOff))); }); });
   if (hiddenRows.has('pins')) pins.remove(); else pins.addTo(map);
 }
 

@@ -216,7 +216,7 @@ WATERS = {
                    cuts=[P(49.10053, -122.64402)],                     # 208 Street bridge
                    tidal=P(49.05772, -122.86968)),                     # BNSF swing bridge
     "nicomen": ml("Nicomen Slough", "Dewdney Slough", seed=P(49.16308, -122.19334),   # Lougheed Highway bridge
-                  cuts=[P(49.2097, -122.0111)]),       # Siddle (Bell's) Creek mouth (BC Geographical Names)
+                  cuts=[P(49.20943, -122.01111)]),     # Siddle (Bell's) Creek mouth: now Siddall Creek, at Malcolm Road
     "norrish": ml("Norrish Creek"),
     "serpentine": ml("Serpentine River", seed=P(49.09437, -122.80116),  # 152 Street bridge
                      cuts=[P(49.13221, -122.75648)]),  # 168 Street bridge; the BNSF tidal boundary is past the OSM line end
@@ -236,6 +236,14 @@ SECS = {
         {"en": "Downstream of the 216th street bridge", "g": section(WATERS["alouette"], P(49.26457, -122.68929), [BR216])},
     ],
 }
+# No-fishing parts that DFO excludes inside an open water. The page draws them as closed lines.
+STAVE_PARK = box(-122.418, 49.186, -122.404, 49.196)
+CLOSED = {
+    "stave": [
+        {"name": "Ruskin Spawning Channel", "g": ml("Ruskin Channel", clip=STAVE_PARK)},   # inlet to the boat ramp culvert
+        {"name": "Northrop Spawning Channel", "g": ml("Northrop Channel", "Thompson Creek", clip=STAVE_PARK)},  # with the fishway creek
+    ],
+}
 LAKE_WATERS = {"khartoum": "Khartoum Lake", "lois": "Lois Lake"}
 fraser_all = ml("Fraser River").intersection(BB)
 
@@ -247,6 +255,7 @@ out = {
     "waters": {k: rnd(v) for k, v in WATERS.items()},
     "arms": ARMS,
     "secs": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in SECS.items()},
+    "closed": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in CLOSED.items()},
 }
 for k, nm in LAKE_WATERS.items():
     out["waters"][k] = rnd(lakes[nm].simplify(0.0002))
