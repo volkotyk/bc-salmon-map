@@ -145,6 +145,11 @@ button:active{background:var(--line)}
 .rep-pin::after{content:'';position:absolute;inset:-10px}  /* a finger-sized hit area around the small bubble */
 .rep-pin.in-legend{display:inline-flex;position:static;flex:none;height:18px;padding:0 5px;cursor:inherit;box-shadow:none}
 .rep-pin.in-legend::after{content:none}
+.unsure-pin{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:20px;height:20px;border:1.5px solid var(--ink-2);
+  border-radius:50%;background:var(--panel);color:var(--ink);font:700 12px/1 var(--f-mono);cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.unsure-pin::after{content:'';position:absolute;inset:-10px}  /* a finger-sized hit area */
+.unsure-pin.in-legend{display:inline-flex;position:static;flex:none;width:18px;height:18px;cursor:inherit;box-shadow:none}
+.unsure-pin.in-legend::after{content:none}
 .man{font-style:italic;color:var(--ink-3)}
 .run h3 .cnt{font-family:var(--f-mono);letter-spacing:0}
 /* The "show more" fold of the report list: plain text styling, not the section style of the rules <details>. */
@@ -421,7 +426,9 @@ const I18N = {
     shopTitle: 'Звіти магазинів і рибалок', mentioned: 'Згадано: ', watersIn: 'Водойми: ', showMore: n => `Показати ще ${n}`,
     pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`}`,
     popReports: 'Свіжі звіти', popReportsNote: 'Звіт — думка його автора. Діють правила з таблиці вище.',
-    legendPin: 'Водойма у свіжому звіті', manualTag: 'додано вручну',
+    legendPin: 'Водойма у свіжому звіті',
+    legendUnsure: "Межа може бути неточною", unsureTitle: "Межа може бути неточною",
+    unsure: {"chapman-falls": "Ділянка закінчується за 100 м нижче водоспаду. DFO пише, що водоспад приблизно за 550 м вище ЛЕП, але на картах там водоспаду немає. Тому точку розраховано з тексту. Найближчий відомий водоспад — приблизно за 1,4 км вище ЛЕП. Дивіться знаки на місці.", "chapman-tidal": "Нижня межа — знаки припливних вод нижче мосту Hwy 101. Точне місце знаків невідоме, тому лінія йде до гирла.", "chehalis-bridge": "Межа — головний лісовозний міст «приблизно за 2,4 км нижче Chehalis Lake». Це єдиний міст тут, але в OSM він лише приблизно за 2 км від озера.", "coquitlam-dam": "DFO не вказує верхньої межі Coquitlam River. Лінія закінчується на дамбі Coquitlam, бо озеро і все вище — закритий вододіл питної води.", "sumas-signs": "Ділянка Sumas закінчується біля знаків межі поблизу Fraser. Місце знаків невідоме. За одним повідомленням рибалки, вони за 100–150 ярдів від Fraser. Лінія йде до Fraser.", "campbell-closure": "З 15 серпня по 30 вересня ловити лосося заборонено від знаків межі вниз до цього пішохідного мосту в кінці Stayte Road. Місце верхніх знаків невідоме, тому ця ділянка на мапі не позначена.", "stave-ruskin": "Канал Ruskin закритий «до переїзду біля човнового спуску». Мапа вважає цим переїздом трубу під дорогою тут. Це не підтверджено.", "serpentine-tidal": "Припливна межа Serpentine — залізничний міст BNSF, нижче кінця лінії в OSM. Між кінцем лінії і мостом ще прісна вода.", "squamish-tidal": "Припливна межа Squamish — лінія на захід від кінчика дамби Squamish (Windsurfer Spit). На мапі лінію не обрізано на цій межі, тому її нижня частина може бути вже тидальною водою."}, manualTag: 'додано вручну',
     runNote: g => `Дані DFO попередні (unverified). Звіт — думка його автора: згадка виду не означає, що цей вид можна залишити. Правила дивіться на карті. Оновлено ${g}.`,
     rules: `<summary>Загальні правила</summary>
       <h3>Усюди</h3><ul>
@@ -493,7 +500,9 @@ const I18N = {
     shopTitle: 'Shop and angler reports', mentioned: 'Mentions: ', watersIn: 'Waters: ', showMore: n => `Show ${n} more`,
     pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent report' : `${n} recent reports`}`,
     popReports: 'Recent reports', popReportsNote: 'A report is its author\'s opinion. The rules in the table above apply.',
-    legendPin: 'Water named in a recent report', manualTag: 'added by hand',
+    legendPin: 'Water named in a recent report',
+    legendUnsure: "Limit may be inaccurate", unsureTitle: "This limit may be inaccurate",
+    unsure: {"chapman-falls": "The section ends 100 m below the falls, which DFO places about 550 m above the power line. No falls are mapped there, so this point is calculated from the text. The nearest mapped falls are about 1.4 km above the power line. Check the signs on site.", "chapman-tidal": "The lower limit is the tidal boundary signs below the Hwy 101 bridge. Their exact place is not known, so the line runs to the mouth.", "chehalis-bridge": "The limit is the main logging road bridge \"approximately 2.4 km downstream of Chehalis Lake\". This is the only bridge here, but in OSM it is only about 2 km below the lake.", "coquitlam-dam": "DFO gives no upper limit for the Coquitlam River. The line ends at the Coquitlam Dam, because the lake and everything above it is a closed drinking-water watershed.", "sumas-signs": "The Sumas section ends at fishing boundary signs near the Fraser. Their place is not known. One angler report puts them 100–150 yards above the Fraser. The line runs to the Fraser.", "campbell-closure": "From Aug 15 to Sep 30, salmon fishing is closed from the boundary signs down to this footbridge at the foot of Stayte Road. The place of the upper signs is not known, so the map does not show this stretch.", "stave-ruskin": "The Ruskin channel is closed \"downstream to the boat ramp crossing\". The map takes the culvert under the road here as that crossing. This is not confirmed.", "serpentine-tidal": "The Serpentine tidal boundary is the BNSF rail bridge, below the end of the OSM line. The water between the line end and the bridge is still fresh water.", "squamish-tidal": "The Squamish tidal boundary is a line due west from the tip of the Squamish dyke (Windsurfer Spit). The map line is not cut at it, so its lowest part may already be tidal water."}, manualTag: 'added by hand',
     runNote: g => `DFO data are preliminary (unverified). A report is its author's opinion: a species in a report does not mean you can retain it. Check the rules on the map. Updated ${g}.`,
     rules: `<summary>General rules</summary>
       <h3>Everywhere</h3><ul>
@@ -563,7 +572,9 @@ const I18N = {
     shopTitle: 'Rapports des boutiques et des pêcheurs', mentioned: 'Mentions : ', watersIn: 'Eaux : ', showMore: n => `Afficher ${n} de plus`,
     pinTitle: (name, n) => `${name} : ${n === 1 ? 'mentionnée dans un rapport récent' : `mentionnée dans ${n} rapports récents`}`,
     popReports: 'Rapports récents', popReportsNote: 'Un rapport est l\'opinion de son auteur. Les règles du tableau ci-dessus s\'appliquent.',
-    legendPin: 'Eau mentionnée dans un rapport récent', manualTag: 'ajouté à la main',
+    legendPin: 'Eau mentionnée dans un rapport récent',
+    legendUnsure: "Limite peut-être imprécise", unsureTitle: "Cette limite peut être imprécise",
+    unsure: {"chapman-falls": "Le tronçon se termine 100 m en aval de la chute, que le MPO situe à environ 550 m en amont de la ligne électrique. Aucune chute n'est cartographiée à cet endroit : ce point est calculé d'après le texte. La chute cartographiée la plus proche est à environ 1,4 km en amont de la ligne. Vérifiez les panneaux sur place.", "chapman-tidal": "La limite aval est formée par les panneaux de limite des eaux à marée en aval du pont de la route 101. Leur emplacement exact est inconnu : la ligne va jusqu'à l'embouchure.", "chehalis-bridge": "La limite est le pont principal de la route forestière « à environ 2,4 km en aval du Chehalis Lake ». C'est le seul pont ici, mais dans OSM il n'est qu'à environ 2 km du lac.", "coquitlam-dam": "Le MPO ne donne aucune limite amont pour la Coquitlam River. La ligne s'arrête au barrage Coquitlam : le lac et tout ce qui est en amont forment un bassin d'eau potable fermé.", "sumas-signs": "Le tronçon de la Sumas se termine aux panneaux de limite près du Fraser. Leur emplacement est inconnu. Selon un pêcheur, ils sont à 100–150 verges du Fraser. La ligne va jusqu'au Fraser.", "campbell-closure": "Du 15 août au 30 septembre, la pêche au saumon est fermée des panneaux de limite jusqu'à cette passerelle au bout de Stayte Road. L'emplacement des panneaux amont est inconnu : la carte ne montre pas ce tronçon.", "stave-ruskin": "Le chenal Ruskin est fermé « jusqu'au passage de la rampe de mise à l'eau ». La carte prend le ponceau sous la route ici pour ce passage. Ce n'est pas confirmé.", "serpentine-tidal": "La limite des eaux à marée de la Serpentine est le pont ferroviaire du BNSF, en aval de la fin de la ligne OSM. Entre la fin de la ligne et le pont, c'est encore de l'eau douce.", "squamish-tidal": "La limite des eaux à marée de la Squamish est une ligne plein ouest depuis la pointe de la digue de Squamish (Windsurfer Spit). La ligne de la carte n'y est pas coupée : sa partie aval peut déjà être en eau à marée."}, manualTag: 'ajouté à la main',
     runNote: g => `Les données du MPO sont préliminaires (non vérifiées). Un rapport est l'opinion de son auteur : une espèce mentionnée ne veut pas dire qu'on peut la garder. Consultez les règles sur la carte. Mis à jour le ${g}.`,
     rules: `<summary>Règles générales</summary>
       <h3>Partout</h3><ul>
@@ -1028,7 +1039,7 @@ document.addEventListener('toggle', e => {
   if (e.target.closest('.leaflet-popup') && activePopup) activePopup.update();   // new height: re-check maxHeight and the position
 }, true);
 
-// Legend rows that the viewer switched off, for this visit only. A row key is a category or 'pins'.
+// Legend rows that the viewer switched off, for this visit only. A row key is a category, 'pins' or 'unsure'.
 const hiddenRows = new Set();
 const rowOf = {};                                      // water id -> the legend row of its current category (styleWater)
 const eachPath = (l, fn) => l.eachLayer ? l.eachLayer(x => eachPath(x, fn)) : fn(l);
@@ -1039,6 +1050,7 @@ function applyHidden() {
     [...partsOf[w.id] || [], ...closedOf[w.id] || []].forEach(p => { const pOff = hiddenRows.has(rowKey(p.cat));
       [p.halo, p.line, p.hit].forEach(g => g && eachPath(g, x => x.getElement()?.classList.toggle('lg-off', pOff))); }); });
   if (hiddenRows.has('pins')) pins.remove(); else pins.addTo(map);
+  if (hiddenRows.has('unsure')) unsure.remove(); else unsure.addTo(map);
 }
 
 function legend() {
@@ -1054,6 +1066,7 @@ function legend() {
   $('legend-title').textContent = t('legendTitle');
   $('legend-body').innerHTML = rows.map(([c, text, k]) => row(c, `<span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>`, text)).join('')
     + (pins.getLayers().length ? row('pins', `<span class="rep-pin in-legend">${PIN_SVG}</span>`, t('legendPin')) : '')
+    + (unsure.getLayers().length ? row('unsure', '<span class="unsure-pin in-legend">?</span>', t('legendUnsure')) : '')
     + `<div class="hint">${esc(t('legendHint'))}<br>${esc(t('legendToggle'))}</div>`;
 }
 // The button stays in place (no re-render), so the keyboard focus stays on it.
@@ -1130,6 +1143,28 @@ function renderPins() {
     m.on('click', () => { skipMapClick = Date.now(); openPopup(w, ll, sub); });
     pins.addLayer(m);
   });
+}
+
+// ---------- uncertain limits: a "?" sign where the map draws a limit from an unclear description ----------
+const unsure = L.layerGroup().addTo(map);
+function renderUnsure() {
+  unsure.clearLayers();
+  (GEO.unsure || []).forEach(u => {
+    const w = WATERS.find(x => x.id === u.w);
+    if (!w || !unsureText(u.id)) return;
+    const ll = L.latLng(u.ll[1], u.ll[0]), title = `${tx(w.name)}: ${t('unsureTitle')}`;
+    const m = L.marker(ll, {pane:'pins', keyboard:true, riseOnHover:true, title,
+      icon: L.divIcon({className:'unsure-pin', html:'?', iconSize:null, iconAnchor:[10, 10]})});
+    m.on('add', () => m.getElement().setAttribute('aria-label', title));
+    m.on('click', () => { skipMapClick = Date.now(); openUnsure(w, ll, u.id); });
+    unsure.addLayer(m);
+  });
+}
+const unsureText = id => (t('unsure') || {})[id] || I18N.en.unsure[id];
+function openUnsure(w, ll, id) {
+  reopen = () => openUnsure(w, ll, id);
+  activePopup = L.popup(popupOpts(300)).setLatLng(ll).setContent(`<div class="pop"><h3>${esc(tx(w.name))}</h3>`
+    + `<p class="sec">${esc(t('unsureTitle'))}</p><p>${esc(unsureText(id))}</p>${routeBlock(ll)}</div>`).openOn(map);
 }
 
 function renderRun() {
@@ -1353,6 +1388,7 @@ function applyLang(lang, save) {
   renderLicence();
   renderStatus();
   renderRun();
+  renderUnsure();
   render();
   layoutSheet();
   if (wasOpen) wasOpen();
