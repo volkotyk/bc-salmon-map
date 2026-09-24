@@ -6,14 +6,15 @@ NAMES = ["Alouette River", "North Alouette River", "South Alouette River", "Ashl
          "Vedder Canal", "Sumas River", "Coquitlam River", "De Boville Slough", "Fraser River",
          "Harrison River", "Kanaka Creek", "Little Campbell River", "Mamquam River", "Nicomekl River",
          "Nicomen Slough", "Dewdney Slough", "Norrish Creek", "Serpentine River", "Squamish River",
-         "Stave River", "Powerhouse Channel"]
+         "Stave River", "Powerhouse Channel",
+         "Ruskin Channel", "Northrop Channel", "Thompson Creek"]  # Stave spawning channels (no fishing)
 LAKES = ["Khartoum Lake", "Lois Lake", "Harrison Lake", "Stave Lake", "Pitt Lake", "Alouette Lake",
          "Chehalis Lake", "Chilliwack Lake", "Coquitlam Lake", "Capilano Lake", "Cultus Lake"]
 rx = "^(" + "|".join(NAMES) + ")$"
 lx = "^(" + "|".join(LAKES) + ")$"
 q = f"""[out:json][timeout:180];
 (
-  way["waterway"~"river|stream|canal|ditch|drain"]["name"~"{rx}"]({BBOX});
+  way["waterway"~"river|stream|canal|ditch|drain|fish_pass"]["name"~"{rx}"]({BBOX});
   way["natural"="water"]["name"~"{lx}"]({BBOX});
   relation["natural"="water"]["name"~"{lx}"]({BBOX});
 );

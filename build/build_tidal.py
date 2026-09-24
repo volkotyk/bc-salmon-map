@@ -1,7 +1,7 @@
 """Add DFO tidal subareas (Areas 28, 29) and the Mouth of the Fraser closure to geo.json."""
 import json
-from shapely.geometry import shape, mapping, Polygon, Point
-from shapely.ops import unary_union
+from shapely.geometry import shape, mapping, Polygon, Point, LineString
+from shapely.ops import unary_union, nearest_points
 
 geo = json.load(open("geo.json"))
 land = unary_union([shape(geo["land"]), shape(geo["us"])])
@@ -29,6 +29,21 @@ for f in sub["features"]:
     subs[lab] = rnd(water)
     p = water.representative_point()
     pts[lab] = [round(p.x, 4), round(p.y, 4)]
+
+
+# River arms below a tidal boundary (from build_geo.py) are tidal water, but the 1:50K polygons stop short of
+# the boundary bridges. Add each arm, and the open water next to the bridge, to the nearest subarea;
+# the arm is a ribbon about 50 m wide that runs on to the subarea edge. Nothing on the fresh side ("up") is added.
+for a in geo.pop("arms", []):
+    arm = unary_union([shape(a[k]) for k in ("cut", "line") if a[k]])
+    sea = shape(a["sea"]) if a["sea"] else Polygon()
+    lab = min(subs, key=lambda k: shape(subs[k]).distance(arm))
+    poly = shape(subs[lab])
+    link = LineString(nearest_points(arm.union(sea), poly))
+    others = unary_union([shape(v) for k, v in subs.items() if k != lab])
+    ribbon = unary_union([arm.buffer(0.0003), link.buffer(0.0003), sea]).difference(others).difference(shape(a["up"]))
+    subs[lab] = rnd(unary_union([poly, ribbon]).simplify(0.0001))
+    print("tidal arm", a["cut"]["coordinates"], "->", lab, round(link.length * 80000), "m link")
 
 
 def dm(d, m):

@@ -2,7 +2,7 @@
 import json
 from collections import defaultdict
 from shapely.geometry import LineString, MultiLineString, Polygon, box, mapping, shape, Point
-from shapely.ops import unary_union, polygonize, linemerge, substring
+from shapely.ops import unary_union, polygonize, linemerge, substring, nearest_points
 
 W, S, E, N = -124.7, 48.95, -121.35, 50.35
 BB = box(W, S, E, N)
@@ -125,7 +125,30 @@ def section(g, seed, cuts, gap=0.0004):
     return linemerge(g) if g.geom_type == "MultiLineString" else g
 
 
-def ml(*names, clip=None, seed=None, cuts=()):
+def ends(g):
+    """Loose ends of a line network."""
+    deg = defaultdict(int)
+    for s in getattr(g, "geoms", [g]):
+        for e in (s.coords[0], s.coords[-1]):
+            deg[e] += 1
+    return {e for e, n in deg.items() if n == 1}
+
+
+def fresh_side(fresh, cut, r=0.005):
+    """Square on the fresh-line side of a tidal boundary: nothing there is tidal water."""
+    near = fresh.intersection(cut.buffer(0.0003).exterior)   # where the fresh line leaves a 30 m circle
+    q = near.representative_point() if not near.is_empty else nearest_points(fresh, cut)[0]
+    dx, dy = q.x - cut.x, q.y - cut.y
+    n = (dx * dx + dy * dy) ** .5
+    dx, dy = dx / n * r, dy / n * r
+    return Polygon([(cut.x - dy, cut.y + dx), (cut.x + dy, cut.y - dx),
+                    (cut.x + dy + dx, cut.y - dx + dy), (cut.x - dy + dx, cut.y + dx + dy)])
+
+
+ARMS = []  # river parts below a tidal boundary; build_tidal.py adds each one to the nearest tidal subarea
+
+
+def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
     ls = [l for n in names for l in lines.get(n, [])]
     g = unary_union(ls)
     if g.geom_type == "MultiLineString":
@@ -133,21 +156,38 @@ def ml(*names, clip=None, seed=None, cuts=()):
     if clip is not None:
         g = g.intersection(clip)
     if seed is not None:
-        g = section(g, seed, cuts)
+        full = section(g, seed, cuts)
+        g = section(g, seed, [*cuts, tidal]) if tidal else full
+        if tidal:
+            arm = full.difference(g.buffer(1e-7))
+            # OSM can end the river at the coastline a little above the boundary bridge: run it on to the bridge.
+            tip = nearest_points(g, tidal)[0]
+            if tip.distance(tidal) > 0.0001 and tip.coords[0] in ends(g):
+                g = linemerge(unary_union([g, LineString([tip, tidal])]))
+            up = fresh_side(g, tidal)
+            # Open water next to the boundary (e.g. an estuary below the bridge), from the exact coastline.
+            sea = tidal.buffer(0.002).difference(land).difference(up)
+            sea = unary_union([p for p in getattr(sea, "geoms", [sea]) if p.distance(tidal) < 0.0005])
+            ARMS.append({"cut": rnd(tidal), "line": None if arm.is_empty else rnd(arm), "up": rnd(up),
+                         "sea": None if sea.is_empty else rnd(sea.simplify(0.0001))})
     return g.simplify(0.0002)
 
 
 # Section limits from the DFO table (Region 2 page), the tidal boundaries and the "No Fishing" limits of the
-# BC Freshwater Fishing Regulations Synopsis 2025-2027, Region 2. A cut is the OSM object that the text names.
+# BC Freshwater Fishing Regulations Synopsis 2025-2027, Region 2. A cut is the OSM object that the text names;
+# "to the confluence" is the point where the line crosses the bank of the receiving river (OSM water area).
 # The seed is any point inside the section. Waters without cuts are open along their full OSM length.
+# Below a tidal boundary (tidal=) the tidal subarea rules apply, see build_tidal.py.
 WATERS = {
     "alouette": ml("Alouette River", "South Alouette River", seed=P(49.24095, -122.62241),   # 216 Street bridge
-                   cuts=[P(49.24650, -122.53467)]),     # Allco Park boundary signs (coordinates from the Synopsis)
+                   cuts=[P(49.24650, -122.53467),       # Allco Park boundary signs (coordinates from the Synopsis)
+                         P(49.26473, -122.70864)]),     # Pitt River bank
     "n-alouette": ml("North Alouette River", clip=box(-122.75, 49.2, -122.4, 49.35)),
-    "ashlu": ml("Ashlu Creek"),
+    "ashlu": ml("Ashlu Creek", seed=P(50.096, -123.6231),              # upper end of the OSM line
+                cuts=[P(49.90138, -123.30521)]),                       # Squamish River bank
     "capilano": ml("Capilano River", seed=P(49.32693, -123.13194),     # Marine Drive bridge
-                   cuts=[P(49.32189, -123.13958),                      # CN rail bridge: tidal boundary
-                         P(49.35534, -123.11082)]),                    # Cable Pool Bridge, 100 m below the fish fence
+                   cuts=[P(49.35534, -123.11082)],                     # Cable Pool Bridge, 100 m below the fish fence
+                   tidal=P(49.32189, -123.13958)),                     # CN rail bridge
     "chapman": ml("Chapman Creek", seed=P(49.44062, -123.72217),       # Hwy 101 bridge
                   cuts=[P(49.47169, -123.72523)]),     # 100 m below the falls: 450 m upstream of the 2L47 power line
     "cheakamus": ml("Cheakamus River"),
@@ -158,31 +198,51 @@ WATERS = {
                      cuts=[P(49.07827, -121.71067),                    # 100 m below the Slesse Creek mouth
                            P(49.11391, -122.11114)]),                  # Barrowtown Pumping Station
     "coquitlam": ml("Coquitlam River", seed=P(49.26905, -122.78000),   # Lougheed Highway bridge
-                    cuts=[P(49.22693, -122.80634),                     # Mary Hill Bypass bridge: tidal boundary
-                          P(49.35411, -122.77674)]),                   # Coquitlam Dam
-    "deboville": ml("De Boville Slough"),
-    "harrison": ml("Harrison River"),
+                    cuts=[P(49.35411, -122.77674)],                    # Coquitlam Dam
+                    tidal=P(49.22693, -122.80634)),                    # Mary Hill Bypass bridge
+    "deboville": ml("De Boville Slough", seed=P(49.2856, -122.7335),   # Cedar Creek and Hyde Creek confluence
+                    cuts=[P(49.27883, -122.70913)]),                   # Pitt River bank
+    "harrison": ml("Harrison River", seed=P(49.24746, -121.94741),     # Highway 7 bridge
+                   cuts=[P(49.22932, -121.94537)]),                    # Fraser River bank
     "kanaka": ml("Kanaka Creek", seed=P(49.19906, -122.55672),         # 240 Street bridge
-                 cuts=[P(49.20257, -122.58081),                        # CPR bridge: tidal boundary
-                       P(49.20726, -122.53638)]),                      # 112 Avenue bridge
+                 cuts=[P(49.20726, -122.53638)],                       # 112 Avenue bridge
+                 tidal=P(49.20257, -122.58081)),                       # CPR bridge
     "little-campbell": ml("Campbell River", seed=P(49.01238, -122.73625),   # 500 kV line crossing
-                          cuts=[P(49.01280, -122.77796),               # BNSF rail bridge: tidal boundary
-                                P(49.02392, -122.71943)]),             # 12 Avenue bridge
-    "mamquam": ml("Mamquam River"),
+                          cuts=[P(49.02392, -122.71943)],              # 12 Avenue bridge
+                          tidal=P(49.01280, -122.77796)),              # BNSF rail bridge
+    "mamquam": ml("Mamquam River", seed=P(49.6258, -122.8091),         # upper end of the OSM line
+                  cuts=[P(49.73477, -123.15197)]),                     # Squamish River bank
     "nicomekl": ml("Nicomekl River", seed=P(49.08585, -122.73537),     # 176 Street bridge
-                   cuts=[P(49.05772, -122.86968),                      # BNSF swing bridge: tidal boundary
-                         P(49.10053, -122.64402)]),                    # 208 Street bridge
+                   cuts=[P(49.10053, -122.64402)],                     # 208 Street bridge
+                   tidal=P(49.05772, -122.86968)),                     # BNSF swing bridge
     "nicomen": ml("Nicomen Slough", "Dewdney Slough", seed=P(49.16308, -122.19334),   # Lougheed Highway bridge
-                  cuts=[P(49.2097, -122.0111)]),       # Siddle (Bell's) Creek mouth (BC Geographical Names)
+                  cuts=[P(49.20943, -122.01111)]),     # Siddle (Bell's) Creek mouth: now Siddall Creek, at Malcolm Road
     "norrish": ml("Norrish Creek"),
     "serpentine": ml("Serpentine River", seed=P(49.09437, -122.80116),  # 152 Street bridge
                      cuts=[P(49.13221, -122.75648)]),  # 168 Street bridge; the BNSF tidal boundary is past the OSM line end
     "squamish": ml("Squamish River", "Powerhouse Channel"),
     "stave": ml("Stave River", seed=P(49.17251, -122.42323),           # Lougheed Highway bridge
-                cuts=[P(49.17198, -122.42361),                         # CPR bridge: DFO limit and tidal boundary
-                      P(49.19590, -122.40761)]),                       # Ruskin Dam (the BC Hydro dam)
+                cuts=[P(49.19590, -122.40761)],                        # Ruskin Dam (the BC Hydro dam)
+                tidal=P(49.17198, -122.42361)),                        # CPR bridge, also the DFO limit
     "fraser-closed": ml("Fraser River", clip=box(-122.31, 48.9, E, 49.6), seed=P(49.20486, -121.77699),  # Agassiz bridge
                         cuts=[P(49.12606, -122.30047)]),               # Mission Railway Bridge (CPR)
+}
+# Parts of one water that have their own DFO "Specific area" rows (rules.json "secs"). "en" is the start of the
+# DFO text; the page matches it to "secs". "in": the part lies inside that section and takes its rules too.
+BR216 = P(49.24095, -122.62241)                        # Alouette: 216 Street bridge
+SECS = {
+    "alouette": [
+        {"en": "Upstream of the 216th Street bridge", "g": section(WATERS["alouette"], P(49.23919, -122.57956), [BR216])},
+        {"en": "Downstream of the 216th street bridge", "g": section(WATERS["alouette"], P(49.26457, -122.68929), [BR216])},
+    ],
+}
+# No-fishing parts that DFO excludes inside an open water. The page draws them as closed lines.
+STAVE_PARK = box(-122.418, 49.186, -122.404, 49.196)
+CLOSED = {
+    "stave": [
+        {"name": "Ruskin Spawning Channel", "g": ml("Ruskin Channel", clip=STAVE_PARK)},   # inlet to the boat ramp culvert
+        {"name": "Northrop Spawning Channel", "g": ml("Northrop Channel", "Thompson Creek", clip=STAVE_PARK)},  # with the fishway creek
+    ],
 }
 LAKE_WATERS = {"khartoum": "Khartoum Lake", "lois": "Lois Lake"}
 fraser_all = ml("Fraser River").intersection(BB)
@@ -193,6 +253,9 @@ out = {
     "lakes": [rnd(g.simplify(0.0003)) for n, g in lakes.items() if n not in LAKE_WATERS.values()],
     "fraser": rnd(fraser_all),
     "waters": {k: rnd(v) for k, v in WATERS.items()},
+    "arms": ARMS,
+    "secs": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in SECS.items()},
+    "closed": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in CLOSED.items()},
 }
 for k, nm in LAKE_WATERS.items():
     out["waters"][k] = rnd(lakes[nm].simplify(0.0002))
