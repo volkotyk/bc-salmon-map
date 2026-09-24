@@ -226,6 +226,7 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
 .pop tr.now td.d{color:var(--ink)}
 .pop tr.now td:first-child{box-shadow:inset 3px 0 0 var(--c);padding-left:7px}
 .pop .sp{font-weight:600;white-space:nowrap}
+.pop-narrow .pop .sp{white-space:normal}   /* see popupOpts */
 .pop .subh{font:600 12px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:10px 0 2px}
 .pop .note{color:var(--ink-2);margin:8px 0 0;font-size:12.5px}
 .route{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:12.5px}
@@ -856,8 +857,11 @@ function routeBlock(ll) {
 }
 // Popup size follows the map size, so on a phone it scrolls inside instead of covering the whole map.
 // On a phone a popup collapses the sheet to 'peek' (see 'popupopen'), so the peek height is kept clear.
-const popupOpts = w => { const {x, y} = map.getSize(), b = WIDE.matches ? 0 : sheet.peek;
-  return {maxWidth: Math.min(w, x - 56), maxHeight: Math.max(160, Math.round((y - b) * .6)),
+// maxWidth is the content width. The popup adds 35 px (2×16 content margin, 2×1 wrapper padding, Leaflet's +1),
+// and auto-pan keeps 48 + 16 px clear, so x - 99 is the widest content that fits between the paddings.
+// When that is less than the requested width, 'pop-narrow' lets the species name wrap, so the rules table fits.
+const popupOpts = w => { const {x, y} = map.getSize(), b = WIDE.matches ? 0 : sheet.peek, mw = Math.min(w, x - 99);
+  return {maxWidth: mw, className: mw < w ? 'pop-narrow' : '', maxHeight: Math.max(160, Math.round((y - b) * .6)),
     autoPanPaddingTopLeft:[48, WIDE.matches ? 16 : 64], autoPanPaddingBottomRight:[16, 16 + b]}; };
 let reopen = null, activePopup = null;                // re-renders the open popup after a language switch
 function openPointPopup(ll, title) {
