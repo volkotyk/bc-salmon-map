@@ -148,7 +148,7 @@ def fresh_side(fresh, cut, r=0.005):
 ARMS = []  # river parts below a tidal boundary; build_tidal.py adds each one to the nearest tidal subarea
 
 
-def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
+def ml(*names, clip=None, seed=None, cuts=(), tidal=None, tol=0.0002):
     ls = [l for n in names for l in lines.get(n, [])]
     g = unary_union(ls)
     if g.geom_type == "MultiLineString":
@@ -170,7 +170,7 @@ def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
             sea = unary_union([p for p in getattr(sea, "geoms", [sea]) if p.distance(tidal) < 0.0005])
             ARMS.append({"cut": rnd(tidal), "line": None if arm.is_empty else rnd(arm), "up": rnd(up),
                          "sea": None if sea.is_empty else rnd(sea.simplify(0.0001))})
-    return g.simplify(0.0002)
+    return g.simplify(tol)
 
 
 # Section limits from the DFO table (Region 2 page), the tidal boundaries and the "No Fishing" limits of the
@@ -178,6 +178,9 @@ def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
 # "to the confluence" is the point where the line crosses the bank of the receiving river (OSM water area).
 # The seed is any point inside the section. Waters without cuts are open along their full OSM length.
 # Below a tidal boundary (tidal=) the tidal subarea rules apply, see build_tidal.py.
+CHAPMAN_FALLS = P(49.47169, -123.72523)    # 100 m below the falls: 450 m upstream of the 2L47 power line
+CHEHALIS_BRIDGE = P(49.38735, -122.02683)  # Maisel FSR bridge, the logging bridge below Chehalis Lake
+COQUITLAM_DAM = P(49.35411, -122.77674)    # Coquitlam Dam: DFO gives no upper limit; above it is a closed watershed
 WATERS = {
     "alouette": ml("Alouette River", "South Alouette River", seed=P(49.24095, -122.62241),   # 216 Street bridge
                    cuts=[P(49.24650, -122.53467),       # Allco Park boundary signs (coordinates from the Synopsis)
@@ -189,16 +192,17 @@ WATERS = {
                    cuts=[P(49.35534, -123.11082)],                     # Cable Pool Bridge, 100 m below the fish fence
                    tidal=P(49.32189, -123.13958)),                     # CN rail bridge
     "chapman": ml("Chapman Creek", seed=P(49.44062, -123.72217),       # Hwy 101 bridge
-                  cuts=[P(49.47169, -123.72523)]),     # 100 m below the falls: 450 m upstream of the 2L47 power line
+                  cuts=[CHAPMAN_FALLS]),
     "cheakamus": ml("Cheakamus River"),
     "chehalis": ml("Chehalis River", seed=P(49.29872, -121.93542),     # Morris Valley Road bridge
-                   cuts=[P(49.38735, -122.02683)]),     # Maisel FSR bridge, the logging bridge below Chehalis Lake
+                   cuts=[CHEHALIS_BRIDGE, P(49.27421, -121.926)]),     # Harrison River water area (Harrison Bay)
     "chilliwack": ml("Chilliwack River", "Vedder River", "Vedder Canal", "Sumas River",
                      seed=P(49.09739, -121.96459),                     # Vedder Bridge
                      cuts=[P(49.07827, -121.71067),                    # 100 m below the Slesse Creek mouth
-                           P(49.11391, -122.11114)]),                  # Barrowtown Pumping Station
+                           P(49.11444, -122.11297),                    # Barrowtown Pumping Station: the Sumas floodgates at Quadling Road
+                           P(49.14148, -122.11946)]),                  # Fraser River bank (lower Sumas mouth)
     "coquitlam": ml("Coquitlam River", seed=P(49.26905, -122.78000),   # Lougheed Highway bridge
-                    cuts=[P(49.35411, -122.77674)],                    # Coquitlam Dam
+                    cuts=[COQUITLAM_DAM],
                     tidal=P(49.22693, -122.80634)),                    # Mary Hill Bypass bridge
     "deboville": ml("De Boville Slough", seed=P(49.2856, -122.7335),   # Cedar Creek and Hyde Creek confluence
                     cuts=[P(49.27883, -122.70913)]),                   # Pitt River bank
@@ -236,14 +240,29 @@ SECS = {
         {"en": "Downstream of the 216th street bridge", "g": section(WATERS["alouette"], P(49.26457, -122.68929), [BR216])},
     ],
 }
-# No-fishing parts that DFO excludes inside an open water. The page draws them as closed lines.
+# No-fishing parts that DFO excludes inside an open water. The page draws them as closed lines. They are short and
+# narrow, so they keep ~1.5 m of detail (tol, 5 decimals) where the long rivers keep ~15 m.
 STAVE_PARK = box(-122.418, 49.186, -122.404, 49.196)
 CLOSED = {
     "stave": [
-        {"name": "Ruskin Spawning Channel", "g": ml("Ruskin Channel", clip=STAVE_PARK)},   # inlet to the boat ramp culvert
-        {"name": "Northrop Spawning Channel", "g": ml("Northrop Channel", "Thompson Creek", clip=STAVE_PARK)},  # with the fishway creek
+        {"name": "Ruskin Spawning Channel", "g": ml("Ruskin Channel", clip=STAVE_PARK, tol=0.00002)},   # inlet to the boat ramp culvert
+        {"name": "Northrop Spawning Channel",                                                          # with the fishway creek
+         "g": ml("Northrop Channel", "Thompson Creek", clip=STAVE_PARK, tol=0.00002)},
     ],
 }
+# Limits that the map draws from an unclear description or unclear data. The page marks each one with a "?" sign;
+# its text (template.html, key "unsure") says what is unclear. Id, water id, point.
+UNSURE = [
+    ("chapman-falls", "chapman", CHAPMAN_FALLS),
+    ("chapman-tidal", "chapman", P(49.44062, -123.72217)),       # Hwy 101 bridge; the signs are somewhere below it
+    ("chehalis-bridge", "chehalis", CHEHALIS_BRIDGE),
+    ("coquitlam-dam", "coquitlam", COQUITLAM_DAM),
+    ("sumas-signs", "chilliwack", P(49.14148, -122.11946)),       # line end at the Fraser bank; one report: signs 100-150 yards up
+    ("campbell-closure", "little-campbell", P(49.01607, -122.7794)),   # Stayte Road footbridge, lower end of the closure
+    ("stave-ruskin", "stave", P(49.19214, -122.40698)),           # culvert taken as the boat ramp crossing
+    ("serpentine-tidal", "serpentine", P(49.0832, -122.8509)),     # OSM line end; the BNSF bridge is further down
+    ("squamish-tidal", "squamish", P(49.6853, -123.1795)),         # OSM line end near the Squamish Spit
+]
 LAKE_WATERS = {"khartoum": "Khartoum Lake", "lois": "Lois Lake"}
 fraser_all = ml("Fraser River").intersection(BB)
 
@@ -255,7 +274,8 @@ out = {
     "waters": {k: rnd(v) for k, v in WATERS.items()},
     "arms": ARMS,
     "secs": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in SECS.items()},
-    "closed": {k: [{**p, "g": rnd(p["g"])} for p in v] for k, v in CLOSED.items()},
+    "closed": {k: [{**p, "g": rnd(p["g"], 5)} for p in v] for k, v in CLOSED.items()},
+    "unsure": [{"id": i, "w": w, "ll": [round(pt.x, 5), round(pt.y, 5)]} for i, w, pt in UNSURE],
 }
 for k, nm in LAKE_WATERS.items():
     out["waters"][k] = rnd(lakes[nm].simplify(0.0002))

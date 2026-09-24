@@ -46,6 +46,19 @@ for a in geo.pop("arms", []):
     print("tidal arm", a["cut"]["coordinates"], "->", lab, round(link.length * 80000), "m link")
 
 
+# One solid block per subarea: fill small holes (the 1:50K data has a few, e.g. at the Capilano mouth) and close
+# gaps up to about 60 m wide, which the shoreline trim and the arm ribbons leave. Big islands (holes of 0.05 km2
+# or more) stay open. A gap never takes water from another subarea.
+KM2 = 1 / (111.32 * 72.6)                              # square degrees per km2 at 49.2 N
+for lab in subs:
+    poly = shape(subs[lab])
+    solid = unary_union([poly, poly.buffer(0.0004, join_style=2).buffer(-0.0004, join_style=2)])
+    solid = unary_union([Polygon(p.exterior, [h for h in p.interiors if Polygon(h).area >= 0.05 * KM2])
+                         for p in getattr(solid, "geoms", [solid])])
+    others = unary_union([shape(v) for k, v in subs.items() if k != lab])
+    subs[lab] = rnd(unary_union([poly, solid.difference(others)]))
+
+
 def dm(d, m):
     return d + m / 60
 
