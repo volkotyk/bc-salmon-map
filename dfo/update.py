@@ -31,6 +31,7 @@ PAGES = {
 MONTHS = {m: i for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
 MON_UK = ["січ", "лют", "бер", "кві", "тра", "чер", "лип", "сер", "вер", "жов", "лис", "гру"]
 MON_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+MON_FR = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
 SPECIES = {"chinook": "chinook", "coho": "coho", "chum": "chum", "pink": "pink", "sockeye": "sockeye", "all": "all"}
 YEAR = ("04-01", "03-31")
 B = C.B
@@ -88,9 +89,10 @@ def parse_dates(text):
 
 def fmt_range(fr, to):
     if (fr, to) == YEAR:
-        return B("цілий рік", "year round")
+        return B("цілий рік", "year round", "toute l'année")
     (m1, d1), (m2, d2) = [map(int, x.split("-")) for x in (fr, to)]
-    return B(f"{d1} {MON_UK[m1-1]} – {d2} {MON_UK[m2-1]}", f"{MON_EN[m1-1]} {d1} – {MON_EN[m2-1]} {d2}")
+    return B(f"{d1} {MON_UK[m1-1]} – {d2} {MON_UK[m2-1]}", f"{MON_EN[m1-1]} {d1} – {MON_EN[m2-1]} {d2}",
+             f"{d1} {MON_FR[m1-1]} – {d2} {MON_FR[m2-1]}")
 
 
 def species_of(text):
@@ -104,24 +106,28 @@ def plural_hatchery(n):
 
 
 def fresh_limit(en):
-    """DFO freshwater limit text -> (type, {uk, en}) or (None, None) when unknown."""
+    """DFO freshwater limit text -> (type, {uk, en, fr}) or (None, None) when unknown."""
     s = en.strip()
-    fixed = {"Non-retention": ("release", "Лише відпустити"), "Bait ban": ("gear", "Заборона наживки"),
-             "Single barbless hook": ("gear", "Лише одинарний гачок без зазубрини"),
-             "No fishing for salmon": ("closed", "Риболовлю на лосося закрито")}
+    fixed = {"Non-retention": ("release", "Лише відпустити", "Remise à l'eau seulement"),
+             "Bait ban": ("gear", "Заборона наживки", "Appâts interdits"),
+             "Single barbless hook": ("gear", "Лише одинарний гачок без зазубрини", "Hameçon simple sans ardillon seulement"),
+             "No fishing for salmon": ("closed", "Риболовлю на лосося закрито", "Pêche au saumon fermée")}
     if s in fixed:
-        typ, uk = fixed[s]
-        return typ, B(uk, s)
+        typ, uk, fr = fixed[s]
+        return typ, B(uk, s, fr)
     m = re.fullmatch(r"(\d+) (hatchery marked )?per day(, hatchery marked only)?(?:, only (\d+) over (\d+) cm)?", s)
     if not m:
         return None, None
     n, hm, hm_only, k, cm = m.groups()
     uk = f"{n} {plural_hatchery(n)} на день" if hm else f"{n} на день"
+    fr = f"{n} {'marqué' if n == '1' else 'marqués'} d'écloserie par jour" if hm else f"{n} par jour"
     if hm_only:
         uk += ", лише заводська" if n == "1" else ", лише заводські"
+        fr += ", marqué d'écloserie seulement" if n == "1" else ", marqués d'écloserie seulement"
     if k:
         uk += f", з них ≤{k} понад {cm} см"
-    return "retain", B(uk, s)
+        fr += f", dont ≤{k} de plus de {cm} cm"
+    return "retain", B(uk, s, fr)
 
 
 def sub_list(text, area, bad, where):
@@ -144,10 +150,10 @@ def sub_list(text, area, bad, where):
     return out
 
 
-def tr(text, table):
-    """Ukrainian from `table` (English fallback); English with a capital first letter for display."""
+def tr(text, uk, fr):
+    """Ukrainian and French from the `uk` / `fr` tables (English fallback); English with a capital first letter."""
     en = text[:1].upper() + text[1:]
-    return B(table.get(text, en), en)
+    return B(uk.get(text, en), en, fr.get(text, en))
 
 
 def last_updated(fragment):
@@ -212,14 +218,14 @@ def parse_region2(page, bad):
         areas = [a for a in w["areas"]]
         if len(areas) == 1:
             if areas[0]:
-                e["sec"] = tr(areas[0], C.AREA_UK)
+                e["sec"] = tr(areas[0], C.AREA_UK, C.AREA_FR)
             elif m.get("sec"):
                 e["sec"] = m["sec"]
             for r in w["rules"]:
                 r.pop("_area")
         else:
             keys = "abcdefgh"
-            e["secs"] = {keys[i]: tr(a, C.AREA_UK) for i, a in enumerate(areas)}
+            e["secs"] = {keys[i]: tr(a, C.AREA_UK, C.AREA_FR) for i, a in enumerate(areas)}
             if m.get("sec"):
                 e["sec"] = m["sec"]
             for r in w["rules"]:
@@ -237,24 +243,27 @@ def gear_text(details):
 
 
 def note(place, typ, details, species):
-    """One DFO restriction row as a bilingual popup note."""
+    """One DFO restriction row as a popup note in three languages."""
     prefix_en = f"{place}: " if place else ""
     prefix_uk = f"{C.PLACE_UK.get(place, place)}: " if place else ""
-    sp_en = f"{species.split(' (')[0]} · " if species not in ("", "Finfish", "Salmon") else ""
-    sp_uk = sp_en and f"{sp_en}"
-    typ_uk = C.TYPE_UK.get(typ, typ)
+    prefix_fr = f"{C.PLACE_FR.get(place, place)} : " if place else ""
+    sp = species.split(" (")[0] if species not in ("", "Finfish", "Salmon") else ""
+    sp_en = sp_uk = f"{sp} · " if sp else ""
+    sp_fr = f"{C.SPECIES_FR.get(sp, sp)} · " if sp else ""
+    typ_uk, typ_fr = C.TYPE_UK.get(typ, typ), C.TYPE_FR.get(typ, typ)
     items = gear_text(details) if re.search(r"\([^()]*(to|round)[^()]*\)\s*$", details) else []
     if items:
-        en_parts, uk_parts = [], []
+        en_parts, uk_parts, fr_parts = [], [], []
         for what, dates in items:
             rng = parse_dates(dates)
             r = fmt_range(*rng) if rng else B(dates, dates)
             en_parts.append(f"{what} ({r['en']})")
             uk_parts.append(f"{C.DETAIL_UK.get(what, what)} ({r['uk']})")
-        en, uk = "; ".join(en_parts), "; ".join(uk_parts)
+            fr_parts.append(f"{C.DETAIL_FR.get(what, what)} ({r['fr']})")
+        en, uk, fr = "; ".join(en_parts), "; ".join(uk_parts), "; ".join(fr_parts)
     else:
-        en, uk = details, C.DETAIL_UK.get(details, details)
-    return B(f"{prefix_uk}{sp_uk}{typ_uk}: {uk}", f"{prefix_en}{sp_en}{typ}: {en}")
+        en, uk, fr = details, C.DETAIL_UK.get(details, details), C.DETAIL_FR.get(details, details)
+    return B(f"{prefix_uk}{sp_uk}{typ_uk}: {uk}", f"{prefix_en}{sp_en}{typ}: {en}", f"{prefix_fr}{sp_fr}{typ_fr} : {fr}")
 
 
 def parse_tidal(area, page, bad):
@@ -285,7 +294,7 @@ def parse_tidal(area, page, bad):
         if status == "closed":
             continue
         if status == "non retention":
-            rule = {"sp": sp, "from": YEAR[0], "to": YEAR[1], "type": "release", "lim": B("Лише відпустити", "Non-retention (release only)")}
+            rule = {"sp": sp, "from": YEAR[0], "to": YEAR[1], "type": "release", "lim": B("Лише відпустити", "Non-retention (release only)", "Remise à l'eau seulement")}
         elif status == "open":
             n = re.match(r"\s*(\d+)", limit_t)
             cm = re.fullmatch(r"\s*(\d+)\s*cm\s*", size_t)
@@ -297,12 +306,13 @@ def parse_tidal(area, page, bad):
             if n == "0":
                 continue
             if wild and wild[1] == "0":
-                lim = B(f"{n} на день, лише заводські (диких — 0), мін. {cm} см", f"{n} per day, hatchery marked only (wild: 0), min. {cm} cm")
+                lim = B(f"{n} на день, лише заводські (диких — 0), мін. {cm} см", f"{n} per day, hatchery marked only (wild: 0), min. {cm} cm",
+                        f"{n} par jour, marqués d'écloserie seulement (sauvages : 0), min. {cm} cm")
             elif wild or "Combined" in limit_t:
                 bad.add(f"{where}: unknown combined limit {limit_t!r}")
                 continue
             else:
-                lim = B(f"{n} на день, мін. {cm} см", f"{n} per day, min. {cm} cm")
+                lim = B(f"{n} на день, мін. {cm} см", f"{n} per day, min. {cm} cm", f"{n} par jour, min. {cm} cm")
             rule = {"sp": sp, "from": YEAR[0], "to": YEAR[1], "type": "retain", "lim": lim}
         else:
             bad.add(f"{where}: unknown status {c[5]!r}")
@@ -338,7 +348,8 @@ def parse_tidal(area, page, bad):
                     bad.add(f"{name}: cannot read gear dates {dates!r}")
                     continue
                 area_gear.append({"sp": "all", "from": rng[0], "to": rng[1], "type": "gear",
-                                  "lim": B(f"Заборонено: {C.DETAIL_UK.get(what, what)}", f"Not allowed: {what}")})
+                                  "lim": B(f"Заборонено: {C.DETAIL_UK.get(what, what)}", f"Not allowed: {what}",
+                                           f"Interdit : {C.DETAIL_FR.get(what, what)}")})
             continue
         if typ == "Reminder" and details.startswith("Closed to harvesting"):
             for sub, paren in re.findall(rf"({area}-\d+) \(([^)]*)\)", details):
@@ -357,10 +368,11 @@ def parse_tidal(area, page, bad):
         per[s] = per[s] + area_gear
         if s in closed_subs:
             per[s] = [{"sp": "all", "from": YEAR[0], "to": YEAR[1], "type": "closed",
-                       "lim": B("Закрито для вилову (навігаційне закриття)", "Closed to harvesting (navigational closure)")}] + area_gear
+                       "lim": B("Закрито для вилову (навігаційне закриття)", "Closed to harvesting (navigational closure)",
+                               "Fermé à la récolte (fermeture de navigation)")}] + area_gear
         elif not any(r["type"] in ("retain", "release") for r in per[s]):
             per[s] = [{"sp": "all", "from": YEAR[0], "to": YEAR[1], "type": "closed",
-                       "lim": B("Закрито для лосося (ліміт 0)", "Closed to salmon (limit 0)")}] + area_gear
+                       "lim": B("Закрито для лосося (ліміт 0)", "Closed to salmon (limit 0)", "Fermé au saumon (limite 0)")}] + area_gear
 
     # group subareas with identical rules
     groups = {}
@@ -371,7 +383,7 @@ def parse_tidal(area, page, bad):
     for i, members in enumerate(groups.values()):
         label = compact(members)
         e = {"id": f"a{area}-{i + 1}", "d": f"a{area}", "tidal": True, "subs": members, "subsLabel": label,
-             "name": C.GROUP_NAMES.get(frozenset(members), B(f"Area {area}: {label}", f"Area {area}: {label}")),
+             "name": C.GROUP_NAMES.get(frozenset(members), B(f"Area {area}: {label}", f"Area {area}: {label}", f"Secteur {area} : {label}")),
              "rules": per[members[0]], "notes": area_notes, "asOf": as_of,
              "subNotes": {s: notes_sub[s] for s in members if notes_sub[s]}}
         out.append(e)
@@ -387,9 +399,9 @@ def parse_tidal(area, page, bad):
                 bad.add(f"{name}: Fraser mouth closure boundary changed; update the polygon in build/build_tidal.py")
             fr, to = dates.pop()
             out.append({"id": f"a{area}-mouth", "d": f"a{area}", "tidal": True, "closure": True, "geom": "mouth",
-                        "name": C.MOUTH_NAME, "sec": C.MOUTH_SEC, "subsLabel": B("частина 29-3", "part of 29-3"),
+                        "name": C.MOUTH_NAME, "sec": C.MOUTH_SEC, "subsLabel": B("частина 29-3", "part of 29-3", "partie de 29-3"),
                         "asOf": as_of, "notes": [],
-                        "rules": [{"sp": "all", "from": fr, "to": to, "type": "closed", "lim": B("Закрито для всіх видів лосося", "Closed to all salmon")}]})
+                        "rules": [{"sp": "all", "from": fr, "to": to, "type": "closed", "lim": B("Закрито для всіх видів лосося", "Closed to all salmon", "Fermé à toutes les espèces de saumon")}]})
     return out, as_of
 
 

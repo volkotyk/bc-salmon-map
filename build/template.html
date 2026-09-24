@@ -277,9 +277,10 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
               <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
               <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
             </button>
-            <div class="lang" role="group" aria-label="Language / Мова">
-              <button type="button" data-lang="uk" lang="uk">UA</button>
+            <div class="lang" role="group" aria-label="Language / Langue / Мова">
               <button type="button" data-lang="en" lang="en">EN</button>
+              <button type="button" data-lang="fr" lang="fr">FR</button>
+              <button type="button" data-lang="uk" lang="uk">UA</button>
             </div>
           </div>
         </div>
@@ -345,28 +346,32 @@ const GEO = JSON.parse(document.getElementById('geo').textContent);
 const REPORTS = (() => { try { return JSON.parse(document.getElementById('reports').textContent); } catch { return {}; } })();
 
 // ---------- language ----------
-// Order: #uk / #en in the URL, then the viewer's saved choice, then the browser language.
-const LANGS = ['uk', 'en'];
+// Order: #en / #fr / #uk in the URL, then the viewer's saved choice, then English.
+const LANGS = ['en', 'fr', 'uk'];
 const store = {
   get: k => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* storage may be blocked */ } },
   del: k => { try { localStorage.removeItem(k); } catch { /* storage may be blocked */ } },
 };
 const fromHash = () => LANGS.find(l => location.hash === '#' + l);
-let LANG = fromHash() || (LANGS.includes(store.get('lang')) ? store.get('lang') : null)
-  || (/^(uk|ru)\b/i.test(navigator.language || '') ? 'uk' : 'en');
+let LANG = fromHash() || (LANGS.includes(store.get('lang')) ? store.get('lang') : null) || 'en';
 
-// Bilingual value: B('текст', 'text'). tx() resolves it for the current language; plain strings pass through.
-const B = (uk, en) => ({uk, en});
-const tx = v => (v && typeof v === 'object' && 'uk' in v) ? v[LANG] : v;
+// Text in three languages: B('текст', 'text', 'texte'); French falls back to English (proper names).
+// tx() resolves it for the current language; plain strings pass through.
+const B = (uk, en, fr) => ({uk, en, fr: fr ?? en});
+const tx = v => (v && typeof v === 'object' && 'en' in v) ? (v[LANG] ?? v.en) : v;
 
 const MONTHS = {
   uk: ['січ','лют','бер','кві','тра','чер','лип','сер','вер','жов','лис','гру'],
   en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+  fr: ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'],
 };
-const fmt = md => { const [m, d] = md.split('-').map(Number); return LANG === 'uk' ? `${d} ${MONTHS.uk[m - 1]}` : `${MONTHS.en[m - 1]} ${d}`; };
-const fmtFull = iso => { const [y, m, d] = iso.split('-').map(Number); return LANG === 'uk' ? `${d} ${MONTHS.uk[m - 1]} ${y}` : `${MONTHS.en[m - 1]} ${d}, ${y}`; };
+const fmt = md => { const [m, d] = md.split('-').map(Number);
+  return LANG === 'en' ? `${MONTHS.en[m - 1]} ${d}` : `${LANG === 'fr' && d === 1 ? '1er' : d} ${MONTHS[LANG][m - 1]}`; };
+const fmtFull = iso => { const [y, m, d] = iso.split('-').map(Number); return LANG === 'en' ? `${fmt(iso.slice(5))}, ${y}` : `${fmt(iso.slice(5))} ${y}`; };
 
+// French short dates end with a period ("24 sept."): no second period at the end of a sentence.
+const endDot = d => d.endsWith('.') ? d : d + '.';
 const I18N = {
   uk: {
     title: 'Лосось Metro Vancouver',
@@ -510,28 +515,102 @@ const I18N = {
         <li>DFO statuses for Areas 28 and 29 have no end date, so for any selected date the page shows the current status. Dated seasonal closures, such as the Fraser mouth, follow the selected date.</li>
         <li>The map updates itself from the DFO pages every day. If DFO changes something unusual, the update stops and the page shows a warning.</li></ul>`,
     foot: `Sources: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>; subarea boundaries from the DFO PFMA Subareas 1:50,000 layer. River section boundaries on the map are approximate; the exact description is in each water's popup. Rules change through fishery notices, so check the source before you go. Map data © OpenStreetMap contributors (ODbL).`,
+  },  fr: {
+    title: 'Carte du saumon de Metro Vancouver',
+    checked: dt => `Règles du MPO vérifiées le <b>${dt}</b>.`, notChecked: 'La vérification automatique du MPO n\'a pas été lancée pour cette copie.',
+    rulesChanged: d => `Carte mise à jour selon les changements du MPO le <b>${d}</b>.`,
+    dfoDates: (a, b, c) => `Dates des pages du MPO : Région 2 — ${a}, secteur 28 — ${b}, secteur 29 — ${c}.`,
+    pending: d => `Le MPO a modifié les règles (${d}), mais la mise à jour automatique s'est arrêtée à une vérification de sécurité. La carte montre les règles précédentes : vérifiez la source du MPO.`,
+    chipOk: d => `MPO ✓ ${d}`, chipWarn: 'MPO : changements en attente', credit: 'Réalisé par Volodymyr Kotyk',
+    eyebrow: 'C.-B. · Lower Mainland · eaux douces et eaux à marée',
+    h1: 'Où pêcher le saumon',
+    lede: 'Choisissez une espèce et une date. Les lignes sont les rivières et les lacs de la Région 2; les zones ombrées sont les sous-secteurs à marée des secteurs 28 et 29. Cliquez n\'importe où sur la carte pour obtenir l\'itinéraire.',
+    spLabel: 'Espèce', dateLabel: 'Date de pêche', today: 'Aujourd\'hui', mapLabel: 'Carte des eaux à saumon du Lower Mainland',
+    sheetExpand: 'Agrandir le panneau', sheetCollapse: 'Réduire le panneau',
+    themeDark: 'Thème sombre', themeLight: 'Thème clair',
+    legendTitle: 'Légende', legendHint: 'Lignes : rivières · zones ombrées : sous-secteurs à marée', legendToggle: 'Touchez une ligne pour la masquer ou l\'afficher sur la carte',
+    legendBoth: 'Quinnat + coho (Chinook + Coho)', legendChinook: 'Quinnat seulement (Chinook)', legendCoho: 'Coho seulement',
+    legendKeep: sp => `${sp} : conservation permise`, legendRelease: 'Remise à l\'eau seulement', legendClosed: 'Fermé à cette date', legendFraser: 'Fermeture (Fraser)',
+    summary: (acc, fo, ft, to, tt, d, rel) => `${acc} : conservation permise dans <b>${fo}</b> des ${ft} eaux douces et dans <b>${to}</b> des ${tt} sous-secteurs à marée le ${endDot(d)}` + (rel ? ` Remise à l'eau seulement dans <b>${rel}</b> autres.` : ''),
+    summaryFresh: (acc, fo, ft, d, rel) => `${acc} : conservation permise dans <b>${fo}</b> des ${ft} eaux douces le ${endDot(d)}` + (rel ? ` Remise à l'eau seulement dans <b>${rel}</b> autres.` : ''),
+    summaryTidal: (acc, to, tt, d, rel) => `${acc} : conservation permise dans <b>${to}</b> des ${tt} sous-secteurs à marée le ${endDot(d)}` + (rel ? ` Remise à l'eau seulement dans <b>${rel}</b> autres.` : ''),
+    banner: (sp, d, rel, fresh) => `Le ${d}, aucune eau ne permet de garder cette espèce : ${sp}. ` + (rel ? `La pêche avec remise à l'eau est permise à ${rel} endroits.` : fresh ? 'Les eaux douces de la Région 2 ne sont ouvertes qu\'au quinnat (Chinook) et au coho.' : ''),
+    licLabel: 'Votre permis', lic: {all:'Les deux', fresh:'Eau douce', tidal:'Marée'},
+    licHint: 'Eaux douces : BC Freshwater Fishing Licence. Eaux à marée : BC Tidal Waters Sport Fishing Licence.',
+    legendOther: 'Exige l\'autre permis',
+    needLicence: tidal => `Pour cette eau, il faut le permis ${tidal ? 'BC Tidal Waters Sport Fishing Licence' : 'BC Freshwater Fishing Licence'}.`,
+    canKeep: 'Conservation : ', releaseSuffix: ' — remise à l\'eau', releaseShort: 'remise à l\'eau',
+    releaseOnly: 'Remise à l\'eau seulement (aucune conservation)', closedOnDate: 'Fermé à cette date',
+    closureOn: range => ` (${range})`, closureOff: range => `Fermeture : ${range}; les règles du sous-secteur 29-3 s'appliquent maintenant`,
+    now: 'maintenant', yearRound: 'toute l\'année',
+    subarea: s => `Sous-secteur ${s}`, partOf293: 'partie du sous-secteur 29-3', mouthShort: 'Embouchure du Fraser',
+    asOf: d => `Statut du MPO au ${d}. « Maintenant » signifie que le MPO ne donne pas de date de fin.`,
+    boldNote: d => `En gras : règles en vigueur le ${endDot(d)}`,
+    routeGoogle: 'Itinéraire dans Google Maps ↗', openOsm: 'Ouvrir dans OpenStreetMap ↗',
+    spHint: 'Touchez une espèce pour voir à quoi elle ressemble.',
+    spCardTitle: sp => `Comment l'identifier : ${sp}`,
+    phaseOcean: 'En mer (secteurs 28 et 29) et au début de la montaison', phaseSpawn: 'Mâle en frai dans la rivière',
+    spCardNote: 'Un poisson marqué d\'écloserie n\'a pas de nageoire adipeuse (la petite nageoire sur le dos, près de la queue); une cicatrice guérie la remplace. Les dessins montrent des mâles; chez les femelles, les signes du frai sont moins marqués.',
+    spCredit: 'Illustrations : gouvernement des États-Unis (Lake Washington Ship Canal Fish Ladder, 1996), T. Knepp / USFWS, Evermann et Goldsborough (1907). Domaine public.',
+    runTitle: 'En montaison dans le Fraser',
+    runLede: 'Pêches d\'essai du MPO et de la CSP : combien de saumons le filet d\'essai prend par jour. Cela montre la montaison dans le Fraser, pas les touches à un endroit précis. Barres : prises sur 28 jours; les barres vives sont les 7 derniers jours.',
+    runLine: (d, n, wk) => `${d} : ${n} poissons · 7 derniers jours : ${wk}`,
+    runInNet: 'dans le filet à kéta',
+    trend: {up: '↑ plus que la semaine précédente', down: '↓ moins que la semaine précédente', flat: '→ comme la semaine précédente'},
+    sparkLabel: (sp, site, max, d) => `${sp}, ${site} : prises sur 28 jours, maximum ${max} poissons (${d})`,
+    sparkDay: (d, n) => `${d} : ${n} poissons`,
+    shopTitle: 'Rapports des boutiques et des pêcheurs', mentioned: 'Mentions : ', watersIn: 'Eaux : ', showMore: n => `Afficher ${n} de plus`,
+    pinTitle: (name, n) => `${name} : ${n === 1 ? 'mentionnée dans un rapport récent' : `mentionnée dans ${n} rapports récents`}`,
+    popReports: 'Rapports récents', popReportsNote: 'Un rapport est l\'opinion de son auteur. Les règles du tableau ci-dessus s\'appliquent.',
+    legendPin: 'Eau mentionnée dans un rapport récent', manualTag: 'ajouté à la main',
+    runNote: g => `Les données du MPO sont préliminaires (non vérifiées). Un rapport est l'opinion de son auteur : une espèce mentionnée ne veut pas dire qu'on peut la garder. Consultez les règles sur la carte. Mis à jour le ${g}.`,
+    rules: `<summary>Règles générales</summary>
+      <h3>Partout</h3><ul>
+        <li>La limite quotidienne pour tous les saumons du Pacifique, eaux à marée et eaux douces combinées, est de 4. Les limites par espèce s'appliquent aussi.</li>
+        <li>La limite de possession est le double de la limite quotidienne.</li>
+        <li>Saumon marqué d'écloserie : quinnat (Chinook) ou coho avec une cicatrice guérie à la place de la nageoire adipeuse. Là où la limite parle de poissons marqués d'écloserie, remettez les poissons sauvages à l'eau.</li>
+        <li>Noms des espèces : quinnat — Chinook, coho — Coho, kéta — Chum, rose — Pink, rouge — Sockeye.</li></ul>
+      <h3>Eaux douces de la Région 2</h3><ul>
+        <li>La pêche au saumon n'est permise que de jour.</li>
+        <li>Pêche interdite à moins de 100 m de toute installation gouvernementale de dénombrement, de passage ou d'élevage du poisson.</li>
+        <li>Limite annuelle : 10 quinnats de plus de 50 cm pour toutes les eaux douces combinées.</li>
+        <li>Bassin de la Squamish (Squamish, Cheakamus, Mamquam, Ashlu) : au total, 1 coho marqué d'écloserie par jour.</li>
+        <li>Taille minimale : coho 25 cm; quinnat, kéta, rose et rouge 30 cm. Mesurez du bout du museau à la fourche de la queue.</li>
+        <li>Un quinnat adulte mesure plus de 50 cm; plus de 62 cm sur le Fraser et la Chehalis du 1<sup>er</sup> sept. au 31 déc., ainsi que sur la Chilliwack/Vedder (avec la Sumas) et la Capilano.</li></ul>
+      <h3>Eaux à marée : secteurs 28 et 29</h3><ul>
+        <li>Pour garder un saumon, il faut un BC Tidal Waters Sport Fishing Licence avec un timbre de conservation du saumon valide.</li>
+        <li>Inscrivez immédiatement chaque quinnat gardé sur votre permis, dans le NRLS ou dans l'application FishingBC.</li>
+        <li>Limite annuelle : 10 quinnats pour toutes les eaux à marée.</li>
+        <li>Hameçons sans ardillon toute l'année. Du 1<sup>er</sup> sept. au 31 mars, hameçons à une seule pointe seulement, 22 mm au plus entre la pointe et la tige.</li>
+        <li>Taille minimale : quinnat 62 cm; coho, kéta, rose et rouge 30 cm.</li>
+        <li>Les statuts du MPO pour les secteurs 28 et 29 n'ont pas de date de fin : pour toute date choisie, la page montre le statut actuel. Les fermetures saisonnières datées, comme l'embouchure du Fraser, suivent la date choisie.</li>
+        <li>La carte se met à jour chaque jour à partir des pages du MPO. Si le MPO change quelque chose d'inhabituel, la mise à jour s'arrête et la page affiche un avertissement.</li></ul>`,
+    foot: `Sources : <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-fra.html" target="_blank" rel="noopener">MPO Région 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-fra.html" target="_blank" rel="noopener">MPO secteur 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-fra.html" target="_blank" rel="noopener">MPO secteur 29</a>; limites des sous-secteurs tirées de la couche MPO PFMA Subareas 1:50 000. Les limites des tronçons de rivière sur la carte sont approximatives; la description exacte figure dans la fenêtre de chaque eau. Les règles changent par avis de pêche (fishery notices) : vérifiez la source avant de partir. Données cartographiques © contributeurs d'OpenStreetMap (ODbL).`,
   },
 };
 const t = (k, ...a) => { const v = I18N[LANG][k]; return typeof v === 'function' ? v(...a) : v; };
 
 // ---------- species ----------
 const SPECIES = [
-  {id:'all',     uk:'Усі відкриті', en:'All open'},
-  {id:'chinook', uk:'Чавича',  en:'Chinook'},
-  {id:'coho',    uk:'Кижуч',   en:'Coho'},
-  {id:'chum',    uk:'Кета',    en:'Chum'},
-  {id:'pink',    uk:'Горбуша', en:'Pink'},
-  {id:'sockeye', uk:'Нерка',   en:'Sockeye'},
+  {id:'all',     uk:'Усі відкриті', en:'All open', fr:'Toutes ouvertes'},
+  {id:'chinook', uk:'Чавича',  en:'Chinook', fr:'Quinnat'},
+  {id:'coho',    uk:'Кижуч',   en:'Coho',    fr:'Coho'},
+  {id:'chum',    uk:'Кета',    en:'Chum',    fr:'Kéta'},
+  {id:'pink',    uk:'Горбуша', en:'Pink',    fr:'Rose'},
+  {id:'sockeye', uk:'Нерка',   en:'Sockeye', fr:'Rouge'},
 ];
 const SP_IDS = ['chinook','coho','chum','pink','sockeye'];
 const spById = id => SPECIES.find(s => s.id === id);
-// Ukrainian UI always shows the English DFO name next to the Ukrainian one.
-const spName = id => id === 'all' ? (LANG === 'uk' ? 'Усі види (all salmon)' : 'All salmon')
-  : LANG === 'uk' ? `${spById(id).uk} (${spById(id).en})` : spById(id).en;
-const spLow = id => LANG === 'uk' ? `${spById(id).uk.toLowerCase()} (${spById(id).en})` : spById(id).en;
+// Ukrainian and French UI show the English DFO name next to their own (unless French uses the same word).
+const withEn = id => LANG !== 'en' && spById(id)[LANG] !== spById(id).en;
+const spName = id => id === 'all' ? {uk:'Усі види (all salmon)', en:'All salmon', fr:'Tous les saumons'}[LANG]
+  : withEn(id) ? `${spById(id)[LANG]} (${spById(id).en})` : spById(id)[LANG];
+const spLow = id => LANG === 'en' ? spById(id).en
+  : withEn(id) ? `${spById(id)[LANG].toLowerCase()} (${spById(id).en})` : spById(id)[LANG].toLowerCase();
 const SP_ACC = {
   uk: {all:'Лосося (salmon)', chinook:'Чавичу (Chinook)', coho:'Кижуча (Coho)', chum:'Кету (Chum)', pink:'Горбушу (Pink)', sockeye:'Нерку (Sockeye)'},
   en: {all:'Salmon', chinook:'Chinook', coho:'Coho', chum:'Chum', pink:'Pink', sockeye:'Sockeye'},
+  fr: {all:'Saumon', chinook:'Quinnat (Chinook)', coho:'Coho', chum:'Kéta (Chum)', pink:'Rose (Pink)', sockeye:'Rouge (Sockeye)'},
 };
 
 // Identification card. Images come from build/species/<id>-<phase>.webp (see fetch_species.py).
@@ -539,36 +618,58 @@ const SP_ACC = {
 const SPECIES_IMG = JSON.parse(document.getElementById('data-species').textContent);
 const SPECIES_MARKS = {
   chinook: [
-    B('<b>Чорні ясна</b> біля основи зубів; увесь рот темний.', '<b>Black gums</b> at the base of the teeth; the whole mouth is dark.'),
-    B('Великі неправильні чорні плями на спині й на <b>обох лопатях хвоста</b>.', 'Large irregular black spots on the back and on <b>both lobes of the tail</b>.'),
-    B('Найбільший із п’яти видів.', 'The largest of the five species.'),
-    B('Кижуч (Coho) схожий, але в нього світлі ясна, а плями лише на верхній лопаті хвоста.', 'Coho looks similar, but has light gums and spots on the upper tail lobe only.'),
+    B('<b>Чорні ясна</b> біля основи зубів; увесь рот темний.', '<b>Black gums</b> at the base of the teeth; the whole mouth is dark.',
+      '<b>Gencives noires</b> à la base des dents; toute la bouche est foncée.'),
+    B('Великі неправильні чорні плями на спині й на <b>обох лопатях хвоста</b>.', 'Large irregular black spots on the back and on <b>both lobes of the tail</b>.',
+      'Grandes taches noires irrégulières sur le dos et sur <b>les deux lobes de la queue</b>.'),
+    B('Найбільший із п’яти видів.', 'The largest of the five species.',
+      'La plus grande des cinq espèces.'),
+    B('Кижуч (Coho) схожий, але в нього світлі ясна, а плями лише на верхній лопаті хвоста.', 'Coho looks similar, but has light gums and spots on the upper tail lobe only.',
+      'Le coho lui ressemble, mais il a les gencives pâles et des taches seulement sur le lobe supérieur de la queue.'),
   ],
   coho: [
-    B('<b>Світлі ясна</b> (білі або сірі), хоча рот темний.', '<b>Light gums</b> (white or grey), although the mouth is dark.'),
-    B('Дрібні чорні плями на спині й лише на <b>верхній лопаті хвоста</b>.', 'Small black spots on the back and on the <b>upper tail lobe only</b>.'),
-    B('Широка основа хвоста.', 'Wide base of the tail.'),
-    B('На нересті: червоні боки, темні спина й голова, у самців гачкувата щелепа.', 'Spawning: red sides, dark back and head, males have a hooked jaw.'),
+    B('<b>Світлі ясна</b> (білі або сірі), хоча рот темний.', '<b>Light gums</b> (white or grey), although the mouth is dark.',
+      '<b>Gencives pâles</b> (blanches ou grises), même si la bouche est foncée.'),
+    B('Дрібні чорні плями на спині й лише на <b>верхній лопаті хвоста</b>.', 'Small black spots on the back and on the <b>upper tail lobe only</b>.',
+      'Petites taches noires sur le dos et <b>seulement sur le lobe supérieur de la queue</b>.'),
+    B('Широка основа хвоста.', 'Wide base of the tail.',
+      'Pédoncule caudal large.'),
+    B('На нересті: червоні боки, темні спина й голова, у самців гачкувата щелепа.', 'Spawning: red sides, dark back and head, males have a hooked jaw.',
+      'En frai : flancs rouges, dos et tête foncés, mâchoire crochue chez les mâles.'),
   ],
   chum: [
-    B('<b>Немає чітких чорних плям</b> на спині й хвості.', '<b>No distinct black spots</b> on the back or tail.'),
-    B('Хвіст зі сріблястими смужками.', 'Silver streaks on the tail.'),
-    B('У морі: сріблястий, інколи з ледь помітними вертикальними смугами.', 'At sea: silver, sometimes with faint vertical bars.'),
-    B('На нересті: зелені й фіолетові вертикальні смуги («тигровий» візерунок), великі зуби в самців, білі кінчики черевних і анального плавців.', 'Spawning: green and purple vertical bars ("calico"), large teeth in males, white tips on the pelvic and anal fins.'),
-    B('Нерка (Sockeye) теж без плям. У кети 19–26 коротких товстих зябрових тичинок, у нерки 28–40 довгих і тонких.', 'Sockeye has no spots either. Chum has 19–26 short, thick gill rakers; Sockeye has 28–40 long, thin ones.'),
+    B('<b>Немає чітких чорних плям</b> на спині й хвості.', '<b>No distinct black spots</b> on the back or tail.',
+      '<b>Pas de taches noires nettes</b> sur le dos ni sur la queue.'),
+    B('Хвіст зі сріблястими смужками.', 'Silver streaks on the tail.',
+      'Stries argentées sur la queue.'),
+    B('У морі: сріблястий, інколи з ледь помітними вертикальними смугами.', 'At sea: silver, sometimes with faint vertical bars.',
+      'En mer : argenté, parfois avec de légères barres verticales.'),
+    B('На нересті: зелені й фіолетові вертикальні смуги («тигровий» візерунок), великі зуби в самців, білі кінчики черевних і анального плавців.', 'Spawning: green and purple vertical bars ("calico"), large teeth in males, white tips on the pelvic and anal fins.',
+      'En frai : barres verticales vertes et violettes (motif « calico »), grandes dents chez les mâles, bouts blancs aux nageoires pelviennes et anale.'),
+    B('Нерка (Sockeye) теж без плям. У кети 19–26 коротких товстих зябрових тичинок, у нерки 28–40 довгих і тонких.', 'Sockeye has no spots either. Chum has 19–26 short, thick gill rakers; Sockeye has 28–40 long, thin ones.',
+      'Le rouge (Sockeye) n\'a pas de taches non plus. Le kéta a 19 à 26 branchicténies courtes et épaisses; le rouge en a 28 à 40, longues et fines.'),
   ],
   pink: [
-    B('Великі <b>овальні</b> чорні плями на спині й на обох лопатях хвоста.', 'Large <b>oval</b> black spots on the back and on both lobes of the tail.'),
-    B('Дуже дрібна луска.', 'Very small scales.'),
-    B('Найменший вид: зазвичай до 2,5 кг.', 'The smallest species: usually up to 2.5 kg.'),
-    B('На нересті в самців великий горб на спині.', 'Spawning males have a large hump on the back.'),
-    B('У Fraser заходить лише в непарні роки.', 'Returns to the Fraser in odd-numbered years only.'),
+    B('Великі <b>овальні</b> чорні плями на спині й на обох лопатях хвоста.', 'Large <b>oval</b> black spots on the back and on both lobes of the tail.',
+      'Grandes taches noires <b>ovales</b> sur le dos et sur les deux lobes de la queue.'),
+    B('Дуже дрібна луска.', 'Very small scales.',
+      'Très petites écailles.'),
+    B('Найменший вид: зазвичай до 2,5 кг.', 'The smallest species: usually up to 2.5 kg.',
+      'La plus petite espèce : en général jusqu\'à 2,5 kg.'),
+    B('На нересті в самців великий горб на спині.', 'Spawning males have a large hump on the back.',
+      'En frai, les mâles ont une grande bosse sur le dos.'),
+    B('У Fraser заходить лише в непарні роки.', 'Returns to the Fraser in odd-numbered years only.',
+      'Remonte le Fraser seulement les années impaires.'),
   ],
   sockeye: [
-    B('<b>Немає чітких чорних плям</b> на спині й хвості.', '<b>No distinct black spots</b> on the back or tail.'),
-    B('У морі: металево-синя спина, сріблясті боки, струнке тіло.', 'At sea: metallic blue back, silver sides, slim body.'),
-    B('Багато довгих тонких зябрових тичинок (28–40).', 'Many long, thin gill rakers (28–40).'),
-    B('На нересті: <b>яскраво-червоне тіло й зелена голова</b>.', 'Spawning: <b>bright red body and green head</b>.'),
+    B('<b>Немає чітких чорних плям</b> на спині й хвості.', '<b>No distinct black spots</b> on the back or tail.',
+      '<b>Pas de taches noires nettes</b> sur le dos ni sur la queue.'),
+    B('У морі: металево-синя спина, сріблясті боки, струнке тіло.', 'At sea: metallic blue back, silver sides, slim body.',
+      'En mer : dos bleu métallique, flancs argentés, corps élancé.'),
+    B('Багато довгих тонких зябрових тичинок (28–40).', 'Many long, thin gill rakers (28–40).',
+      'Nombreuses branchicténies longues et fines (28 à 40).'),
+    B('На нересті: <b>яскраво-червоне тіло й зелена голова</b>.', 'Spawning: <b>bright red body and green head</b>.',
+      'En frai : <b>corps rouge vif et tête verte</b>.'),
   ],
 };
 
@@ -576,14 +677,14 @@ const DISTRICTS = {
   sea:   'Sea-to-Sky',
   sun:   'Sunshine Coast',
   north: 'North Shore',
-  tri:   B('Tri-Cities і Maple Ridge', 'Tri-Cities & Maple Ridge'),
-  sur:   B('Surrey і Langley', 'Surrey & Langley'),
+  tri:   B('Tri-Cities і Maple Ridge', 'Tri-Cities & Maple Ridge', 'Tri-Cities et Maple Ridge'),
+  sur:   B('Surrey і Langley', 'Surrey & Langley', 'Surrey et Langley'),
   valley:'Fraser Valley',
-  a28:   B('Солона вода · Area 28', 'Tidal waters · Area 28'),
-  a29:   B('Солона вода · Area 29', 'Tidal waters · Area 29'),
+  a28:   B('Солона вода · Area 28', 'Tidal waters · Area 28', 'Eaux à marée · secteur 28'),
+  a29:   B('Солона вода · Area 29', 'Tidal waters · Area 29', 'Eaux à marée · secteur 29'),
 };
 
-// Rules come from build/rules.json, generated by dfo/update.py from the DFO pages. Every text is {uk, en}.
+// Rules come from build/rules.json, generated by dfo/update.py from the DFO pages. Every text is {uk, en, fr}.
 const RULES = JSON.parse(document.getElementById('data-rules').textContent);
 const STATUS = JSON.parse(document.getElementById('data-status').textContent);
 const WATERS = RULES.waters;
@@ -840,7 +941,7 @@ const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(
 function renderSpecies() {
   $('species').innerHTML = SPECIES.map(s => {
     const dot = `<span class="dot" style="--c:var(${s.id === 'all' ? '--c-both' : CAT_VAR[s.id]})"></span>`;
-    const text = LANG === 'uk' ? `${s.uk}${s.id === 'all' ? '' : ` <small>(${s.en})</small>`}` : s.en;
+    const text = s.id !== 'all' && withEn(s.id) ? `${s[LANG]} <small>(${s.en})</small>` : s[LANG];
     return `<input type="radio" name="sp" id="sp-${s.id}" value="${s.id}" ${s.id === state.sp ? 'checked' : ''}>
       <label for="sp-${s.id}">${dot}${text}</label>`;
   }).join('');
@@ -914,7 +1015,7 @@ $('legend-body').addEventListener('click', e => {
 // ---------- running now: Fraser test fisheries + tackle shop reports ----------
 // Shows only current data: a series with no sample in RUN_MAX_AGE days (off season) is left out.
 const RUN_MAX_AGE = 14, SHOP_MAX_AGE = 21, SHOP_SHOW = 5;
-const SITES = {Albion:'Albion (Fort Langley)', Whonnock:'Whonnock (Maple Ridge)', Qualark:B('Qualark (біля Yale)', 'Qualark (near Yale)')};
+const SITES = {Albion:'Albion (Fort Langley)', Whonnock:'Whonnock (Maple Ridge)', Qualark:B('Qualark (біля Yale)', 'Qualark (near Yale)', 'Qualark (près de Yale)')};
 const isoShift = (iso, n) => { const [y, m, d] = iso.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10); };
 const fmtIso = iso => fmt(iso.slice(5));
 
