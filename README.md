@@ -1,12 +1,39 @@
-# Metro Vancouver Salmon Map · Лосось Metro Vancouver
+# Metro Vancouver Salmon Map
+
+**English** · [Українська](README.uk.md)
 
 An interactive map of where you can fish for Pacific salmon in the BC Lower Mainland, by species and date.
-Інтерактивна карта: де і коли можна ловити тихоокеанського лосося в Lower Mainland (B.C.), за видом і датою.
+The page is in English, French and Ukrainian.
 
-**Live map:** https://volkotyk.github.io/bc-salmon-map/ · English: [`#en`](https://volkotyk.github.io/bc-salmon-map/#en) · Українська: [`#uk`](https://volkotyk.github.io/bc-salmon-map/#uk)
+**Live map:** https://volkotyk.github.io/bc-salmon-map/ · English [`#en`](https://volkotyk.github.io/bc-salmon-map/#en) · Français [`#fr`](https://volkotyk.github.io/bc-salmon-map/#fr) · Українська [`#uk`](https://volkotyk.github.io/bc-salmon-map/#uk)
+
+![Demo: pick a species, a date and a licence, open a river, get directions, switch to the dark theme and to French](docs/screenshots/demo-en.gif)
 
 > **Not an official source.** Rules change through DFO fishery notices. Always check the
 > [DFO pages](#data-sources) before you fish. River section boundaries on the map are approximate.
+
+## How to use
+
+1. **Pick a species** (or *All open*). The map colours every water by what you can keep on that day; the card below shows how the fish looks.
+2. **Pick a date.** The map and the list switch to the rules in force on that day. *Today* brings you back.
+3. **Pick your licence:** *Freshwater*, *Tidal* or *Both*. Waters that need the other licence fade out.
+4. **Click a river, a lake or a tidal subarea** (on the map or in the list) for its full rule table, fishery notices and recent reports.
+5. **Click any spot on the map** for its coordinates and directions there in Google Maps.
+6. **Switch the theme and the language** with the moon / sun button and **EN · FR · UA** at the top of the panel.
+
+| Water popup | Species card |
+|---|---|
+| ![Capilano River popup with the rule table and recent reports](docs/screenshots/popup-en.png) | ![Chum selected: identification card, and only tidal subareas open](docs/screenshots/species-en.png) |
+
+| Dark theme | In French |
+|---|---|
+| ![The map in the dark theme](docs/screenshots/dark-en.png) | ![French interface with the Chilliwack / Vedder River popup](docs/screenshots/french.png) |
+
+| Phone | Phone, water popup |
+|---|---|
+| <img src="docs/screenshots/phone-en.png" width="260" alt="Phone layout: map with the panel as a bottom sheet"> | <img src="docs/screenshots/phone-popup-en.png" width="260" alt="Phone layout: Capilano River popup"> |
+
+The screenshots show the built-in outline map; the live site draws the same layers over OpenStreetMap tiles.
 
 ## What it shows
 
@@ -20,16 +47,16 @@ An interactive map of where you can fish for Pacific salmon in the BC Lower Main
 
 Features:
 
-- Filter by species: Chinook, Coho, Chum, Pink, Sockeye (Ukrainian names always show the English DFO name).
+- Filter by species: Chinook, Coho, Chum, Pink, Sockeye (French and Ukrainian names show the English DFO name next to them when it differs).
 - Species identification card: pick a species to see drawings of the sea phase and the spawning phase, plus the key marks (gums, tail spots, colours).
 - Pick a date: the map and list show the rules in force on that day, including ranges that cross New Year.
 - Licence switch: *Both*, *Freshwater* (BC Freshwater Fishing Licence) or *Tidal* (BC Tidal Waters Sport Fishing Licence). With one licence, the list and the summary show only the waters it covers; the other waters stay on the map as faint outlines, and their popup names the licence they need. The choice is remembered.
-- Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure.
+- Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure. A click on a legend row hides or shows that layer on the map.
 - Click any water for the full rule table, notes and fishery-notice links.
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
 - "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, Facebook and TikTok have no public search API for this use; add their posts by hand.
-- UA / EN switch (also `#uk` / `#en` in the URL; the choice is remembered). Light and dark themes: the page follows the system theme; a small sun / moon button next to the language switch changes it, and the page remembers the choice until it equals the system theme again.
+- EN / FR / UA switch (also `#en` / `#fr` / `#uk` in the URL; the choice is remembered). English is the default. Light and dark themes: the page follows the system theme; a small sun / moon button next to the language switch changes it, and the page remembers the choice until it equals the system theme again.
 - Foldable blocks: a click on a block title folds "Running now", its report list, each district group and the report list in a popup. The page remembers the folded blocks.
 - Mobile first: on a phone the map fills the screen and the panel is a bottom sheet. Drag the sheet or tap its handle: the short position shows the species and the date, the middle position adds the list, the tall position shows everything. From 768 px wide the panel is a sidebar.
 
@@ -38,13 +65,15 @@ Features:
 ```
 .github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, fetch the running-now data, build index.html, deploy to Pages
 .github/workflows/pr-preview.yml   pull requests: fetch the running-now data (strict), build index.html, attach it as the site-preview artifact; no deploy
+README.uk.md          this file in Ukrainian
+docs/screenshots/      README screenshots and the demo GIFs (English and Ukrainian)
 dfo/
   update.py             reads the DFO pages, parses the tables, validates, writes build/rules.json + build/status.json
-  catalog.py            hand-kept knowledge: DFO names -> map lines, group names, Ukrainian wording
+  catalog.py            hand-kept knowledge: DFO names -> map lines, group names, Ukrainian and French wording
   htmltable.py          small HTML table reader (rowspan/colspan)
   snapshots/            plain text of the salmon part of each DFO page (git history shows what DFO changed)
 build/
-  template.html         page source: markup, CSS, JS, UA/EN interface texts
+  template.html         page source: markup, CSS, JS, EN/FR/UA interface texts
   rules.json            fishing rules parsed from DFO (generated; readable diffs in git)
   status.json           last rules change, and "pending" when an update was blocked
   leaflet.css           Leaflet 1.9.4 CSS (inlined at build time; Leaflet JS loads from cdnjs)
@@ -92,9 +121,9 @@ Every day at 15:23 UTC (08:23 Pacific daylight time), on every push, and on dema
 **Safety check.** If DFO shows something the updater does not understand — a water that has no line on the map,
 an unreadable date, a new limit wording, a changed table layout, a changed Fraser-mouth boundary — the map keeps the
 previous rules, shows a red *"DFO: changes pending"* warning, and the workflow opens an issue labelled `dfo-update`
-with the reasons and the text diff. Fix `dfo/catalog.py` (for example add the new water and its Ukrainian name), push,
-and the next run publishes the new rules and clears the warning. A limit wording without a Ukrainian translation does
-not block: it is shown in English.
+with the reasons and the text diff. Fix `dfo/catalog.py` (for example add the new water and its Ukrainian and French names), push,
+and the next run publishes the new rules and clears the warning. A limit wording without a Ukrainian or French
+translation does not block: it is shown in English.
 
 To test the parser without the network: `python dfo/update.py --cache` (reuses `dfo/cache/`, saved by the last online run).
 
