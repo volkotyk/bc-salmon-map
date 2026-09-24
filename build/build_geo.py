@@ -2,7 +2,7 @@
 import json
 from collections import defaultdict
 from shapely.geometry import LineString, MultiLineString, Polygon, box, mapping, shape, Point
-from shapely.ops import unary_union, polygonize, linemerge, substring
+from shapely.ops import unary_union, polygonize, linemerge, substring, nearest_points
 
 W, S, E, N = -124.7, 48.95, -121.35, 50.35
 BB = box(W, S, E, N)
@@ -125,6 +125,26 @@ def section(g, seed, cuts, gap=0.0004):
     return linemerge(g) if g.geom_type == "MultiLineString" else g
 
 
+def ends(g):
+    """Loose ends of a line network."""
+    deg = defaultdict(int)
+    for s in getattr(g, "geoms", [g]):
+        for e in (s.coords[0], s.coords[-1]):
+            deg[e] += 1
+    return {e for e, n in deg.items() if n == 1}
+
+
+def fresh_side(fresh, cut, r=0.005):
+    """Square on the fresh-line side of a tidal boundary: nothing there is tidal water."""
+    near = fresh.intersection(cut.buffer(0.0003).exterior)   # where the fresh line leaves a 30 m circle
+    q = near.representative_point() if not near.is_empty else nearest_points(fresh, cut)[0]
+    dx, dy = q.x - cut.x, q.y - cut.y
+    n = (dx * dx + dy * dy) ** .5
+    dx, dy = dx / n * r, dy / n * r
+    return Polygon([(cut.x - dy, cut.y + dx), (cut.x + dy, cut.y - dx),
+                    (cut.x + dy + dx, cut.y - dx + dy), (cut.x - dy + dx, cut.y + dx + dy)])
+
+
 ARMS = []  # river parts below a tidal boundary; build_tidal.py adds each one to the nearest tidal subarea
 
 
@@ -140,10 +160,15 @@ def ml(*names, clip=None, seed=None, cuts=(), tidal=None):
         g = section(g, seed, [*cuts, tidal]) if tidal else full
         if tidal:
             arm = full.difference(g.buffer(1e-7))
+            # OSM can end the river at the coastline a little above the boundary bridge: run it on to the bridge.
+            tip = nearest_points(g, tidal)[0]
+            if tip.distance(tidal) > 0.0001 and tip.coords[0] in ends(g):
+                g = linemerge(unary_union([g, LineString([tip, tidal])]))
+            up = fresh_side(g, tidal)
             # Open water next to the boundary (e.g. an estuary below the bridge), from the exact coastline.
-            sea = tidal.buffer(0.002).difference(land)
+            sea = tidal.buffer(0.002).difference(land).difference(up)
             sea = unary_union([p for p in getattr(sea, "geoms", [sea]) if p.distance(tidal) < 0.0005])
-            ARMS.append({"cut": rnd(tidal), "line": None if arm.is_empty else rnd(arm),
+            ARMS.append({"cut": rnd(tidal), "line": None if arm.is_empty else rnd(arm), "up": rnd(up),
                          "sea": None if sea.is_empty else rnd(sea.simplify(0.0001))})
     return g.simplify(0.0002)
 

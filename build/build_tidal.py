@@ -33,7 +33,7 @@ for f in sub["features"]:
 
 # River arms below a tidal boundary (from build_geo.py) are tidal water, but the 1:50K polygons stop short of
 # the boundary bridges. Add each arm, and the open water next to the bridge, to the nearest subarea;
-# the arm is a ribbon about 50 m wide that runs on to the subarea edge.
+# the arm is a ribbon about 50 m wide that runs on to the subarea edge. Nothing on the fresh side ("up") is added.
 for a in geo.pop("arms", []):
     arm = unary_union([shape(a[k]) for k in ("cut", "line") if a[k]])
     sea = shape(a["sea"]) if a["sea"] else Polygon()
@@ -41,7 +41,7 @@ for a in geo.pop("arms", []):
     poly = shape(subs[lab])
     link = LineString(nearest_points(arm.union(sea), poly))
     others = unary_union([shape(v) for k, v in subs.items() if k != lab])
-    ribbon = unary_union([arm.buffer(0.0003), link.buffer(0.0003), sea]).difference(others)
+    ribbon = unary_union([arm.buffer(0.0003), link.buffer(0.0003), sea]).difference(others).difference(shape(a["up"]))
     subs[lab] = rnd(unary_union([poly, ribbon]).simplify(0.0001))
     print("tidal arm", a["cut"]["coordinates"], "->", lab, round(link.length * 80000), "m link")
 
