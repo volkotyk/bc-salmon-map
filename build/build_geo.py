@@ -195,11 +195,12 @@ WATERS = {
                   cuts=[CHAPMAN_FALLS]),
     "cheakamus": ml("Cheakamus River"),
     "chehalis": ml("Chehalis River", seed=P(49.29872, -121.93542),     # Morris Valley Road bridge
-                   cuts=[CHEHALIS_BRIDGE]),
+                   cuts=[CHEHALIS_BRIDGE, P(49.27421, -121.926)]),     # Harrison River water area (Harrison Bay)
     "chilliwack": ml("Chilliwack River", "Vedder River", "Vedder Canal", "Sumas River",
                      seed=P(49.09739, -121.96459),                     # Vedder Bridge
                      cuts=[P(49.07827, -121.71067),                    # 100 m below the Slesse Creek mouth
-                           P(49.11391, -122.11114)]),                  # Barrowtown Pumping Station
+                           P(49.11444, -122.11297),                    # Barrowtown Pumping Station: the Sumas floodgates at Quadling Road
+                           P(49.14148, -122.11946)]),                  # Fraser River bank (lower Sumas mouth)
     "coquitlam": ml("Coquitlam River", seed=P(49.26905, -122.78000),   # Lougheed Highway bridge
                     cuts=[COQUITLAM_DAM],
                     tidal=P(49.22693, -122.80634)),                    # Mary Hill Bypass bridge
@@ -254,7 +255,7 @@ UNSURE = [
     ("chapman-tidal", "chapman", P(49.44062, -123.72217)),       # Hwy 101 bridge; the signs are somewhere below it
     ("chehalis-bridge", "chehalis", CHEHALIS_BRIDGE),
     ("coquitlam-dam", "coquitlam", COQUITLAM_DAM),
-    ("sumas-signs", "chilliwack", P(49.1428, -122.1206)),         # one forum report: 100-150 yards above the Fraser
+    ("sumas-signs", "chilliwack", P(49.14148, -122.11946)),       # line end at the Fraser bank; one report: signs 100-150 yards up
     ("campbell-closure", "little-campbell", P(49.01607, -122.7794)),   # Stayte Road footbridge, lower end of the closure
     ("stave-ruskin", "stave", P(49.19214, -122.40698)),           # culvert taken as the boat ramp crossing
     ("serpentine-tidal", "serpentine", P(49.0832, -122.8509)),     # OSM line end; the BNSF bridge is further down
