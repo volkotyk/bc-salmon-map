@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-25T19:22Z",
+ "generated": "2026-09-26T18:39Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-08-28", 12, 0.73],
     ["2026-08-29", 1, 0.06],
     ["2026-08-30", 6, 0.37],
     ["2026-08-31", 6, 0.38],
@@ -44,7 +43,8 @@
     ["2026-09-17", 35, 2.78],
     ["2026-09-19", 41, 3.25],
     ["2026-09-21", 97, 7.15],
-    ["2026-09-23", 196, 13.07]
+    ["2026-09-23", 196, 13.07],
+    ["2026-09-25", 175, 11.67]
    ]
   },
   {
@@ -61,7 +61,8 @@
     ["2026-09-17", 2, 0.16],
     ["2026-09-19", 11, 0.87],
     ["2026-09-21", 5, 0.37],
-    ["2026-09-23", 0, 0.0]
+    ["2026-09-23", 0, 0.0],
+    ["2026-09-25", 2, 0.13]
    ]
   },
   {
@@ -71,7 +72,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-08-28", 17, 1.55],
     ["2026-08-29", 22, 1.98],
     ["2026-08-30", 7, 0.66],
     ["2026-08-31", 8, 0.77],
@@ -98,7 +98,8 @@
     ["2026-09-21", 28, 1.97],
     ["2026-09-22", 50, 3.42],
     ["2026-09-23", 39, 2.62],
-    ["2026-09-24", 33, 2.42]
+    ["2026-09-24", 33, 2.42],
+    ["2026-09-25", 29, 2.07]
    ]
   },
   {
@@ -108,7 +109,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-08-28", 16, 33.33],
     ["2026-08-29", 13, 40.62],
     ["2026-08-30", 18, 37.5],
     ["2026-08-31", 7, 17.5],
@@ -135,11 +135,20 @@
     ["2026-09-21", 7, 43.75],
     ["2026-09-22", 13, 28.89],
     ["2026-09-23", 7, 31.82],
-    ["2026-09-24", 4, 9.52]
+    ["2026-09-24", 4, 9.52],
+    ["2026-09-25", 4, 12.5]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: September 25, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-25-2026",
+   "date": "2026-09-25",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack", "capilano"]
+  },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
    "title": "A limit of salmon for the day (photo)",
@@ -452,14 +461,6 @@
    "sp": ["chinook"],
    "w": ["chilliwack"],
    "manual": true
-  },
-  {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: September 4, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-4-2026",
-   "date": "2026-09-04",
-   "sp": ["chinook", "coho"],
-   "w": ["a29-mouth"]
   },
   {
    "src": "Instagram",
