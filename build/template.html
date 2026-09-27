@@ -45,11 +45,14 @@
 }
 /* Mobile first. Phones (the default): a full-screen map with the panel as a bottom sheet over it.
    JS sets --sheet-vis, the visible sheet height; the sheet, the legend and the bottom map controls follow it.
+   JS sets --sheet-rest, the height of the sheet at rest ('min' or 'peek'). The map ends 16px below the top of
+   the resting sheet (--map-cut), so Leaflet fits, centers and limits the view in the part that the viewer sees.
    From 768px: the panel is a sidebar next to the map. --tap is the minimum size of a touch target. */
-:root{--tap:44px;--sheet-vis:0px;--sheet-ease:transform .32s cubic-bezier(.2,.8,.2,1)}
+:root{--tap:44px;--sheet-vis:0px;--sheet-rest:0px;--map-cut:max(0px,calc(var(--sheet-rest) - 16px));--sheet-ease:transform .32s cubic-bezier(.2,.8,.2,1)}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-tap-highlight-color:transparent}
-.mapwrap{position:fixed;inset:0;isolation:isolate;container-type:inline-size}   /* cqw: the search box fits the map width */
+/* cqw: the search box fits the map width. The background shows while the sheet slides up over a shorter map. */
+.mapwrap{position:fixed;inset:0;isolation:isolate;container-type:inline-size;background:var(--sea)}
 .panel{position:fixed;left:0;right:0;bottom:0;z-index:2;height:calc(100dvh - 44px - env(safe-area-inset-top));display:flex;flex-direction:column;
   background:var(--panel);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.2);padding-bottom:env(safe-area-inset-bottom);
   transform:translateY(calc(100% - var(--sheet-vis)));transition:var(--sheet-ease)}
@@ -226,7 +229,7 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
 .status b{font-weight:600;color:var(--ink)}
 .dfo-chip{position:absolute;top:calc(10px + env(safe-area-inset-top));right:10px;z-index:500;font:600 12px var(--f-mono);padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);box-shadow:0 1px 6px rgba(0,0,0,.12)}
 .dfo-chip.warn{background:var(--c-fraser);border-color:var(--c-fraser);color:#fff}
-#map{position:absolute;inset:0;background:var(--sea)}
+#map{position:absolute;inset:0 0 var(--map-cut);background:var(--sea)}
 .legend{position:absolute;left:8px;bottom:22px;z-index:500;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:12.5px;box-shadow:0 2px 10px rgba(0,0,0,.12);max-width:calc(100% - 24px);
   transform:translateY(calc(-1 * min(var(--sheet-vis), 60dvh)));transition:var(--sheet-ease)}
 .legend[open]{padding-bottom:10px}
@@ -257,8 +260,9 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
 .leaflet-bar a{background:var(--panel);color:var(--ink);border-bottom-color:var(--line)}
 @media (hover:hover){.leaflet-bar a:hover{background:var(--chip-bg);color:var(--ink)}}
 .leaflet-top{top:env(safe-area-inset-top)}
-/* The bottom map controls and the legend ride on top of the sheet, up to 60dvh; a full sheet covers them. */
-.leaflet-bottom{transform:translateY(calc(-1 * min(var(--sheet-vis), 60dvh)));transition:var(--sheet-ease)}
+/* The bottom map controls and the legend ride on top of the sheet, up to 60dvh; a full sheet covers them.
+   The controls are inside #map, which already ends at --map-cut. */
+.leaflet-bottom{transform:translateY(calc(-1 * max(0px, min(var(--sheet-vis), 60dvh) - var(--map-cut))));transition:var(--sheet-ease)}
 @media (pointer:coarse){
   .leaflet-touch .leaflet-bar a{width:var(--tap);height:var(--tap);line-height:var(--tap);font-size:22px}
   .leaflet-container a.leaflet-popup-close-button{width:var(--tap);height:var(--tap);font:22px/var(--tap) Tahoma,Verdana,sans-serif}
@@ -1071,11 +1075,11 @@ function routeBlock(ll, save) {
     ${save && spots.length < SPOT_MAX ? `<button type="button" class="spot-save" data-lat="${lat}" data-lng="${lng}" data-w="${save.w ? esc(save.w.id) : ''}">${esc(t('spotSave'))}</button>` : ''}</div>`;
 }
 // Popup size follows the map size, so on a phone it scrolls inside instead of covering the whole map.
-// On a phone a popup collapses the sheet to 'peek' (see 'popupopen'), so the peek height is kept clear.
+// On a phone a popup lowers the sheet to a rest detent (see 'popupopen'); the map ends there, so only sheetCover() is kept clear.
 // maxWidth is the content width. The popup adds 35 px (2×16 content margin, 2×1 wrapper padding, Leaflet's +1),
 // and auto-pan keeps 48 + 16 px clear, so x - 99 is the widest content that fits between the paddings.
 // When that is less than the requested width, 'pop-narrow' lets the species name wrap, so the rules table fits.
-const popupOpts = w => { const {x, y} = map.getSize(), b = WIDE.matches ? 0 : sheet.peek, mw = Math.min(w, x - 99);
+const popupOpts = w => { const {x, y} = map.getSize(), b = sheetCover(), mw = Math.min(w, x - 99);
   return {maxWidth: mw, className: mw < w ? 'pop-narrow' : '', maxHeight: Math.max(160, Math.round((y - b) * .6)),
     autoPanPaddingTopLeft:[48, WIDE.matches ? 16 : 64], autoPanPaddingBottomRight:[16, 16 + b]}; };
 let reopen = null, activePopup = null;                // re-renders the open popup after a language switch
@@ -1489,7 +1493,8 @@ $('spots').addEventListener('click', e => {
 // The first fix moves the map to the dot; later fixes only move the dot, so the map does not jump while the viewer pans.
 map.createPane('me').style.zIndex = 420;               // above the waters (410), below the labels (600) and the pins
 const R_ME = L.svg({pane:'me'});
-const me = {on:false, ll:null, acc:0, dot:null, circle:null, btn:null};
+// auto: the page started the search at load, so a failure stays silent (see the end of the script).
+const me = {on:false, auto:false, ll:null, acc:0, dot:null, circle:null, btn:null};
 const meTitle = () => t('meHere', Math.round(me.acc));
 const LocateControl = L.Control.extend({
   options: {position:'topleft'},                       // added after the zoom control, so it sits under it
@@ -1514,8 +1519,9 @@ function renderLocate() {
   const el = me.dot && me.dot.getElement();
   if (el) { el.title = meTitle(); el.setAttribute('aria-label', el.title); }
 }
-function startLocate() {
+function startLocate(auto = false) {
   me.on = true;
+  me.auto = auto;
   me.ll = null;
   renderLocate();
   map.locate({watch:true, enableHighAccuracy:true, maximumAge:10000, timeout:15000});
@@ -1524,7 +1530,7 @@ function stopLocate() {
   map.stopLocate();
   me.dot?.remove();
   me.circle?.remove();
-  Object.assign(me, {on:false, ll:null, dot:null, circle:null});
+  Object.assign(me, {on:false, auto:false, ll:null, dot:null, circle:null});
   renderLocate();
 }
 // A short message over the map: the page has no other place for a message without a position.
@@ -1553,13 +1559,15 @@ map.on('locationfound', e => {
   renderLocate();
   if (!first) return;
   if (map.options.maxBounds.contains(me.ll)) map.flyTo(me.ll, Math.max(map.getZoom(), 15), {duration:.6});
+  else if (me.auto) stopLocate();
   else mapMsg(t('meOutside'));
 });
 // Before the first fix an error ends the search. After it, a lost signal keeps the last position.
 map.on('locationerror', e => {
   if (!me.on || me.ll) return;
+  const auto = me.auto;
   stopLocate();
-  mapMsg(t(e.code === 1 ? 'meDenied' : 'meFail'));
+  if (!auto) mapMsg(t(e.code === 1 ? 'meDenied' : 'meFail'));
 });
 
 // ---------- water level: ECCC real-time gauges (build/fetch_hydro.py) ----------
@@ -1652,7 +1660,7 @@ function focusGauge(id) {
   if (!s) return;
   if (hiddenRows.delete('gauges')) { applyHidden(); legend(); }
   const w = WATERS.find(x => x.id === s.w), ll = L.latLng(s.ll[1], s.ll[0]);
-  setSheet('peek');
+  lowerSheet();
   map.flyToBounds(L.latLngBounds(ll, ll), {...mapPadding(60), maxZoom:13, duration:.6});
   let shown = false;
   const show = () => { if (!shown) { shown = true; map.stop(); openGauge(s, w); } };
@@ -1771,13 +1779,19 @@ $('dfo-chip').addEventListener('click', () => {
 });
 
 // ---------- bottom sheet (phones) ----------
-// Below WIDE the panel is a bottom sheet with three detents: 'peek' shows the title and the controls,
-// 'half' covers half the screen, 'full' shows the whole panel and scrolls. Drag the sheet or tap the grip.
+// Below WIDE the panel is a bottom sheet with four detents: 'min' shows only the grip, 'peek' shows the title
+// and the controls, 'half' covers half the screen, 'full' shows the whole panel and scrolls.
+// Drag the sheet or tap the grip. Only a drag goes down to 'min'.
+// 'min' and 'peek' are rest detents: the map ends at them (see --sheet-rest). 'half' and 'full' cover the map.
 const WIDE = window.matchMedia('(min-width:768px)');
 const root = document.documentElement;
-const sheet = {el: $('panel'), body: $('panel-body'), grip: $('grip'), state: 'peek', peek: 0, full: 0, vis: 0, safeBottom: 0, noClickUntil: 0};
-const DETENTS = ['peek', 'half', 'full'];
-const detentVis = s => s === 'full' ? sheet.full : s === 'half' ? Math.max(sheet.peek, Math.round(sheet.full * .55)) : sheet.peek;
+const sheet = {el: $('panel'), body: $('panel-body'), grip: $('grip'), state: 'peek', min: 0, peek: 0, full: 0, vis: 0, rest: 0, safeBottom: 0, noClickUntil: 0};
+const DETENTS = ['min', 'peek', 'half', 'full'];
+const detentVis = s => s === 'full' ? sheet.full : s === 'half' ? Math.max(sheet.peek, Math.round(sheet.full * .55)) : s === 'min' ? sheet.min : sheet.peek;
+// The part of the map under the resting sheet: the rounded top of the sheet (see --map-cut).
+const sheetCover = () => WIDE.matches ? 0 : 16;
+// A popup or a flight needs the map: a sheet above 'peek' goes down to 'peek', and 'min' stays.
+const lowerSheet = () => { if (sheet.state !== 'min') setSheet('peek'); };
 const setVis = v => { sheet.vis = v; root.style.setProperty('--sheet-vis', `${v}px`); };
 
 // Peek ends below the date row. The measure adds the body scroll offset, and the translateY of the sheet cancels out.
@@ -1785,6 +1799,7 @@ function measureSheet() {
   const top = sheet.el.getBoundingClientRect().top;
   sheet.safeBottom = parseFloat(getComputedStyle(sheet.el).paddingBottom) || 0;
   sheet.full = sheet.el.offsetHeight;
+  sheet.min = sheet.grip.offsetHeight + sheet.safeBottom;
   sheet.peek = Math.min(sheet.full, Math.ceil($('date-row').getBoundingClientRect().bottom - top + sheet.body.scrollTop + 14 + sheet.safeBottom));
 }
 
@@ -1794,17 +1809,30 @@ function setSheet(s) {
   root.dataset.sheet = s;
   if (s !== 'full') sheet.body.scrollTop = 0;          // only a full sheet scrolls
   setVis(detentVis(s));
-  sheet.grip.setAttribute('aria-expanded', String(s !== 'peek'));
+  // The map keeps its top-left point (pan:false), so the sheet uncovers or covers the map, and the map does not jump.
+  const rest = detentVis(s === 'min' ? 'min' : 'peek');
+  if (rest !== sheet.rest) {
+    sheet.rest = rest;
+    root.style.setProperty('--sheet-rest', `${rest}px`);
+    map.invalidateSize({pan:false});
+  }
+  sheet.grip.setAttribute('aria-expanded', String(s === 'half' || s === 'full'));
   sheet.grip.setAttribute('aria-label', t(s === 'full' ? 'sheetCollapse' : 'sheetExpand'));
 }
 
 function layoutSheet() {
-  if (WIDE.matches) { delete root.dataset.sheet; root.style.removeProperty('--sheet-vis'); return; }
+  if (WIDE.matches) {
+    delete root.dataset.sheet;
+    root.style.removeProperty('--sheet-vis');
+    root.style.removeProperty('--sheet-rest');
+    sheet.rest = 0;
+    return;
+  }
   measureSheet();
   setSheet(sheet.state);
 }
 
-sheet.grip.addEventListener('click', () => setSheet({peek: 'half', half: 'full', full: 'peek'}[sheet.state]));
+sheet.grip.addEventListener('click', () => setSheet({min: 'peek', peek: 'half', half: 'full', full: 'peek'}[sheet.state]));
 
 // Drag. A full sheet scrolls its content natively, so there only the grip drags it.
 // A mostly horizontal move is not a sheet drag.
@@ -1829,7 +1857,7 @@ window.addEventListener('pointermove', e => {
   const dt = e.timeStamp - drag.lastT;
   if (dt > 0) drag.v = (drag.lastY - e.clientY) / dt;   // px/ms, up is positive
   drag.lastY = e.clientY; drag.lastT = e.timeStamp;
-  setVis(Math.min(sheet.full, Math.max(sheet.peek, drag.vis - dy)));
+  setVis(Math.min(sheet.full, Math.max(sheet.min, drag.vis - dy)));
 });
 const endDrag = e => {
   if (!drag || e.pointerId !== drag.id) return;
@@ -1862,7 +1890,7 @@ sheet.body.addEventListener('focusin', e => {
   }
 });
 sheet.el.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || WIDE.matches || sheet.state === 'peek') return;
+  if (e.key !== 'Escape' || WIDE.matches || sheet.state === 'peek' || sheet.state === 'min') return;
   setSheet('peek');
   sheet.grip.focus();
 });
@@ -1922,7 +1950,7 @@ $('run').addEventListener('click', e => {
 });
 // Flies the map, then opens a popup.
 function flyThen(fly, open) {
-  setSheet('peek');
+  lowerSheet();
   fly();
   // A flight may not emit 'moveend' when the view does not change, so a timer is the fallback.
   let shown = false;
@@ -1940,8 +1968,8 @@ function focusSpot(id) {
   const s = spots.find(x => x.id === id);
   if (s) flyThen(() => map.flyTo([s.lat, s.lng], Math.max(map.getZoom(), 14), {duration:.6}), () => openSpot(id));
 }
-// Fit padding that keeps a feature clear of the map controls and, on a phone, of the peeking sheet.
-const mapPadding = p => WIDE.matches ? {padding:[p, p]} : {paddingTopLeft:[p / 2, p + 10], paddingBottomRight:[p / 2, sheet.peek + p / 2]};
+// Fit padding that keeps a feature clear of the map controls and, on a phone, of the rounded top of the sheet.
+const mapPadding = p => WIDE.matches ? {padding:[p, p]} : {paddingTopLeft:[p / 2, p + 10], paddingBottomRight:[p / 2, sheetCover() + p / 2]};
 
 // ---------- search: coordinates, map waters and subareas locally; other places via Nominatim ----------
 // Coordinates: decimal degrees, degrees + minutes, or degrees + minutes + seconds, with signs or N/S/E/W,
@@ -2198,6 +2226,11 @@ syncZoomClasses();
 new ResizeObserver(() => map.invalidateSize()).observe($('map'));
 $('legend').open = WIDE.matches;
 WIDE.addEventListener('change', () => { layoutSheet(); $('legend').open = WIDE.matches; });
-map.on('popupopen', () => { if (!WIDE.matches) { $('legend').open = false; setSheet('peek'); } });
+map.on('popupopen', () => { if (!WIDE.matches) { $('legend').open = false; lowerSheet(); } });
+// Start at the position of the viewer. A phone asks for it; a desktop uses it only when the permission is already given,
+// because a desktop is rarely at the river. Without the Permissions API the page does not ask.
+navigator.permissions?.query({name:'geolocation'}).then(p => {
+  if (!me.on && (p.state === 'granted' || (p.state === 'prompt' && !WIDE.matches))) startLocate(true);
+}, () => {});
 })();
 </script>
