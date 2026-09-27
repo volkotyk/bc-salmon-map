@@ -6,7 +6,7 @@
 """
 import subprocess, sys
 
-FETCH = ["osm.py", "fetch_coast.py", "fetch_subareas.py", "fetch_reports.py"]
+FETCH = ["osm.py", "fetch_coast.py", "fetch_subareas.py", "fetch_reports.py", "fetch_hydro.py"]
 BUILD = ["build_geo.py", "build_tidal.py"]
 PAGE = ["assemble.py"]
 

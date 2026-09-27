@@ -39,6 +39,7 @@
 | Морські підзони (заливка) | Усі 31 підзона DFO **Area 28 і 29**: Howe Sound, Burrard Inlet, Strait of Georgia, припливна частина Fraser | Сторінки DFO для солоних вод + межі підзон DFO PFMA |
 | Сезонне закриття | Закриття гирла Fraser для лосося (1 серпня – 30 вересня), намальоване за координатами DFO | Сторінка DFO Area 29 |
 | Зараз у Fraser (панель) | Денний улов тестових сіток на Fraser: Albion для чавичі (Chinook), кети (Chum) і кижуча (Coho), Whonnock і Qualark для нерки (Sockeye) (і для горбуші (Pink) у роки горбуші). У кожному рядку: остання проба, сума за 7 днів, тренд, стовпчики за 28 днів. Найновіші звіти рибальських магазинів з видами й водоймами, які вони згадують; кнопка водойми переносить карту до неї | [DFO Albion test fishery](https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html), [PSC test fishing results](https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/) (таблиці PDF), [Pacific Angler Friday Fishing Report](https://www.pacificangler.ca/blogs/learn), Reddit [r/fishingBC](https://www.reddit.com/r/fishingBC/) і [r/chilliwack](https://www.reddit.com/r/chilliwack/) (публічні стрічки) |
+| Рівень води | Рівень води за останні 14 днів (погодинно) на гідропості ECCC для 12 річок: рівень зараз, витрата, зміна за 24 години, лінія за 14 днів. Круглий значок позначає кожен гідропост на карті; його вікно показує рівень і координати поста. Вікно водойми і блок «Рівень води» в панелі «Зараз» (річки, відкриті сьогодні) мають кнопку «Показати гідропост на карті» | [Дані ECCC у реальному часі](https://wateroffice.ec.gc.ca/) (OGC API `api.weather.gc.ca`, попередні) |
 | Основа карти | Справжні тайли OpenStreetMap, коли хостинг їх дозволяє; інакше вбудована контурна карта (узбережжя, озера, річки) | OpenStreetMap |
 
 Можливості:
@@ -59,8 +60,8 @@
 ## Структура репозиторію
 
 ```
-.github/workflows/pages.yml   щодня + при push: оновити правила з DFO, закомітити зміни, отримати дані «Зараз у Fraser», зібрати index.html, опублікувати на Pages
-.github/workflows/pr-preview.yml   pull requests: отримати дані «Зараз у Fraser» (strict), зібрати index.html, додати як артефакт site-preview; без публікації
+.github/workflows/pages.yml   щодня + при push: оновити правила з DFO, закомітити зміни, отримати дані «Зараз у Fraser» і рівень води, зібрати index.html, опублікувати на Pages
+.github/workflows/pr-preview.yml   pull requests: отримати дані «Зараз у Fraser» і рівень води (strict), зібрати index.html, додати як артефакт site-preview; без публікації
 README.uk.md          цей файл українською (README.md — англійською)
 docs/screenshots/      скріншоти й демо-GIF для README (англійською та українською)
 dfo/
@@ -78,6 +79,8 @@ build/
   species/*.webp        малюнки видів (суспільне надбання), вбудовуються в сторінку; їх завантажує fetch_species.py
   fetch_reports.py      тестовий лов DFO/PSC + стрічки звітів магазинів -> reports.json (джерело, що не відповіло, зберігає попередні дані)
   reports.json          дані «Зараз у Fraser» (генерується; комітиться, коли дані змінилися, тож історія git — щоденний знімок)
+  fetch_hydro.py        рівень води ECCC у реальному часі, 14 днів, погодинно -> hydro.json (пост, що не відповів, зберігає попередні дані)
+  hydro.json            дані рівня води (генерується; комітиться разом з reports.json)
   manual/reports.csv    звіти, додані вручну (див. «Додати дані вручну»)
   manual/testfish.csv   рядки тестового лову чи підрахунків, додані вручну
   *.py                  завантаження геометрії + скрипти збирання, assemble.py
@@ -140,7 +143,7 @@ python run_all.py --page     # лише перезібрати index.html піс
 
 `index.html` (один файл, ~0.9 MB з вбудованими малюнками видів, без бекенду) — результат збирання, його не комітять. Його збирає й публікує GitHub Actions.
 
-Конвеєр: `osm.py` (геометрія річок і озер) → `fetch_coast.py` (узбережжя) → `fetch_subareas.py` (підзони DFO) → `fetch_reports.py` (панель «Зараз у Fraser») → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` запускається лише тоді, коли змінюється малюнок виду; його результат `species/*.webp` закомічено.
+Конвеєр: `osm.py` (геометрія річок і озер) → `fetch_coast.py` (узбережжя) → `fetch_subareas.py` (підзони DFO) → `fetch_reports.py` (панель «Зараз у Fraser») → `fetch_hydro.py` (рівень води) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` запускається лише тоді, коли змінюється малюнок виду; його результат `species/*.webp` закомічено.
 
 ### Локальний перегляд
 

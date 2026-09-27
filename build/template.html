@@ -12,7 +12,7 @@
   --sea:#c3d6dd; --land:#eceee6; --land-edge:#b9c4bf; --us:#e2e1da; --lake:#b2cdd6; --river:#8fb3c0;
   --label:#3b4c50; --halo:#ffffff;
   --c-chinook:#be5b03; --c-coho:#1781da; --c-both:#793d9c; --c-chum:#178560; --c-pink:#e03699; --c-sockeye:#9d0126;
-  --c-release:#b58a00; --c-closed:#95a0a0; --c-fraser:#b42318;
+  --c-release:#b58a00; --c-closed:#95a0a0; --c-fraser:#b42318; --c-water:#1f6390;
   --chip-bg:#eef2f0;
   --tile-filter:none;
   --f-display:"Fira Sans Extra Condensed","Arial Narrow","Roboto Condensed",sans-serif;
@@ -27,7 +27,7 @@
     --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
     --label:#b7c6c4; --halo:#0e1719;
     --c-chinook:#d57403; --c-coho:#2782bb; --c-both:#a572f0; --c-chum:#33ab6c; --c-pink:#ed1baa; --c-sockeye:#d91638;
-    --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
+    --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d; --c-water:#7cc0e6;
     --chip-bg:#1c2c2f;
     --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
   }
@@ -39,7 +39,7 @@
   --sea:#0c1d24; --land:#1b2927; --land-edge:#2f4340; --us:#172220; --lake:#12303a; --river:#2c5866;
   --label:#b7c6c4; --halo:#0e1719;
   --c-chinook:#d57403; --c-coho:#2782bb; --c-both:#a572f0; --c-chum:#33ab6c; --c-pink:#ed1baa; --c-sockeye:#d91638;
-  --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d;
+  --c-release:#e3c04b; --c-closed:#5e6b6b; --c-fraser:#f2786d; --c-water:#7cc0e6;
   --chip-bg:#1c2c2f;
   --tile-filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.6);
 }
@@ -151,6 +151,21 @@ button:active{background:var(--line)}
 .unsure-pin.in-legend{display:inline-flex;position:static;flex:none;width:18px;height:18px;cursor:inherit;box-shadow:none}
 .unsure-pin.in-legend::after{content:none}
 .man{font-style:italic;color:var(--ink-3)}
+/* Water level gauge: a round badge centred on the station position. */
+.gauge-pin{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border:1.5px solid var(--c-water);
+  border-radius:50%;background:var(--panel);color:var(--c-water);cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.gauge-pin svg{width:13px;height:13px;flex:none}
+.gauge-pin::after{content:'';position:absolute;inset:-10px}  /* a finger-sized hit area */
+.gauge-pin.in-legend{display:inline-flex;position:static;flex:none;width:18px;height:18px;cursor:inherit;box-shadow:none}
+.gauge-pin.in-legend::after{content:none}
+.lv{display:block;margin-top:4px;max-width:100%}
+.lv .ln{fill:none;stroke:var(--c-water);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.lv line{stroke:var(--line);stroke-width:1}
+.lv circle{fill:var(--c-water)}
+.lv-now{margin:0}
+.lv-now b{font-family:var(--f-mono);font-weight:500}
+.lv-sub{margin:2px 0 0;color:var(--ink-2);font-size:12.5px}
+.pop .gauge-go,.run .gauge-go{display:inline-flex;align-items:center;margin-top:6px}
 .run h3 .cnt{font-family:var(--f-mono);letter-spacing:0}
 /* The "show more" fold of the report list: plain text styling, not the section style of the rules <details>. */
 .run details.more{border-top:0;padding-top:0}
@@ -345,11 +360,14 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
 <script id="data-status" type="application/json">__STATUS__</script>
 <script id="data-species" type="application/json">__SPECIES__</script>
 <script id="reports" type="application/json">__REPORTS__</script>
+<script id="hydro" type="application/json">__HYDRO__</script>
 <script>
 (() => {
 const GEO = JSON.parse(document.getElementById('geo').textContent);
 // Built by build/fetch_reports.py; empty ({}) when the build had no network for it.
 const REPORTS = (() => { try { return JSON.parse(document.getElementById('reports').textContent); } catch { return {}; } })();
+// Built by build/fetch_hydro.py; empty ({}) when the build had no network for it.
+const HYDRO = (() => { try { return JSON.parse(document.getElementById('hydro').textContent); } catch { return {}; } })();
 
 // ---------- language ----------
 // Order: #en / #fr / #uk in the URL, then the viewer's saved choice, then English.
@@ -423,6 +441,13 @@ const I18N = {
     trend: {up: '↑ більше, ніж тижнем раніше', down: '↓ менше, ніж тижнем раніше', flat: '→ як тижнем раніше'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: улов за 28 днів, найбільше ${max} шт. (${d})`,
     sparkDay: (d, n) => `${d}: ${n} шт.`,
+    lvTitle: 'Рівень води', lvLede: 'Гідропости ECCC на річках, відкритих сьогодні. Лінія — рівень за 14 днів, риска внизу — північ.',
+    lv24: d => `За 24 год: ${d}`, lvRange: (a, b) => `14 днів: від ${a} до ${b}`,
+    lvChart: (name, a, b) => `${name}: рівень води за 14 днів, від ${a} до ${b}`, lvDay: (d, a, b) => `${d}: ${a} – ${b}`,
+    lvNote: 'Попередні дані ECCC у реальному часі. Рівень — висота води над нулем саме цього поста, тому порівнюйте його лише з цим самим постом.',
+    unitM: 'м', unitQ: 'м³/с',
+    gaugeWhere: 'Показати гідропост на карті', gaugeAt: name => `Гідропост ECCC: ${name}`, gaugeTitle: (name, lv) => `Гідропост ${name}: ${lv}`,
+    legendGauge: 'Гідропост (рівень води)',
     shopTitle: 'Звіти магазинів і рибалок', mentioned: 'Згадано: ', watersIn: 'Водойми: ', showMore: n => `Показати ще ${n}`,
     pinTitle: (name, n) => `${name}: згадано ${n === 1 ? 'у свіжому звіті' : `у ${n} свіжих звітах`}`,
     popReports: 'Свіжі звіти', popReportsNote: 'Звіт — думка його автора. Діють правила з таблиці вище.',
@@ -451,7 +476,7 @@ const I18N = {
         <li>Мінімальний розмір: чавича (Chinook) — 62 см; кижуч (Coho), кета (Chum), горбуша (Pink), нерка (Sockeye) — 30 см.</li>
         <li>Статуси DFO для Area 28 і 29 не мають дати завершення, тому для будь-якої вибраної дати сторінка показує поточний стан. Виняток — сезонні закриття з датами, наприклад гирло Fraser.</li>
         <li>Правила на карті щодня автоматично оновлюються зі сторінок DFO. Якщо DFO змінить щось незвичне, оновлення зупиняється, і сторінка показує попередження.</li></ul>`,
-    foot: `Джерела: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>, межі підзон — шар DFO PFMA Subareas 1:50 000. Межі ділянок на річках приблизні: точний опис є у вікні водойми. Правила змінюються через fishery notices, тому перевірте джерело перед виїздом. Картографічні дані © учасники OpenStreetMap (ODbL).`,
+    foot: `Джерела: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>, межі підзон — шар DFO PFMA Subareas 1:50 000, рівень води — <a href="https://wateroffice.ec.gc.ca/" target="_blank" rel="noopener">ECCC Water Office</a>. Межі ділянок на річках приблизні: точний опис є у вікні водойми. Правила змінюються через fishery notices, тому перевірте джерело перед виїздом. Картографічні дані © учасники OpenStreetMap (ODbL).`,
   },
   en: {
     title: 'Metro Vancouver Salmon Map',
@@ -497,6 +522,13 @@ const I18N = {
     trend: {up: '↑ more than the week before', down: '↓ fewer than the week before', flat: '→ same as the week before'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site}: catch over 28 days, highest ${max} fish (${d})`,
     sparkDay: (d, n) => `${d}: ${n} fish`,
+    lvTitle: 'Water levels', lvLede: 'ECCC gauges on the rivers open today. The line is the level over 14 days; a tick at the bottom is midnight.',
+    lv24: d => `Last 24 h: ${d}`, lvRange: (a, b) => `14 days: ${a} to ${b}`,
+    lvChart: (name, a, b) => `${name}: water level over 14 days, ${a} to ${b}`, lvDay: (d, a, b) => `${d}: ${a} – ${b}`,
+    lvNote: 'Provisional ECCC real-time data. The level is the water height above the zero of this gauge, so compare it only with the same gauge.',
+    unitM: 'm', unitQ: 'm³/s',
+    gaugeWhere: 'Show the gauge on the map', gaugeAt: name => `ECCC gauge: ${name}`, gaugeTitle: (name, lv) => `Gauge ${name}: ${lv}`,
+    legendGauge: 'Water level gauge',
     shopTitle: 'Shop and angler reports', mentioned: 'Mentions: ', watersIn: 'Waters: ', showMore: n => `Show ${n} more`,
     pinTitle: (name, n) => `${name}: named in ${n === 1 ? 'a recent report' : `${n} recent reports`}`,
     popReports: 'Recent reports', popReportsNote: 'A report is its author\'s opinion. The rules in the table above apply.',
@@ -524,7 +556,7 @@ const I18N = {
         <li>Minimum size: Chinook 62 cm; Coho, Chum, Pink and Sockeye 30 cm.</li>
         <li>DFO statuses for Areas 28 and 29 have no end date, so for any selected date the page shows the current status. Dated seasonal closures, such as the Fraser mouth, follow the selected date.</li>
         <li>The map updates itself from the DFO pages every day. If DFO changes something unusual, the update stops and the page shows a warning.</li></ul>`,
-    foot: `Sources: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>; subarea boundaries from the DFO PFMA Subareas 1:50,000 layer. River section boundaries on the map are approximate; the exact description is in each water's popup. Rules change through fishery notices, so check the source before you go. Map data © OpenStreetMap contributors (ODbL).`,
+    foot: `Sources: <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html" target="_blank" rel="noopener">DFO Region 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html" target="_blank" rel="noopener">DFO Area 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html" target="_blank" rel="noopener">DFO Area 29</a>; subarea boundaries from the DFO PFMA Subareas 1:50,000 layer; water levels from the <a href="https://wateroffice.ec.gc.ca/" target="_blank" rel="noopener">ECCC Water Office</a>. River section boundaries on the map are approximate; the exact description is in each water's popup. Rules change through fishery notices, so check the source before you go. Map data © OpenStreetMap contributors (ODbL).`,
   },  fr: {
     title: 'Carte du saumon de Metro Vancouver',
     checked: dt => `Règles du MPO vérifiées le <b>${dt}</b>.`, notChecked: 'La vérification automatique du MPO n\'a pas été lancée pour cette copie.',
@@ -569,6 +601,13 @@ const I18N = {
     trend: {up: '↑ plus que la semaine précédente', down: '↓ moins que la semaine précédente', flat: '→ comme la semaine précédente'},
     sparkLabel: (sp, site, max, d) => `${sp}, ${site} : prises sur 28 jours, maximum ${max} poissons (${d})`,
     sparkDay: (d, n) => `${d} : ${n} poissons`,
+    lvTitle: `Niveaux d'eau`, lvLede: `Stations de l'ECCC sur les rivières ouvertes aujourd'hui. La ligne montre le niveau sur 14 jours; un trait en bas marque minuit.`,
+    lv24: d => `Dernières 24 h : ${d}`, lvRange: (a, b) => `14 jours : de ${a} à ${b}`,
+    lvChart: (name, a, b) => `${name} : niveau d'eau sur 14 jours, de ${a} à ${b}`, lvDay: (d, a, b) => `${d} : ${a} – ${b}`,
+    lvNote: `Données provisoires de l'ECCC en temps réel. Le niveau est la hauteur de l'eau au-dessus du zéro de cette station : comparez-le seulement avec la même station.`,
+    unitM: 'm', unitQ: 'm³/s',
+    gaugeWhere: 'Afficher la station sur la carte', gaugeAt: name => `Station de l'ECCC : ${name}`, gaugeTitle: (name, lv) => `Station ${name} : ${lv}`,
+    legendGauge: `Station hydrométrique (niveau d'eau)`,
     shopTitle: 'Rapports des boutiques et des pêcheurs', mentioned: 'Mentions : ', watersIn: 'Eaux : ', showMore: n => `Afficher ${n} de plus`,
     pinTitle: (name, n) => `${name} : ${n === 1 ? 'mentionnée dans un rapport récent' : `mentionnée dans ${n} rapports récents`}`,
     popReports: 'Rapports récents', popReportsNote: 'Un rapport est l\'opinion de son auteur. Les règles du tableau ci-dessus s\'appliquent.',
@@ -597,7 +636,7 @@ const I18N = {
         <li>Taille minimale : quinnat 62 cm; coho, kéta, rose et rouge 30 cm.</li>
         <li>Les statuts du MPO pour les secteurs 28 et 29 n'ont pas de date de fin : pour toute date choisie, la page montre le statut actuel. Les fermetures saisonnières datées, comme l'embouchure du Fraser, suivent la date choisie.</li>
         <li>La carte se met à jour chaque jour à partir des pages du MPO. Si le MPO change quelque chose d'inhabituel, la mise à jour s'arrête et la page affiche un avertissement.</li></ul>`,
-    foot: `Sources : <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-fra.html" target="_blank" rel="noopener">MPO Région 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-fra.html" target="_blank" rel="noopener">MPO secteur 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-fra.html" target="_blank" rel="noopener">MPO secteur 29</a>; limites des sous-secteurs tirées de la couche MPO PFMA Subareas 1:50 000. Les limites des tronçons de rivière sur la carte sont approximatives; la description exacte figure dans la fenêtre de chaque eau. Les règles changent par avis de pêche (fishery notices) : vérifiez la source avant de partir. Données cartographiques © contributeurs d'OpenStreetMap (ODbL).`,
+    foot: `Sources : <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-fra.html" target="_blank" rel="noopener">MPO Région 2</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-fra.html" target="_blank" rel="noopener">MPO secteur 28</a>, <a href="https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-fra.html" target="_blank" rel="noopener">MPO secteur 29</a>; limites des sous-secteurs tirées de la couche MPO PFMA Subareas 1:50 000; niveaux d'eau du <a href="https://wateroffice.ec.gc.ca/index_f.html" target="_blank" rel="noopener">Bureau d'information sur l'eau de l'ECCC</a>. Les limites des tronçons de rivière sur la carte sont approximatives; la description exacte figure dans la fenêtre de chaque eau. Les règles changent par avis de pêche (fishery notices) : vérifiez la source avant de partir. Données cartographiques © contributeurs d'OpenStreetMap (ODbL).`,
   },
 };
 const t = (k, ...a) => { const v = I18N[LANG][k]; return typeof v === 'function' ? v(...a) : v; };
@@ -773,7 +812,7 @@ map.attributionControl.setPrefix(false);
 let attribution = '';
 function renderAttribution() {
   map.attributionControl.removeAttribution(attribution);
-  attribution = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · DFO · '
+  attribution = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · DFO · ECCC · '
     + `<a href="https://www.linkedin.com/in/vskotyk" target="_blank" rel="author noopener">${esc(t('credit'))}</a>`;
   map.attributionControl.addAttribution(attribution);
 }
@@ -962,8 +1001,11 @@ function openPopup(w, latlng, sub) {
     + reps.map(r => `<li>${extLink(r.url, `${esc(r.src)} · ${fmtIso(r.date)}`)}${manualTag(r)}${r.manual ? `: ${esc(r.title)}` : ''}`
       + (r.sp.length ? ` — ${esc(t('mentioned'))}${r.sp.map(sp => esc(spLow(sp))).join(', ')}` : '') + '</li>').join('')
     + `</ul><p class="note">${esc(t('popReportsNote'))}</p>`) : '';
+  // Water level at the gauge of this water: under the rules, next to the reports.
+  const g = gaugeFor(w), lvHtml = g ? fold('pop-lv', esc(t('lvTitle')), gaugeBlock(g, tx(w.name), true)
+    + `<p class="note">${esc(t('lvNote'))}</p>`) : '';
   const html = `<div class="pop"><h3>${esc(tx(w.name))}</h3>${tag}${need}
-    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${repHtml}${asOf}
+    ${w.sec ? `<p class="sec">${esc(tx(w.sec))}</p>` : ''}${body}${notes}${lvHtml}${repHtml}${asOf}
     <p class="note">${esc(t('boldNote', fmt(md)))}</p>${routeBlock(ll)}</div>`;
   // A node, not a string: activePopup.update() after a fold toggle then keeps the node and its fold state.
   const node = document.createElement('div');
@@ -1039,7 +1081,7 @@ document.addEventListener('toggle', e => {
   if (e.target.closest('.leaflet-popup') && activePopup) activePopup.update();   // new height: re-check maxHeight and the position
 }, true);
 
-// Legend rows that the viewer switched off, for this visit only. A row key is a category, 'pins' or 'unsure'.
+// Legend rows that the viewer switched off, for this visit only. A row key is a category, 'pins', 'unsure' or 'gauges'.
 const hiddenRows = new Set();
 const rowOf = {};                                      // water id -> the legend row of its current category (styleWater)
 const eachPath = (l, fn) => l.eachLayer ? l.eachLayer(x => eachPath(x, fn)) : fn(l);
@@ -1051,6 +1093,7 @@ function applyHidden() {
       [p.halo, p.line, p.hit].forEach(g => g && eachPath(g, x => x.getElement()?.classList.toggle('lg-off', pOff))); }); });
   if (hiddenRows.has('pins')) pins.remove(); else pins.addTo(map);
   if (hiddenRows.has('unsure')) unsure.remove(); else unsure.addTo(map);
+  if (hiddenRows.has('gauges')) gauges.remove(); else gauges.addTo(map);
 }
 
 function legend() {
@@ -1067,6 +1110,7 @@ function legend() {
   $('legend-body').innerHTML = rows.map(([c, text, k]) => row(c, `<span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>`, text)).join('')
     + (pins.getLayers().length ? row('pins', `<span class="rep-pin in-legend">${PIN_SVG}</span>`, t('legendPin')) : '')
     + (unsure.getLayers().length ? row('unsure', '<span class="unsure-pin in-legend">?</span>', t('legendUnsure')) : '')
+    + (gauges.getLayers().length ? row('gauges', `<span class="gauge-pin in-legend">${GAUGE_SVG}</span>`, t('legendGauge')) : '')
     + `<div class="hint">${esc(t('legendHint'))}<br>${esc(t('legendToggle'))}</div>`;
 }
 // The button stays in place (no re-render), so the keyboard focus stays on it.
@@ -1167,12 +1211,121 @@ function openUnsure(w, ll, id) {
     + `<p class="sec">${esc(t('unsureTitle'))}</p><p>${esc(unsureText(id))}</p>${routeBlock(ll)}</div>`).openOn(map);
 }
 
+// ---------- water level: ECCC real-time gauges (build/fetch_hydro.py) ----------
+// The level is metres above the zero of each gauge, so a gauge is compared only with itself:
+// the change in 24 hours and the 14-day line. A gauge whose newest reading is too old is hidden.
+const LV_MAX_AGE = 48 * 36e5, LV_SPAN = 14 * 864e5, LV_W = 224, LV_H = 40, LV_MIN_RANGE = .1;
+const gaugesFresh = () => (HYDRO.stations || []).filter(s => s.now && Date.now() - Date.parse(s.now[0]) < LV_MAX_AGE
+  && WATERS.some(w => w.id === s.w));
+const gaugeFor = w => gaugesFresh().find(s => s.w === w.id);
+const LOCALES = {uk:'uk-UA', en:'en-CA', fr:'fr-CA'};
+const metres = v => `${v.toLocaleString(LOCALES[LANG], {minimumFractionDigits:2, maximumFractionDigits:2})} ${t('unitM')}`;
+const flowText = v => `${v.toLocaleString(LOCALES[LANG], {maximumSignificantDigits:3})} ${t('unitQ')}`;
+const localISO = ms => { const d = new Date(ms); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const fmtStamp = iso => { const d = new Date(iso); return `${fmtIso(localISO(d))}, ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const gaugeUrl = s => `https://wateroffice.ec.gc.ca/report/real_time_${LANG === 'fr' ? 'f' : 'e'}.html?stn=${encodeURIComponent(s.id)}`;
+
+// [time ms, level] of each hour (plotted at mid-hour) and of the newest reading, oldest first, gaps left out.
+function gaugePoints(s) {
+  const t0 = Date.parse(s.t0) + 18e5, now = Date.parse(s.now[0]);
+  return [...s.lv.map((v, i) => [t0 + i * 36e5, v]).filter(([x, v]) => v !== null && x < now), [now, s.now[1]]];
+}
+
+// Level change since the reading nearest to 24 hours before the newest one (within 2 hours), or null.
+function change24(s, pts) {
+  const at = Date.parse(s.now[0]) - 864e5;
+  const near = pts.reduce((b, p) => Math.abs(p[0] - at) < Math.abs(b[0] - at) ? p : b, pts[0]);
+  return Math.abs(near[0] - at) <= 2 * 36e5 ? s.now[1] - near[1] : null;
+}
+
+// 14-day line on one time axis for all gauges (up to now). A gap of more than 3 hours breaks the line.
+// The vertical range is at least LV_MIN_RANGE, so a few millimetres of noise do not look like a flood.
+function levelChart(s, pts, name) {
+  const end = Date.now(), start = end - LV_SPAN;
+  const p = pts.filter(([x]) => x >= start);
+  const vals = p.map(([, v]) => v), lo0 = Math.min(...vals), hi0 = Math.max(...vals);
+  const mid = (lo0 + hi0) / 2, half = Math.max(hi0 - lo0, LV_MIN_RANGE) / 2, lo = mid - half, hi = mid + half;
+  const X = x => (x - start) / LV_SPAN * LV_W, Y = v => LV_H - 3 - (v - lo) / (hi - lo) * (LV_H - 6);
+  let d = '', prev = null;
+  p.forEach(([x, v]) => { d += `${prev !== null && x - prev <= 3 * 36e5 ? 'L' : 'M'}${X(x).toFixed(1)},${Y(v).toFixed(1)}`; prev = x; });
+  // Local midnights: a tick on the base line and a hover slot with the range of that day.
+  let days = '';
+  for (let m = new Date(start).setHours(24, 0, 0, 0) - 864e5; m < end; m = new Date(m).setHours(24, 0, 0, 0)) {
+    const a = Math.max(m, start), b = Math.min(new Date(m).setHours(24, 0, 0, 0), end);
+    const v = p.filter(([x]) => x >= a && x < b).map(([, y]) => y);
+    if (m >= start) days += `<line x1="${X(m).toFixed(1)}" x2="${X(m).toFixed(1)}" y1="${LV_H - 4}" y2="${LV_H}"/>`;
+    if (v.length) days += `<g><title>${esc(t('lvDay', fmtIso(localISO(a)), metres(Math.min(...v)), metres(Math.max(...v))))}</title>`
+      + `<rect x="${X(a).toFixed(1)}" width="${(X(b) - X(a)).toFixed(1)}" height="${LV_H}" fill="transparent"/></g>`;
+  }
+  const [lx, lv] = p[p.length - 1];
+  return `<svg class="lv" width="${LV_W}" height="${LV_H}" viewBox="0 0 ${LV_W} ${LV_H}" role="img" aria-label="${esc(t('lvChart', name, metres(lo0), metres(hi0)))}">`
+    + `<line x1="0" x2="${LV_W}" y1="${LV_H - .5}" y2="${LV_H - .5}"/>${days}<path class="ln" d="${d}"/>`
+    + `<circle cx="${X(lx).toFixed(1)}" cy="${Y(lv).toFixed(1)}" r="2.5"/></svg>`;
+}
+
+// Level now, flow, reading time, 24-hour change, the 14-day line and the station link.
+function gaugeBlock(s, name, where) {
+  const pts = gaugePoints(s), [iso, lv, q] = s.now, ch = change24(s, pts);
+  const vals = pts.filter(([x]) => x >= Date.now() - LV_SPAN).map(([, v]) => v);
+  const arrow = ch === null ? '' : Math.abs(ch) < .005 ? '→ ' : ch > 0 ? '↑ ' : '↓ ';
+  return `<p class="lv-now"><b>${esc(metres(lv))}</b>${q !== null ? ` · ${esc(flowText(q))}` : ''} · ${esc(fmtStamp(iso))}</p>`
+    + (ch === null ? '' : `<p class="lv-sub">${esc(t('lv24', arrow + metres(Math.abs(ch))))}</p>`)
+    + levelChart(s, pts, name)
+    + `<p class="lv-sub">${esc(t('lvRange', metres(Math.min(...vals)), metres(Math.max(...vals))))}</p>`
+    + `<p class="lv-sub">${extLink(gaugeUrl(s), esc(t('gaugeAt', s.name)))}</p>`
+    + (where ? `<button type="button" class="wlink gauge-go" data-gauge="${esc(s.id)}">${esc(t('gaugeWhere'))}</button>` : '');
+}
+
+const GAUGE_SVG = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 4.5q1.25-1.6 2.5 0t2.5 0 2.5 0 2.5 0M1 8.5q1.25-1.6 2.5 0t2.5 0 2.5 0 2.5 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+const gauges = L.layerGroup().addTo(map);
+function renderGauges() {
+  gauges.clearLayers();
+  gaugesFresh().forEach(s => {
+    const w = WATERS.find(x => x.id === s.w), ll = L.latLng(s.ll[1], s.ll[0]), title = t('gaugeTitle', s.name, metres(s.now[1]));
+    const m = L.marker(ll, {pane:'pins', keyboard:true, riseOnHover:true, title,
+      icon: L.divIcon({className:'gauge-pin', html:GAUGE_SVG, iconSize:null, iconAnchor:[11, 11]})});
+    m.on('add', () => m.getElement().setAttribute('aria-label', title));
+    m.on('click', () => { skipMapClick = Date.now(); openGauge(s, w); });
+    gauges.addLayer(m);
+  });
+}
+function openGauge(s, w) {
+  const ll = L.latLng(s.ll[1], s.ll[0]);
+  reopen = () => openGauge(s, w);
+  activePopup = L.popup(popupOpts(300)).setLatLng(ll).setContent(`<div class="pop"><h3>${esc(tx(w.name))}</h3>`
+    + `<p class="sec">${esc(t('lvTitle'))}</p>${gaugeBlock(s, tx(w.name), false)}<p class="note">${esc(t('lvNote'))}</p>${routeBlock(ll)}</div>`).openOn(map);
+}
+// Fly to the gauge and open its popup. A hidden gauge legend row is switched on again, so the marker shows.
+function focusGauge(id) {
+  const s = gaugesFresh().find(x => x.id === id);
+  if (!s) return;
+  if (hiddenRows.delete('gauges')) { applyHidden(); legend(); }
+  const w = WATERS.find(x => x.id === s.w), ll = L.latLng(s.ll[1], s.ll[0]);
+  setSheet('peek');
+  map.flyToBounds(L.latLngBounds(ll, ll), {...mapPadding(60), maxZoom:13, duration:.6});
+  let shown = false;
+  const show = () => { if (!shown) { shown = true; map.stop(); openGauge(s, w); } };
+  map.once('moveend', show);
+  setTimeout(show, 900);
+}
+// Popups stop click propagation, so the "show the gauge" button inside a popup is read in the capture phase.
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('.leaflet-popup [data-gauge]');
+  if (b) { skipMapClick = Date.now(); focusGauge(b.dataset.gauge); }
+}, true);
+
 function renderRun() {
   renderPins();
+  renderGauges();
   const today = todayISO();
   const series = (REPORTS.testfish || []).filter(s => s.days.length && s.days[s.days.length - 1][0] >= isoShift(today, -RUN_MAX_AGE));
   const shops = freshShops();
-  $('run').hidden = !series.length && !shops.length;
+  // Water levels: gauges on the waters that are open today (retention or release), whatever the selected date.
+  const md = today.slice(5);
+  const levels = gaugesFresh().map(s => ({s, w: WATERS.find(x => x.id === s.w)}))
+    .filter(({w}) => !['closed', 'inactive', 'fraser'].includes(evaluate(w, 'all', md).cat))
+    .sort((a, b) => tx(a.w.name).localeCompare(tx(b.w.name)));
+  $('run').hidden = !series.length && !shops.length && !levels.length;
   if ($('run').hidden) return;
   const dot = sp => `<span class="dot" style="--c:var(${CAT_VAR[sp]})"></span>`;
   const rows = series.map(s => {
@@ -1194,6 +1347,10 @@ function renderRun() {
   const moreOpen = !!($('run').querySelector('details.more') || {}).open;   // keep the choice across a language switch
   $('run').innerHTML = fold('run', `<h2>${esc(t('runTitle'))}</h2>`,
     (rows ? `<p class="run-lede">${esc(t('runLede'))}</p><ul>${rows}</ul>` : '')
+    + (levels.length ? fold('levels', `<h3>${esc(t('lvTitle'))} <span class="cnt">(${levels.length})</span></h3>`,
+      `<p class="run-lede">${esc(t('lvLede'))}</p><ul>${levels.map(({s, w}) => `<li class="item"><span class="dot" style="--c:var(--c-water)"></span>`
+        + `<span class="nm"><button type="button" class="wlink" data-id="${w.id}">${esc(tx(w.name))}</button></span>`
+        + `<div class="lim">${gaugeBlock(s, tx(w.name), true)}</div></li>`).join('')}</ul><p class="run-note">${esc(t('lvNote'))}</p>`) : '')
     + (reps.length ? fold('shops', `<h3>${esc(t('shopTitle'))} <span class="cnt">(${reps.length})</span></h3>`,
       `<ul>${reps.slice(0, SHOP_SHOW).join('')}</ul>`
       + (reps.length > SHOP_SHOW ? `<details class="more"${moreOpen ? ' open' : ''}><summary>${esc(t('showMore', reps.length - SHOP_SHOW))}</summary>`
@@ -1405,7 +1562,10 @@ document.querySelector('.lang').addEventListener('click', e => {
 });
 window.addEventListener('hashchange', () => { const l = fromHash(); if (l && l !== LANG) applyLang(l, true); });
 $('groups').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) focusWater(b.dataset.id); });
-$('run').addEventListener('click', e => { const b = e.target.closest('.wlink'); if (b) focusWater(b.dataset.id); });
+$('run').addEventListener('click', e => {
+  const g = e.target.closest('[data-gauge]'), b = e.target.closest('.wlink');
+  if (g) focusGauge(g.dataset.gauge); else if (b) focusWater(b.dataset.id);
+});
 function focusWater(id) {
   const w = WATERS.find(x => x.id === id);
   const L_ = layers[w.id];
