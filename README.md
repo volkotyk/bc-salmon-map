@@ -45,6 +45,7 @@ The screenshots show the built-in outline map; the live site draws the same laye
 | Tidal subareas (shaded) | All 31 subareas of DFO **Areas 28 and 29**: Howe Sound, Burrard Inlet, Strait of Georgia, tidal Fraser | DFO tidal pages + DFO PFMA subarea boundaries |
 | Seasonal closure | Mouth of the Fraser River salmon closure (Aug 1 – Sep 30), drawn from the DFO coordinates | DFO Area 29 page |
 | Running now (panel) | Daily catch of the Fraser test fisheries: Albion for Chinook, Chum and Coho, Whonnock and Qualark for Sockeye (and Pink in pink years). Each row: last sample, 7-day total, trend, 28-day bar strip. The newest tackle shop reports with the species and map waters they name; a water button flies the map to that water | [DFO Albion test fishery](https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html), [PSC test fishing results](https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/) (PDF tables), [Pacific Angler Friday Fishing Report](https://www.pacificangler.ca/blogs/learn), Reddit [r/fishingBC](https://www.reddit.com/r/fishingBC/) and [r/chilliwack](https://www.reddit.com/r/chilliwack/) (public feeds) |
+| Water level | The last 14 days of water level (hourly) at the ECCC gauge of 12 rivers: level now, flow, change in 24 hours, 14-day line. A round badge marks each gauge on the map; its popup has the level and the gauge coordinates. The water popup and the *Water levels* block of the running-now panel (rivers open today) have a *Show the gauge on the map* button | [ECCC real-time hydrometric data](https://wateroffice.ec.gc.ca/) (OGC API `api.weather.gc.ca`, provisional) |
 | Base map | Real OpenStreetMap tiles when the host allows them; otherwise a built-in outline map (coastline, lakes, rivers) | OpenStreetMap |
 
 Features:
@@ -67,8 +68,8 @@ Features:
 ## Repository layout
 
 ```
-.github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, fetch the running-now data, build index.html, deploy to Pages
-.github/workflows/pr-preview.yml   pull requests: fetch the running-now data (strict), build index.html, attach it as the site-preview artifact; no deploy
+.github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, fetch the running-now data and the water levels, build index.html, deploy to Pages
+.github/workflows/pr-preview.yml   pull requests: fetch the running-now data and the water levels (strict), build index.html, attach it as the site-preview artifact; no deploy
 README.uk.md          this file in Ukrainian
 docs/screenshots/      README screenshots and the demo GIFs (English and Ukrainian)
 dfo/
@@ -86,6 +87,8 @@ build/
   species/*.webp        species illustrations (public domain), inlined into the page; fetch_species.py downloads them
   fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (a failed source keeps its previous data)
   reports.json          running-now data (generated; committed when the data change, so git history is the daily snapshot)
+  fetch_hydro.py        ECCC real-time water level, last 14 days, hourly -> hydro.json (a failed gauge keeps its previous data)
+  hydro.json            water level data (generated; committed with reports.json)
   manual/reports.csv    reports added by hand (see "Add data by hand")
   manual/testfish.csv   test-fishery or count rows added by hand
   *.py                  geometry fetch + build scripts, assemble.py
@@ -148,7 +151,7 @@ python run_all.py --page     # only re-assemble index.html after editing templat
 
 `index.html` (single file, ~0.9 MB with the inlined species drawings, no backend) is a build output and is not committed. GitHub Actions assembles and publishes it.
 
-Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `fetch_reports.py` (running-now panel) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species drawing changes; its output `species/*.webp` is committed.
+Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `fetch_reports.py` (running-now panel) → `fetch_hydro.py` (water levels) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species drawing changes; its output `species/*.webp` is committed.
 
 ### Local preview
 

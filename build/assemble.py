@@ -1,7 +1,8 @@
-"""Inline Leaflet CSS, geo.json, rules.json, status.json, species/*.webp and reports.json into template.html.
+"""Inline Leaflet CSS, geo.json, rules.json, status.json, species/*.webp, reports.json and hydro.json into template.html.
 
 CHECKED_AT (ISO time of the last successful DFO check) is taken from the environment when set.
 reports.json (from fetch_reports.py) is optional: without it the page hides the "running now" panel.
+hydro.json (from fetch_hydro.py) is optional: without it the page shows no water levels.
 
 Writes:
   ../index.html        standalone page for GitHub Pages or any static host
@@ -22,10 +23,12 @@ species = json.dumps({os.path.basename(p)[:-5]: "data:image/webp;base64," + base
 reports = open("reports.json", encoding="utf-8").read() if os.path.exists("reports.json") else "{}"
 # Report titles come from other sites: escape every "<" (also "<!--") so no text can end the <script> block.
 reports = reports.replace("<", "\\u003c")
+hydro = open("hydro.json", encoding="utf-8").read() if os.path.exists("hydro.json") else "{}"
+hydro = hydro.replace("<", "\\u003c")    # station names come from ECCC: same escape as the reports
 # Reports go in last, so a title that contains "__GEO__" or "__RULES__" stays plain text.
 body = (t.replace("/*__LEAFLET_CSS__*/", css).replace("__GEO__", geo)
         .replace("__RULES__", rules).replace("__STATUS__", status).replace("__SPECIES__", species)
-        .replace("__REPORTS__", reports))
+        .replace("__HYDRO__", hydro).replace("__REPORTS__", reports))
 
 os.makedirs("out", exist_ok=True)
 open("out/artifact.html", "w", encoding="utf-8").write(body)

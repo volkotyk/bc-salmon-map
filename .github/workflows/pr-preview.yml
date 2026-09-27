@@ -27,6 +27,11 @@ jobs:
         run: python3 fetch_reports.py --strict
 
       - if: ${{ !cancelled() }}
+        name: Fetch the water levels (strict)
+        working-directory: build
+        run: python3 fetch_hydro.py --strict
+
+      - if: ${{ !cancelled() }}
         name: Assemble the page
         working-directory: build
         run: python3 run_all.py --page
@@ -47,6 +52,10 @@ jobs:
           print("\n| Report | Date | Species | Waters |\n|---|---|---|---|")
           for r in d.get("reports", []):
               print(f"| [{r['title']}]({r['url']}) | {r['date']} | {', '.join(r['sp'])} | {', '.join(r['w'])} |")
+          h = json.load(open("hydro.json", encoding="utf-8")) if os.path.exists("hydro.json") else {}
+          print("\n| Gauge | Water | Newest reading | Level m | Flow m³/s | Hours with data |\n|---|---|---|---|---|---|")
+          for s in h.get("stations", []):
+              print(f"| {s['id']} {s['name']} | {s['w']} | {s['now'][0]} | {s['now'][1]} | {s['now'][2]} | {sum(v is not None for v in s['lv'])} |")
           print("\nDownload the `site-preview` artifact, unzip it, run `python -m http.server` in that folder "
                 "and open http://localhost:8000/.")
           EOF
@@ -58,4 +67,5 @@ jobs:
           path: |
             index.html
             build/reports.json
+            build/hydro.json
           retention-days: 7
