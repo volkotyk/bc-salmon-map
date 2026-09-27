@@ -236,11 +236,14 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
 .legend[open] summary::before{transform:rotate(90deg) translateX(2px)}
 .legend[open] summary{margin-bottom:2px}
 #legend-body{display:flex;flex-direction:column}
-.legend .row{display:flex;align-items:center;gap:8px;min-height:calc(var(--tap) - 14px);padding:0;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+/* 22px keeps a 4px space between the 18px icons when --tap is 32px. */
+.legend .row{display:flex;align-items:center;gap:8px;min-height:max(22px,calc(var(--tap) - 14px));padding:0;border:0;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
 .legend .row[aria-pressed="false"]{opacity:.45}
 .legend .row[aria-pressed="false"] .tx{text-decoration:line-through}
 /* A switched-off legend row hides its paths; they stay in the DOM, so the draw order does not change. */
 .leaflet-pane path.lg-off{display:none}
+/* All swatches and icons sit in one 26px column, so all labels start at the same x. */
+.legend .ic{flex:none;width:26px;display:flex;align-items:center;justify-content:center}
 .legend .sw{width:26px;height:0;border-top:5px solid var(--c);flex:none;border-radius:3px}
 .legend .sw.dash{border-top-style:dashed;border-top-width:3px}
 .legend .sw.thin{border-top-width:2px}
@@ -1177,7 +1180,7 @@ function legend() {
     : [[state.sp, t('legendKeep', spName(state.sp))]];
   rows.push(['release', t('legendRelease'), 'dash'], ['closed', t('legendClosed'), 'thin'], ['fraser', t('legendFraser'), 'dash']);
   if (state.lic !== 'all') rows.push(['other', t('legendOther'), 'dot2']);
-  const row = (key, sw, text) => `<button type="button" class="row" data-row="${key}" aria-pressed="${!hiddenRows.has(key)}">${sw}<span class="tx">${esc(text)}</span></button>`;
+  const row = (key, sw, text) => `<button type="button" class="row" data-row="${key}" aria-pressed="${!hiddenRows.has(key)}"><span class="ic">${sw}</span><span class="tx">${esc(text)}</span></button>`;
   $('legend-title').textContent = t('legendTitle');
   $('legend-body').innerHTML = rows.map(([c, text, k]) => row(c, `<span class="sw ${k || ''}" style="--c:var(${CAT_VAR[c]})"></span>`, text)).join('')
     + (pins.getLayers().length ? row('pins', `<span class="rep-pin in-legend">${PIN_SVG}</span>`, t('legendPin')) : '')
