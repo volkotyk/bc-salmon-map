@@ -49,7 +49,7 @@
 :root{--tap:44px;--sheet-vis:0px;--sheet-ease:transform .32s cubic-bezier(.2,.8,.2,1)}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-tap-highlight-color:transparent}
-.mapwrap{position:fixed;inset:0;isolation:isolate}
+.mapwrap{position:fixed;inset:0;isolation:isolate;container-type:inline-size}   /* cqw: the search box fits the map width */
 .panel{position:fixed;left:0;right:0;bottom:0;z-index:2;height:calc(100dvh - 44px - env(safe-area-inset-top));display:flex;flex-direction:column;
   background:var(--panel);border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(0,0,0,.2);padding-bottom:env(safe-area-inset-bottom);
   transform:translateY(calc(100% - var(--sheet-vis)));transition:var(--sheet-ease)}
@@ -252,6 +252,25 @@ summary{cursor:pointer;font:600 15px var(--f-display);letter-spacing:.04em;text-
 .route{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:12.5px}
 .route .ll{font:500 12px var(--f-mono);color:var(--ink-3);user-select:all}
 .route a{font-weight:600}
+/* Map search: a button under the zoom control opens a field; the results list opens under the field. */
+.search-ctl{position:relative}
+.search-ctl .leaflet-bar a{display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.search-ctl .leaflet-bar a[aria-expanded="true"]{color:var(--focus)}
+.search-ctl svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.search-box{position:absolute;top:0;left:calc(100% + 8px);width:min(360px,calc(100cqw - 76px));background:var(--panel);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.18);overflow:hidden;font:13px/1.35 var(--f-body)}
+/* 16px keeps iOS Safari from zooming the page when the field gets focus. */
+.search-box input{box-sizing:border-box;width:100%;min-height:var(--tap);padding:0 12px;border:0;background:none;color:var(--ink);font:16px var(--f-body)}
+.search-box input:focus-visible{outline-offset:-2px}
+.search-res{list-style:none;margin:0;padding:0;max-height:min(50dvh,320px);overflow-y:auto;border-top:1px solid var(--line)}
+.search-res:empty{display:none}
+.search-res button{display:block;width:100%;min-height:var(--tap);padding:6px 12px;border:0;border-radius:0;background:none;text-align:left;font:inherit;color:inherit}
+.search-res button:focus-visible{outline-offset:-2px}
+@media (hover:hover){.search-res button:hover{background:var(--chip-bg)}}
+.search-res b{display:block;font-weight:600}
+.search-res small{display:block;color:var(--ink-3);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.search-msg{margin:0;padding:8px 12px;border-top:1px solid var(--line);color:var(--ink-2);font-size:12.5px}
+.search-msg:empty{display:none}
 .lang{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:none}
 .lang button{border:0;border-radius:0;min-width:var(--tap);padding:0 9px;font:600 12px var(--f-mono);background:var(--panel);color:var(--ink-2)}
 .lang button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
@@ -429,6 +448,11 @@ const I18N = {
     asOf: d => `Статус DFO на ${d}. «Зараз» означає, що DFO не вказує дату завершення.`,
     boldNote: d => `Жирним — правила, що діють ${d}.`,
     routeGoogle: 'Маршрут у Google Maps ↗', openOsm: 'Відкрити в OpenStreetMap ↗',
+    search: 'Пошук на карті', searchClose: 'Закрити пошук', searchPh: 'Місце, водойма або 49.1, -121.9',
+    searchHint: 'Введіть назву місця чи водойми, підзону (29-3) або координати. Натисніть Enter.',
+    searching: 'Шукаю…', searchNone: 'У межах карти нічого не знайдено.', searchOut: 'Ці координати поза межами карти.',
+    searchOffline: 'Пошук місць зараз недоступний. Координати й назви водойм працюють.',
+    searchCoords: 'Координати', searchWater: tidal => tidal ? 'Морська зона на карті' : 'Водойма на карті',
     spHint: 'Натисніть на вид, щоб побачити, як він виглядає.',
     spCardTitle: sp => `Як розпізнати: ${sp}`,
     phaseOcean: 'У морі (Area 28 і 29) і на початку ходу в річку', phaseSpawn: 'Нерестовий самець у річці',
@@ -510,6 +534,11 @@ const I18N = {
     asOf: d => `DFO status as of ${d}. "Now" means DFO gives no end date.`,
     boldNote: d => `Bold: rules in force on ${d}.`,
     routeGoogle: 'Directions in Google Maps ↗', openOsm: 'Open in OpenStreetMap ↗',
+    search: 'Search the map', searchClose: 'Close search', searchPh: 'Place, water or 49.1, -121.9',
+    searchHint: 'Type a place or water name, a subarea (29-3) or coordinates. Press Enter.',
+    searching: 'Searching…', searchNone: 'Nothing found inside the map area.', searchOut: 'These coordinates are outside the map area.',
+    searchOffline: 'Place search is not available now. Coordinates and water names still work.',
+    searchCoords: 'Coordinates', searchWater: tidal => tidal ? 'Tidal area on the map' : 'Water on the map',
     spHint: 'Tap a species to see what it looks like.',
     spCardTitle: sp => `How to identify: ${sp}`,
     phaseOcean: 'At sea (Areas 28 and 29) and early in the river run', phaseSpawn: 'Spawning male in the river',
@@ -589,6 +618,11 @@ const I18N = {
     asOf: d => `Statut du MPO au ${d}. « Maintenant » signifie que le MPO ne donne pas de date de fin.`,
     boldNote: d => `En gras : règles en vigueur le ${endDot(d)}`,
     routeGoogle: 'Itinéraire dans Google Maps ↗', openOsm: 'Ouvrir dans OpenStreetMap ↗',
+    search: 'Rechercher sur la carte', searchClose: 'Fermer la recherche', searchPh: 'Lieu, cours d\'eau ou 49.1, -121.9',
+    searchHint: 'Tapez un lieu, un cours d\'eau, un sous-secteur (29-3) ou des coordonnées. Appuyez sur Entrée.',
+    searching: 'Recherche…', searchNone: 'Rien trouvé dans la zone de la carte.', searchOut: 'Ces coordonnées sont hors de la zone de la carte.',
+    searchOffline: 'La recherche de lieux n\'est pas disponible. Les coordonnées et les noms des eaux fonctionnent.',
+    searchCoords: 'Coordonnées', searchWater: tidal => tidal ? 'Zone à marée sur la carte' : 'Cours d\'eau sur la carte',
     spHint: 'Touchez une espèce pour voir à quoi elle ressemble.',
     spCardTitle: sp => `Comment l'identifier : ${sp}`,
     phaseOcean: 'En mer (secteurs 28 et 29) et au début de la montaison', phaseSpawn: 'Mâle en frai dans la rivière',
@@ -803,9 +837,10 @@ const CAT_VAR = {chinook:'--c-chinook', coho:'--c-coho', both:'--c-both', chum:'
 const catColor = cat => css(CAT_VAR[cat]);
 
 // ---------- map and panes ----------
+const MAP_BOUNDS = L.latLngBounds([48.6, -125.3], [50.7, -120.8]);
 const map = L.map('map', {
   zoomSnap: .25, minZoom: 7.5, maxZoom: 17, attributionControl: true,
-  maxBounds: [[48.6, -125.3], [50.7, -120.8]], maxBoundsViscosity: .8,
+  maxBounds: MAP_BOUNDS, maxBoundsViscosity: .8,
 });
 map.attributionControl.setPrefix(false);
 // One attribution string: data credits, then the author link. applyLang replaces it, so the credit follows the language.
@@ -1546,6 +1581,7 @@ function applyLang(lang, save) {
   renderStatus();
   renderRun();
   renderUnsure();
+  renderSearch();
   render();
   layoutSheet();
   if (wasOpen) wasOpen();
@@ -1572,15 +1608,216 @@ function focusWater(id) {
   const bounds = (L_.poly || L_.line).getBounds();
   setSheet('peek');
   map.flyToBounds(bounds, {...mapPadding(60), maxZoom:13, duration:.6});
-  // flyToBounds may not emit 'moveend' when the view does not change, so a timer is the fallback.
+  afterFly(() => openPopup(w, null, w.subs && w.subs[0]));
+}
+// Runs show() once, when the flight started just before ends.
+// A flight may not emit 'moveend' when the view does not change, so a timer is the fallback.
+// map.stop() ends a still-running flight: Leaflet skips popup auto-pan while the map animates.
+function afterFly(show) {
   let shown = false;
-  // map.stop() ends a still-running flight: Leaflet skips popup auto-pan while the map animates.
-  const show = () => { if (!shown) { shown = true; map.stop(); openPopup(w, null, w.subs && w.subs[0]); } };
-  map.once('moveend', show);
-  setTimeout(show, 900);
+  const once = () => { if (!shown) { shown = true; map.stop(); show(); } };
+  map.once('moveend', once);
+  setTimeout(once, 900);
 }
 // Fit padding that keeps a feature clear of the map controls and, on a phone, of the peeking sheet.
 const mapPadding = p => WIDE.matches ? {padding:[p, p]} : {paddingTopLeft:[p / 2, p + 10], paddingBottomRight:[p / 2, sheet.peek + p / 2]};
+
+// ---------- search: coordinates, map waters and subareas locally; other places via Nominatim ----------
+// Coordinates: decimal degrees, degrees + minutes, or degrees + minutes + seconds, with signs or N/S/E/W,
+// in either order. A pasted map link works too: the first "lat,lng" pair in it counts.
+// Returns an L.LatLng, or null when the text is not a coordinate pair.
+function parseLatLng(q) {
+  const link = /^https?:\/\//i.test(q.trim()) && q.match(/(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+  const comma = q.match(/^\s*([+-]?\d{1,3}),(\d+)\s*[;\s]\s*([+-]?\d{1,3}),(\d+)\s*$/);   // decimal commas: "49,1 -121,9"
+  const s = link ? `${link[1]} ${link[2]}` : comma ? `${comma[1]}.${comma[2]} ${comma[3]}.${comma[4]}`
+    : q.toUpperCase().replace(/[°º'′’"″”,;]/g, ' ');
+  const TOKEN = /[NSEW]|[+-]?\d+(?:\.\d+)?/g;
+  if (s.replace(TOKEN, '').trim()) return null;           // other letters or signs: a place name
+  // Groups of 1–3 numbers (degrees, minutes, seconds). A letter before or after a group is its hemisphere.
+  const groups = [];
+  let g = {nums: [], hemi: null};
+  for (const tok of s.match(TOKEN) || []) {
+    if (/\d/.test(tok)) { g.nums.push(Number(tok)); continue; }
+    if (!g.nums.length) { if (g.hemi) return null; g.hemi = tok; }               // "N 49"
+    else if (!g.hemi) { g.hemi = tok; groups.push(g); g = {nums: [], hemi: null}; }   // "49 N"
+    else { groups.push(g); g = {nums: [], hemi: tok}; }                          // "N 49 W 121": W starts the next group
+  }
+  if (g.nums.length) groups.push(g); else if (g.hemi) return null;
+  // No letters: "49 6 30 121 58 3" is split in the middle.
+  if (groups.length === 1 && !groups[0].hemi && [2, 4, 6].includes(groups[0].nums.length)) {
+    const n = groups[0].nums, h = n.length / 2;
+    groups.splice(0, 1, {nums: n.slice(0, h), hemi: null}, {nums: n.slice(h), hemi: null});
+  }
+  if (groups.length !== 2 || groups.some(x => !x.nums.length || x.nums.length > 3)) return null;
+  const isLat = h => h === 'N' || h === 'S', isLng = h => h === 'E' || h === 'W';
+  let [a, b] = groups;
+  if (isLng(a.hemi) || isLat(b.hemi)) [a, b] = [b, a];                                        // "121W 49N"
+  if (isLng(a.hemi) || isLat(b.hemi)) return null;                                            // "49N 121N"
+  const deg = ({nums: [d, m = 0, sec = 0], hemi}, n) => {
+    if (m < 0 || m >= 60 || sec < 0 || sec >= 60 || (n > 1 && !Number.isInteger(d))) return NaN;
+    const v = Math.abs(d) + m / 60 + sec / 3600;
+    return (d < 0 || hemi === 'S' || hemi === 'W') ? -v : v;
+  };
+  let lat = deg(a, a.nums.length), lng = deg(b, b.nums.length);
+  if (!a.hemi && !b.hemi && Math.abs(lat) > 90 && Math.abs(lng) <= 90) [lat, lng] = [lng, lat];   // "-121.9, 49.1"
+  if (!(Math.abs(lat) <= 90 && Math.abs(lng) <= 180)) return null;
+  // "49.1, 121.9" without a minus or a W: on this map that is west longitude.
+  if (!b.hemi && lng > 0 && !MAP_BOUNDS.contains([lat, lng]) && MAP_BOUNDS.contains([lat, -lng])) lng = -lng;
+  return L.latLng(lat, lng);
+}
+
+// Case and accent do not matter: "chehalis" finds "Chehalis", "riviere" finds "rivière".
+const plain = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+// Local results, with no network: a subarea code, a coordinate pair, or the map waters whose name
+// (in any language) has every typed word. Returns null for a coordinate pair outside the map.
+function localResults(q) {
+  const code = q.trim().match(/^(2[89])\s*[-–.]\s*(\d{1,2})$/), sub = code && `${code[1]}-${Number(code[2])}`;
+  const tw = sub && GEO.subpts[sub] && WATERS.find(w => w.subs && w.subs.includes(sub));
+  if (tw) return [{kind: 'sub', ll: L.latLng(GEO.subpts[sub][1], GEO.subpts[sub][0]), code: sub, w: tw,
+    title: t('subarea', sub), sub: tx(tw.name)}];
+  const ll = parseLatLng(q);
+  if (ll) return MAP_BOUNDS.contains(ll)
+    ? [{kind: 'point', ll, title: `${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`, sub: t('searchCoords')}] : null;
+  const words = plain(q).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  return WATERS.filter(w => namesOf(w).some(n => words.every(x => n.includes(x))))
+    .slice(0, 6).map(w => ({kind: 'water', id: w.id, title: tx(w.name), sub: t('searchWater', !!w.tidal)}));
+}
+const namesOf = w => (w.name && typeof w.name === 'object' ? Object.values(w.name) : [w.name]).map(plain);
+const mapWaterNames = WATERS.flatMap(namesOf);
+
+// Nominatim usage policy: at most 1 request per second, no search-as-you-type, OSM attribution (the map shows it),
+// a Referer that identifies the site (the browser sends it). The page asks only on Enter and keeps a cache.
+// viewbox + bounded=1: only places inside the map area.
+const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
+const placeCache = new Map();
+let lastPlaceReq = 0, placeCtl = null;
+async function placeResults(q) {
+  const key = `${LANG}|${plain(q)}`;
+  if (placeCache.has(key)) return placeCache.get(key);
+  placeCtl?.abort();
+  const ctl = placeCtl = new AbortController();
+  const wait = lastPlaceReq + 1000 - Date.now();
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  if (ctl.signal.aborted) throw new DOMException('aborted', 'AbortError');
+  lastPlaceReq = Date.now();
+  const vb = [MAP_BOUNDS.getWest(), MAP_BOUNDS.getNorth(), MAP_BOUNDS.getEast(), MAP_BOUNDS.getSouth()].join(',');
+  const url = `${NOMINATIM}?format=jsonv2&limit=10&bounded=1&viewbox=${vb}&accept-language=${LANG}&q=${encodeURIComponent(q)}`;
+  const res = await fetch(url, {signal: ctl.signal});
+  if (!res.ok) throw new Error(`Nominatim ${res.status}`);
+  // OSM splits a river into many ways with one name: one river result per name.
+  // A river or lake that is a map water is left out: the local result opens its rules.
+  // Other places: one result per name and context (a dam and its power plant have the same name and place).
+  const seen = new Set(), out = [];
+  for (const r of await res.json()) {
+    const parts = r.display_name.split(', '), title = r.name || parts[0];
+    const sub = parts.slice(1).filter(p => !/\d/.test(p)).slice(0, 2).join(', ');   // no house numbers, no postal codes
+    const water = r.category === 'waterway' || (r.category === 'natural' && r.type === 'water');
+    const p = plain(title), keys = water ? [`${p}|${sub}`, `~${p}`] : [`${p}|${sub}`];
+    if (keys.some(k => seen.has(k)) || (water && mapWaterNames.some(n => n.includes(p)))) continue;
+    keys.forEach(k => seen.add(k));
+    const bb = (r.boundingbox || []).map(Number);    // [south, north, west, east]
+    out.push({kind: 'place', ll: L.latLng(+r.lat, +r.lon), title, sub,
+      bounds: bb.length === 4 ? L.latLngBounds([bb[0], bb[2]], [bb[1], bb[3]]) : null});
+  }
+  placeCache.set(key, out.slice(0, 6));
+  return placeCache.get(key);
+}
+
+const SearchControl = L.Control.extend({
+  options: {position: 'topleft'},                     // added after the zoom control, so it sits under it
+  onAdd() {
+    const box = L.DomUtil.create('div', 'search-ctl');
+    box.innerHTML = `<div class="leaflet-bar"><a href="#" role="button" id="search-btn" aria-expanded="false" aria-controls="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg></a></div>
+      <form class="search-box" id="search-box" role="search" hidden>
+        <input type="search" id="search-q" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <ul class="search-res" id="search-res"></ul>
+        <p class="search-msg" id="search-msg" role="status" aria-live="polite"></p>
+      </form>`;
+    L.DomEvent.disableClickPropagation(box);
+    L.DomEvent.disableScrollPropagation(box);
+    return box;
+  },
+});
+new SearchControl().addTo(map);
+
+let searchItems = [];
+const searchOpen = () => !$('search-box').hidden;
+function renderSearch() {
+  const b = $('search-btn');
+  b.title = t(searchOpen() ? 'searchClose' : 'search');
+  b.setAttribute('aria-label', b.title);
+  $('search-q').placeholder = t('searchPh');
+  $('search-q').setAttribute('aria-label', t('search'));
+  if (searchOpen()) onSearchInput();                  // a language switch re-renders the local results
+}
+// msg: the i18n key of the line under the results, or '' for none.
+function showResults(items, msg) {
+  searchItems = items;
+  $('search-res').innerHTML = items.map((it, i) =>
+    `<li><button type="button" data-i="${i}"><b>${esc(it.title)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</button></li>`).join('');
+  $('search-msg').textContent = msg ? t(msg) : '';
+}
+function setSearchOpen(open) {
+  $('search-box').hidden = !open;
+  $('search-btn').setAttribute('aria-expanded', String(open));
+  renderSearch();
+  if (open) { $('search-q').focus(); $('search-q').select(); }
+}
+// Typing shows only local results. A coordinate pair outside the map shows its message on Enter, not while typing.
+function onSearchInput() {
+  placeCtl?.abort();
+  const q = $('search-q').value;
+  if (!q.trim()) return showResults([], 'searchHint');
+  showResults(localResults(q) || [], '');
+}
+async function onSearchSubmit() {
+  const q = $('search-q').value.trim();
+  if (!q) return;
+  const local = localResults(q);
+  if (!local) return showResults([], 'searchOut');
+  if (local[0] && (local[0].kind === 'point' || local[0].kind === 'sub')) return pickResult(local[0]);
+  if (q.length < 3) return showResults(local, local.length ? '' : 'searchNone');
+  showResults(local, 'searching');
+  const stale = () => $('search-q').value.trim() !== q;   // the field changed during the request
+  try {
+    const places = await placeResults(q);
+    if (stale()) return;
+    const items = [...local, ...places];
+    showResults(items, items.length ? '' : 'searchNone');
+  } catch (err) {
+    if (err.name === 'AbortError' || stale()) return;
+    showResults(local, 'searchOffline');             // offline, blocked (artifact viewer) or refused by Nominatim
+  }
+}
+function pickResult(it) {
+  setSearchOpen(false);
+  $('search-btn').focus();
+  if (it.kind === 'water') return focusWater(it.id);
+  setSheet('peek');
+  if (it.bounds) map.flyToBounds(it.bounds, {...mapPadding(60), maxZoom: 14, duration: .6});
+  else map.flyTo(it.ll, Math.max(map.getZoom(), it.kind === 'sub' ? 11 : 14), {duration: .6});
+  afterFly(() => it.kind === 'sub' ? openPopup(it.w, it.ll, it.code)
+    : openPointPopup(it.ll, it.kind === 'place' ? it.title : ''));
+}
+
+const toggleSearch = e => { e.preventDefault(); setSearchOpen(!searchOpen()); };
+$('search-btn').addEventListener('click', toggleSearch);
+$('search-btn').addEventListener('keydown', e => { if (e.key === ' ') toggleSearch(e); });   // a role=button link: Space too
+$('search-q').addEventListener('input', onSearchInput);
+$('search-box').addEventListener('submit', e => { e.preventDefault(); onSearchSubmit(); });
+$('search-res').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) pickResult(searchItems[+b.dataset.i]); });
+// Keyboard: arrows move between the field and the results; Escape closes the search.
+$('search-box').addEventListener('keydown', e => {
+  if (e.key === 'Escape') { e.preventDefault(); setSearchOpen(false); $('search-btn').focus(); return; }
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+  const list = [$('search-q'), ...$('search-res').querySelectorAll('button')], i = list.indexOf(document.activeElement);
+  if (i < 0 || list.length < 2) return;
+  e.preventDefault();
+  list[(i + (e.key === 'ArrowDown' ? 1 : list.length - 1)) % list.length].focus();
+});
+map.on('click', () => { if (searchOpen()) setSearchOpen(false); });
 
 // ---------- basemap: real tiles when the host allows them, built-in vector map otherwise ----------
 // The claude.ai artifact sandbox blocks external images, so tiles fail there and the vector layers stay.

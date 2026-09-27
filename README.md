@@ -19,7 +19,8 @@ The page is in English, French and Ukrainian.
 3. **Pick your licence:** *Freshwater*, *Tidal* or *Both*. Waters that need the other licence fade out.
 4. **Click a river, a lake or a tidal subarea** (on the map or in the list) for its full rule table, fishery notices and recent reports.
 5. **Click any spot on the map** for its coordinates and directions there in Google Maps.
-6. **Switch the theme and the language** with the moon / sun button and **EN · FR · UA** at the top of the panel.
+6. **Search the map** with the magnifier button under the zoom buttons: type a place, a water, a subarea (`29-3`) or coordinates, then press Enter.
+7. **Switch the theme and the language** with the moon / sun button and **EN · FR · UA** at the top of the panel.
 
 | Water popup | Species card |
 |---|---|
@@ -55,6 +56,7 @@ Features:
 - Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure. A click on a legend row hides or shows that layer on the map.
 - Click any water for the full rule table, notes and fishery-notice links.
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
+- **Search:** the magnifier button under the zoom buttons. Coordinates (decimal, degrees-minutes-seconds, N/S/E/W, a pasted Google Maps link), subarea codes (`29-3`) and map waters are found in the page, with no network. Other place names go to [Nominatim](https://nominatim.org/) (OpenStreetMap, no key) only on Enter, at most once a second, only inside the map area; the page keeps the results for the session.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
 - "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, Facebook and TikTok have no public search API for this use; add their posts by hand.
 - EN / FR / UA switch (also `#en` / `#fr` / `#uk` in the URL; the choice is remembered). English is the default. Light and dark themes: the page follows the system theme; a small sun / moon button next to the language switch changes it, and the page remembers the choice until it equals the system theme again.
@@ -161,6 +163,7 @@ Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `f
 - **Where external images are blocked** (for example the claude.ai artifact viewer): tiles fail, and the page keeps its built-in vector map.
 - **Opened from disk (`file://`):** OSM may refuse tiles without a Referer; the page then keeps the vector map. Serve it locally instead: `python -m http.server` and open `http://localhost:8000/`.
 - Directions use a plain link to Google Maps, so no Google API key is needed.
+- Place search uses the public [Nominatim server](https://operations.osmfoundation.org/policies/nominatim/) (no key). Its policy allows light use: at most 1 request per second, no search-as-you-type, visible OSM attribution, a Referer from the browser. Where the network is blocked, coordinates and map waters still work.
 
 Other basemap options (checked September 2026):
 
@@ -181,6 +184,7 @@ Free static hosts that work the same way: GitHub Pages, Cloudflare Pages, Netlif
 - DFO Pacific Fishery Management Subareas 1:50K: https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/Pacific/DFO_BC_PFMA_SUBAREAS_50K_V3_1/MapServer
 - OpenStreetMap contributors (ODbL 1.0), via the Overpass API: coastline, rivers, lakes
 - Basemap tiles: © OpenStreetMap contributors, served by the OpenStreetMap Foundation
+- Place search: Nominatim, © OpenStreetMap contributors (ODbL 1.0)
 - Species illustrations (public domain, via Wikimedia Commons): U.S. Government Printing Office pamphlet *Lake Washington Ship Canal Fish Ladder* (1996) for Chinook, Coho and Sockeye; Timothy Knepp, U.S. Fish and Wildlife Service, for spawning Pink and Chum; A. Hoen & Co. plate in Evermann & Goldsborough, *The Fishes of Alaska* (1907), for sea-phase Pink. There is no public-domain sea-phase Chum drawing, so the card describes it in text.
 
 ## Licence
