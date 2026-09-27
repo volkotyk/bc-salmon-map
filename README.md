@@ -19,8 +19,10 @@ The page is in English, French and Ukrainian.
 3. **Pick your licence:** *Freshwater*, *Tidal* or *Both*. Waters that need the other licence fade out.
 4. **Click a river, a lake or a tidal subarea** (on the map or in the list) for its full rule table, fishery notices and recent reports.
 5. **Click any spot on the map** for its coordinates and directions there in Google Maps.
-6. **Search the map** with the magnifier button under the zoom buttons: type a place, a water, a subarea (`29-3`) or coordinates, then press Enter.
-7. **Switch the theme and the language** with the moon / sun button and **EN · FR · UA** at the top of the panel.
+6. **Save a fishing spot** with *Save to my spots* in the popup of a point or a water. Give it a name and a note; the *My spots* list is in the panel.
+   On the water, the **location button** under the zoom buttons shows where you are: click the blue dot, then *Save to my spots*.
+7. **Search the map** with the magnifier button under the zoom buttons: type a place, a water, a subarea (`29-3`) or coordinates, then press Enter.
+8. **Switch the theme and the language** with the moon / sun button and **EN · FR · UA** at the top of the panel.
 
 | Water popup | Species card |
 |---|---|
@@ -56,6 +58,8 @@ Features:
 - Colours: Chinook + Coho, Chinook only, Coho only, release only, closed, closure. A click on a legend row hides or shows that layer on the map.
 - Click any water for the full rule table, notes and fishery-notice links.
 - Click anywhere on the map for its coordinates and a **Google Maps directions** / OpenStreetMap link.
+- **My spots** with no account and no server: *Save to my spots* in the popup of a point, a water or a limit puts the spot on the map (a pin) and in the *My spots* list in the panel. The spot popup edits the name and the note and saves at each key press; a spot saved from a water popup links to the rules of that water. Delete needs a second press. The spots stay only in the `localStorage` of this browser (up to 200 spots); open tabs stay in sync. *Copy the link to my spots* gives an address with `?spots=` (base64url JSON): a backup, and a way to move the spots to another device or to give them to another angler. The page adds the spots of a link only after the viewer agrees, and skips spots at the same coordinates. Safari can delete site data when the site is not opened for 7 days, so keep the link.
+- **My location:** the button under the zoom buttons shows a blue dot at your GPS position with its accuracy circle; the first fix moves the map there. A click on the dot opens a popup with *Save to my spots*. A second click on the button stops the tracking. The position stays in the page: the site does not store or send it.
 - **Search:** the magnifier button under the zoom buttons. Coordinates (decimal, degrees-minutes-seconds, N/S/E/W, a pasted Google Maps link), subarea codes (`29-3`) and map waters are found in the page, with no network. Other place names go to [Nominatim](https://nominatim.org/) (OpenStreetMap, no key) only on Enter, at most once a second, only inside the map area; the page keeps the results for the session.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
 - "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, Facebook and TikTok have no public search API for this use; add their posts by hand.
