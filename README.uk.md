@@ -82,7 +82,7 @@ build/
   leaflet.css           CSS Leaflet 1.9.4 (вбудовується під час збирання; JS Leaflet вантажиться з cdnjs)
   geo.json              геометрія карти: суша, річки, озера, морські підзони
   sub.geojson           підзони DFO PFMA для Area 28–29 (сирі дані)
-  species/*.webp        малюнки видів (суспільне надбання), вбудовуються в сторінку; їх завантажує fetch_species.py
+  species/*.webp        зображення видів (фото WDFW і малюнки в суспільному надбанні), вбудовуються в сторінку; їх робить fetch_species.py
   fetch_reports.py      тестовий лов DFO/PSC + стрічки звітів магазинів -> reports.json (джерело, що не відповіло, зберігає попередні дані)
   reports.json          дані «Зараз у Fraser» (генерується; комітиться, коли дані змінилися, тож історія git — щоденний знімок)
   fetch_hydro.py        рівень води ECCC у реальному часі, 14 днів, погодинно -> hydro.json (пост, що не відповів, зберігає попередні дані)
@@ -149,7 +149,7 @@ python run_all.py --page     # лише перезібрати index.html піс
 
 `index.html` (один файл, ~0.9 MB з вбудованими малюнками видів, без бекенду) — результат збирання, його не комітять. Його збирає й публікує GitHub Actions.
 
-Конвеєр: `osm.py` (геометрія річок і озер) → `fetch_coast.py` (узбережжя) → `fetch_subareas.py` (підзони DFO) → `fetch_reports.py` (панель «Зараз у Fraser») → `fetch_hydro.py` (рівень води) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` запускається лише тоді, коли змінюється малюнок виду; його результат `species/*.webp` закомічено.
+Конвеєр: `osm.py` (геометрія річок і озер) → `fetch_coast.py` (узбережжя) → `fetch_subareas.py` (підзони DFO) → `fetch_reports.py` (панель «Зараз у Fraser») → `fetch_hydro.py` (рівень води) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` запускається лише тоді, коли змінюється зображення виду (аргумент: шлях до PDF *BC Wild Salmon Identification Guide*); його результат `species/*.webp` закомічено.
 
 ### Локальний перегляд
 
@@ -185,8 +185,9 @@ python run_all.py --page     # лише перезібрати index.html піс
 - Учасники OpenStreetMap (ODbL 1.0), через Overpass API: узбережжя, річки, озера
 - Тайли основи карти: © учасники OpenStreetMap, роздає OpenStreetMap Foundation
 - Пошук місць: Nominatim, © учасники OpenStreetMap (ODbL 1.0)
-- Малюнки видів (суспільне надбання, через Wikimedia Commons): брошура U.S. Government Printing Office *Lake Washington Ship Canal Fish Ladder* (1996) для чавичі, кижуча й нерки; Timothy Knepp, U.S. Fish and Wildlife Service, для нерестових горбуші й кети; таблиця A. Hoen & Co. у Evermann & Goldsborough, *The Fishes of Alaska* (1907), для морської горбуші. Малюнка морської кети в суспільному надбанні немає, тож картка описує її текстом.
+- Фото видів у морській фазі: © Washington Department of Fish and Wildlife, усі права захищено, з таблиці *BC Wild Salmon Identification Guide*. WDFW дозволяє некомерційні інформаційні копії з приміткою WDFW (https://wdfw.wa.gov/privacy): "This is a reproduction of a Washington Department of Fish and Wildlife document and is not the official document or regulations of the Washington Department of Fish and Wildlife. The accuracy of the reproduction cannot be guaranteed by WDFW."
+- Малюнки видів у нерестовій фазі (суспільне надбання, через Wikimedia Commons): брошура U.S. Government Printing Office *Lake Washington Ship Canal Fish Ladder* (1996) для чавичі, кижуча й нерки; Timothy Knepp, U.S. Fish and Wildlife Service, для горбуші й кети.
 
 ## Ліцензія
 
-Код: MIT, див. [LICENSE](LICENSE). Дані карти в `build/geo.json` отримано з OpenStreetMap, вони доступні за [ODbL](https://opendatacommons.org/licenses/odbl/). Описи правил переказують сторінки DFO; саме сторінки DFO є офіційним джерелом. Leaflet — BSD-2-Clause.
+Код: MIT, див. [LICENSE](LICENSE). Дані карти в `build/geo.json` отримано з OpenStreetMap, вони доступні за [ODbL](https://opendatacommons.org/licenses/odbl/). Описи правил переказують сторінки DFO; саме сторінки DFO є офіційним джерелом. Leaflet — BSD-2-Clause. Фото морської фази в `build/species/*-ocean.webp` належать WDFW (©) і не підпадають під ліцензію MIT.

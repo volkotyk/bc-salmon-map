@@ -86,7 +86,7 @@ build/
   leaflet.css           Leaflet 1.9.4 CSS (inlined at build time; Leaflet JS loads from cdnjs)
   geo.json              map geometry: land, rivers, lakes, tidal subareas
   sub.geojson           DFO PFMA subareas for Areas 28–29 (raw)
-  species/*.webp        species illustrations (public domain), inlined into the page; fetch_species.py downloads them
+  species/*.webp        species images (WDFW photos and public-domain drawings), inlined into the page; fetch_species.py makes them
   fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (a failed source keeps its previous data)
   reports.json          running-now data (generated; committed when the data change, so git history is the daily snapshot)
   fetch_hydro.py        ECCC real-time water level, last 14 days, hourly -> hydro.json (a failed gauge keeps its previous data)
@@ -153,7 +153,7 @@ python run_all.py --page     # only re-assemble index.html after editing templat
 
 `index.html` (single file, ~0.9 MB with the inlined species drawings, no backend) is a build output and is not committed. GitHub Actions assembles and publishes it.
 
-Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `fetch_reports.py` (running-now panel) → `fetch_hydro.py` (water levels) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species drawing changes; its output `species/*.webp` is committed.
+Pipeline: `osm.py` (river/lake geometry) → `fetch_coast.py` (coastline) → `fetch_subareas.py` (DFO subareas) → `fetch_reports.py` (running-now panel) → `fetch_hydro.py` (water levels) → `build_geo.py` → `build_tidal.py` → `assemble.py`. `fetch_species.py` runs only when a species image changes (argument: the path to the *BC Wild Salmon Identification Guide* PDF); its output `species/*.webp` is committed.
 
 ### Local preview
 
@@ -189,8 +189,9 @@ Free static hosts that work the same way: GitHub Pages, Cloudflare Pages, Netlif
 - OpenStreetMap contributors (ODbL 1.0), via the Overpass API: coastline, rivers, lakes
 - Basemap tiles: © OpenStreetMap contributors, served by the OpenStreetMap Foundation
 - Place search: Nominatim, © OpenStreetMap contributors (ODbL 1.0)
-- Species illustrations (public domain, via Wikimedia Commons): U.S. Government Printing Office pamphlet *Lake Washington Ship Canal Fish Ladder* (1996) for Chinook, Coho and Sockeye; Timothy Knepp, U.S. Fish and Wildlife Service, for spawning Pink and Chum; A. Hoen & Co. plate in Evermann & Goldsborough, *The Fishes of Alaska* (1907), for sea-phase Pink. There is no public-domain sea-phase Chum drawing, so the card describes it in text.
+- Sea-phase species photos: © Washington Department of Fish and Wildlife, all rights reserved, from the *BC Wild Salmon Identification Guide* chart. WDFW allows non-commercial, informational copies with its notice (https://wdfw.wa.gov/privacy): "This is a reproduction of a Washington Department of Fish and Wildlife document and is not the official document or regulations of the Washington Department of Fish and Wildlife. The accuracy of the reproduction cannot be guaranteed by WDFW."
+- Spawning-phase species drawings (public domain, via Wikimedia Commons): U.S. Government Printing Office pamphlet *Lake Washington Ship Canal Fish Ladder* (1996) for Chinook, Coho and Sockeye; Timothy Knepp, U.S. Fish and Wildlife Service, for Pink and Chum.
 
 ## Licence
 
-Code: MIT, see [LICENSE](LICENSE). Map data in `build/geo.json` is derived from OpenStreetMap and is available under the [ODbL](https://opendatacommons.org/licenses/odbl/). Regulation summaries paraphrase DFO pages; the DFO pages are the authoritative source. Leaflet is BSD-2-Clause.
+Code: MIT, see [LICENSE](LICENSE). Map data in `build/geo.json` is derived from OpenStreetMap and is available under the [ODbL](https://opendatacommons.org/licenses/odbl/). Regulation summaries paraphrase DFO pages; the DFO pages are the authoritative source. Leaflet is BSD-2-Clause. The sea-phase photos in `build/species/*-ocean.webp` are © WDFW and are not under the MIT licence.
