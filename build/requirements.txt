@@ -1,3 +1,4 @@
 requests>=2.31
 shapely>=2.0
 pillow>=10.0   # fetch_species.py only (WebP)
+pypdf>=4.0     # fetch_species.py only (sea-phase photos)
