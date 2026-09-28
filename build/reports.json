@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-27T19:52Z",
+ "generated": "2026-09-28T20:24Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-08-30", 6, 0.37],
     ["2026-08-31", 6, 0.38],
     ["2026-09-01", 23, 1.39],
     ["2026-09-02", 8, 0.51],
@@ -44,7 +43,8 @@
     ["2026-09-19", 41, 3.25],
     ["2026-09-21", 97, 7.15],
     ["2026-09-23", 196, 13.07],
-    ["2026-09-25", 175, 11.67]
+    ["2026-09-25", 175, 11.67],
+    ["2026-09-27", 141, 9.64]
    ]
   },
   {
@@ -62,7 +62,8 @@
     ["2026-09-19", 11, 0.87],
     ["2026-09-21", 5, 0.37],
     ["2026-09-23", 0, 0.0],
-    ["2026-09-25", 2, 0.13]
+    ["2026-09-25", 2, 0.13],
+    ["2026-09-27", 0, 0.0]
    ]
   },
   {
@@ -72,7 +73,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-08-30", 7, 0.66],
     ["2026-08-31", 8, 0.77],
     ["2026-09-01", 35, 3.1],
     ["2026-09-02", 6, 0.56],
@@ -99,7 +99,8 @@
     ["2026-09-23", 39, 2.62],
     ["2026-09-24", 33, 2.42],
     ["2026-09-25", 29, 2.07],
-    ["2026-09-26", 24, 1.84]
+    ["2026-09-26", 24, 1.84],
+    ["2026-09-27", 16, 1.14]
    ]
   },
   {
@@ -109,7 +110,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-08-30", 18, 37.5],
     ["2026-08-31", 7, 17.5],
     ["2026-09-01", 8, 16.67],
     ["2026-09-02", 23, 47.92],
@@ -135,11 +135,21 @@
     ["2026-09-22", 13, 28.89],
     ["2026-09-23", 7, 31.82],
     ["2026-09-24", 4, 9.52],
-    ["2026-09-25", 4, 12.5]
+    ["2026-09-25", 4, 12.5],
+    ["2026-09-26", 1, 4.17]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Reddit r/chilliwack",
+   "title": "The salmon run is going strong in the Chilliwack River",
+   "url": "https://www.reddit.com/r/chilliwack/comments/1wslwfn/the_salmon_run_is_going_strong_in_the_chilliwack/",
+   "date": "2026-09-28",
+   "sp": [],
+   "w": ["chilliwack"],
+   "reddit": true
+  },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
    "title": "A spring (chinook) salmon (photo)",
