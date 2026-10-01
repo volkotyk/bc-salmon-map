@@ -23,13 +23,18 @@ barbless hook and line |
 2 |
 Open |
 Coho salmon (hatchery and wild combined) |
-28 |
+28-1 to 28-10 |
 30cm |
 barbless hook and line |
 2 Combined Total
 * Consisting of no more than: 2 - Hatchery - marked
 0 - Wild - unmarked
 Open |
+28-11 to 28-14 |
+30cm |
+barbless hook and line |
+0 |
+Non Retention |
 Pink salmon |
 28 |
 30cm |
@@ -42,7 +47,7 @@ Sockeye salmon |
 barbless hook and line |
 0 |
 Non Retention |
-Last updated: 2026-09-01
+Last updated: 2026-10-01
 Restrictions
 Always check for protected areas [#area-closures].
 Species |

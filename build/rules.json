@@ -8,12 +8,12 @@
   "area28": {
    "title": "Area 28",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html",
-   "dfoDate": "2026-09-01"
+   "dfoDate": "2026-10-01"
   },
   "area29": {
    "title": "Area 29",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html",
-   "dfoDate": "2026-09-05"
+   "dfoDate": "2026-10-01"
   }
  },
  "waters": [
@@ -1030,17 +1030,13 @@
     "28-6",
     "28-7",
     "28-9",
-    "28-10",
-    "28-11",
-    "28-12",
-    "28-13",
-    "28-14"
+    "28-10"
    ],
-   "subsLabel": "28-1…28-7, 28-9…28-14",
+   "subsLabel": "28-1…28-7, 28-9, 28-10",
    "name": {
-    "uk": "Howe Sound і Burrard Inlet",
-    "en": "Howe Sound & Burrard Inlet",
-    "fr": "Howe Sound et Burrard Inlet"
+    "uk": "Area 28: 28-1…28-7, 28-9, 28-10",
+    "en": "Area 28: 28-1…28-7, 28-9, 28-10",
+    "fr": "Secteur 28 : 28-1…28-7, 28-9, 28-10"
    },
    "rules": [
     {
@@ -1133,7 +1129,7 @@
     }
    ],
    "notes": [],
-   "asOf": "2026-09-01",
+   "asOf": "2026-10-01",
    "subNotes": {
     "28-1": [
      {
@@ -1266,7 +1262,7 @@
     }
    ],
    "notes": [],
-   "asOf": "2026-09-01",
+   "asOf": "2026-10-01",
    "subNotes": {
     "28-8": [
      {
@@ -1276,6 +1272,116 @@
      }
     ]
    }
+  },
+  {
+   "id": "a28-3",
+   "d": "a28",
+   "tidal": true,
+   "subs": [
+    "28-11",
+    "28-12",
+    "28-13",
+    "28-14"
+   ],
+   "subsLabel": "28-11…28-14",
+   "name": {
+    "uk": "Area 28: 28-11…28-14",
+    "en": "Area 28: 28-11…28-14",
+    "fr": "Secteur 28 : 28-11…28-14"
+   },
+   "rules": [
+    {
+     "sp": "chinook",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, мін. 62 см",
+      "en": "2 per day, min. 62 cm",
+      "fr": "2 par jour, min. 62 cm"
+     }
+    },
+    {
+     "sp": "chum",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "2 на день, мін. 30 см",
+      "en": "2 per day, min. 30 cm",
+      "fr": "2 par jour, min. 30 cm"
+     }
+    },
+    {
+     "sp": "coho",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "release",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention (release only)",
+      "fr": "Remise à l'eau seulement"
+     }
+    },
+    {
+     "sp": "pink",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "retain",
+     "lim": {
+      "uk": "4 на день, мін. 30 см",
+      "en": "4 per day, min. 30 cm",
+      "fr": "4 par jour, min. 30 cm"
+     }
+    },
+    {
+     "sp": "sockeye",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "release",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention (release only)",
+      "fr": "Remise à l'eau seulement"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з кількома вістрями",
+      "en": "Not allowed: a hook having more than one point",
+      "fr": "Interdit : hameçon à plusieurs pointes"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "04-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок із зазубриною",
+      "en": "Not allowed: barbed hook",
+      "fr": "Interdit : hameçon avec ardillon"
+     }
+    },
+    {
+     "sp": "all",
+     "from": "09-01",
+     "to": "03-31",
+     "type": "gear",
+     "lim": {
+      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
+      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank",
+      "fr": "Interdit : hameçon à une pointe de plus de 22 mm entre la pointe et la tige"
+     }
+    }
+   ],
+   "notes": [],
+   "asOf": "2026-10-01",
+   "subNotes": {}
   },
   {
    "id": "a29-1",
@@ -1392,7 +1498,7 @@
      "fr": "Rappel : In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
     }
    ],
-   "asOf": "2026-09-05",
+   "asOf": "2026-10-01",
    "subNotes": {
     "29-1": [
      {
@@ -1486,7 +1592,7 @@
      "fr": "Rappel : In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
     }
    ],
-   "asOf": "2026-09-05",
+   "asOf": "2026-10-01",
    "subNotes": {
     "29-9": [
      {
@@ -1985,43 +2091,6 @@
      }
     ]
    }
-  },
-  {
-   "id": "a29-mouth",
-   "d": "a29",
-   "tidal": true,
-   "closure": true,
-   "geom": "mouth",
-   "name": {
-    "uk": "Гирло Fraser: сезонне закриття",
-    "en": "Fraser River mouth: seasonal closure",
-    "fr": "Embouchure du Fraser : fermeture saisonnière"
-   },
-   "sec": {
-    "uk": "Від Point Grey і North Arm Jetty на захід до 123°20.8′ W.",
-    "en": "From Point Grey and the North Arm Jetty west to 123°20.8′ W.",
-    "fr": "De Point Grey et de la jetée North Arm vers l'ouest jusqu'à 123°20.8′ O."
-   },
-   "subsLabel": {
-    "uk": "частина 29-3",
-    "en": "part of 29-3",
-    "fr": "partie de 29-3"
-   },
-   "asOf": "2026-09-05",
-   "notes": [],
-   "rules": [
-    {
-     "sp": "all",
-     "from": "08-01",
-     "to": "09-30",
-     "type": "closed",
-     "lim": {
-      "uk": "Закрито для всіх видів лосося",
-      "en": "Closed to all salmon",
-      "fr": "Fermé à toutes les espèces de saumon"
-     }
-    }
-   ]
   }
  ]
 }

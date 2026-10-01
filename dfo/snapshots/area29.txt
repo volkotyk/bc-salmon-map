@@ -69,21 +69,21 @@ Areas |
 Restriction type |
 Restriction details |
 Finfish |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Closed |
 From one hour after sunset to one hour before sunrise only - (year round ) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Reminder |
 As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to fish in the tidal portion of the Fraser River using a fishing line with a barbed hook attached. |
 29 |
 Reminder |
 In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line). |
 Salmon |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Gear Restriction |
 You are not allowed to harvest using the following gears and methods:
 natural bait (Sep 5 to Oct 6)
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Reminder |
 As per the British Columbia Sport Fishing Regulations, 1996 - It is prohibited to use more than one line when sport fishing in the tidal waters of the Fraser River. |
 Coastwide |
@@ -114,13 +114,10 @@ Coastwide |
 Reminder |
 The use of more than one single hook is permitted (e.g., using two single hooks in a tandem set up to hold a single piece of bait or lure is permitted) (See exceptions). |
 Chinook salmon (hatchery and wild combined) |
-Mouth of the Fraser River Salmon Closure [#_750] |
-Closed |
-barbless hook and line (Aug 1 to Sep 30) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Closed |
 barbless hook and line (year round ) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Minimum Size (cm) |
 30 |
 Coastwide |
@@ -130,51 +127,36 @@ Coastwide |
 Reminder |
 Keeping your chinook salmon? You must permanently record all retained chinook salmon (head-on length) on your Tidal Waters Sport Fishing Licence. The licence holder may alternatively record retained catch immediately in an electronic licence held in an approved third-party application linked to their National Recreational Licensing System (NRLS) account, or if mobile internet access is immediately available, directly in their NRLS account. The licence holder shall ensure that all mandatory catch records for the current licence year are produced, either on the licence (paper or electronic), or from the licence holder's NRLS account at the time of inspection. |
 Chum salmon |
-Mouth of the Fraser River Salmon Closure [#_750] |
-Closed |
-barbless hook and line (Aug 1 to Sep 30) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Closed |
 barbless hook and line (year round ) |
 Coho salmon (hatchery and wild combined) |
-Mouth of the Fraser River Salmon Closure [#_750] |
-Closed |
-barbless hook and line (Aug 1 to Sep 30) |
-Portion of Subarea 29-1 in front of Chapman Creek [#_4975] |
+Portion of Subarea 29-1 in front of Chapman Creek [#_9220] |
 Daily Limit Pieces |
 2 |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Closed |
 barbless hook and line (year round ) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Minimum Size (cm) |
 25 |
 Pink salmon |
-Mouth of the Fraser River Salmon Closure [#_750] |
-Closed |
-barbless hook and line (Aug 1 to Sep 30) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Closed |
 barbless hook and line (year round ) |
-Tidal portion of the Fraser River (in Area 29) [#_4962] |
+Tidal portion of the Fraser River (in Area 29) [#_5476] |
 Daily Limit Pieces |
 0 |
 Sockeye salmon |
-Mouth of the Fraser River Salmon Closure [#_750] |
-Closed |
-barbless hook and line (Aug 1 to Sep 30) |
-Tidal Portion of Fraser River (Area 29) [#_8917] |
+Tidal Portion of Fraser River (Area 29) [#_791] |
 Closed |
 barbless hook and line (year round ) |
-Last updated: 2026-09-05
+Last updated: 2026-10-01
 Area descriptions
 Area |
 Map |
 Area description |
 Coastwide |
-Mouth of the Fraser River Salmon Closure |
-Mouth of the Fraser River Salmon Closure [http://www.pac.dfo-mpo.gc.ca/fm-gp/rec/includes/Mouth_of_the_Fraser_River_Salmon_Closure.jpeg] |
-That portion of Subarea 29-3 inside a line drawn from a point in water at 49°17.519'N and 123°20.404'W easterly to a point in water located on the boundary between Subareas 28-7 and 29-3 at 49°17.400'N and 123°15.867' W, then southerly following the Subarea boundary to a point on land near Point Grey at 49°15.995'N and 123°15.860'W, then southerly following the shoreline to Point Grey at 49°15.936'N and 123°15.860'W, then southwesterly to the north side of North Arm Jetty Light at 49°15.443'N and 123°16.772'W, then southerly to the south side of North Arm Jetty Light at 49°15.437'N and 123°16.779'W, then southwesterly to a point in water located on the boundary between Subareas 29-3 and 29-10 at 49°13.258'N and 123°17.117'W, then westerly to a point in water at 49°13.349'N and 123°20.797'W, and then northerly in a straight line back to the point of commencement. |
 Portion of Subarea 29-1 in front of Chapman Creek |
 Portion of Subarea 29-1 in front of Chapman Creek of Davis Bay and Trail Bay, inside a half mile ribbon boundary (1/2 mile offshore), commencing from one half mile true South of the Western boundary of Snickett Park (49°27.625'N and 123°45.903'W to one half mile true South of the marker at the entrance to the Port Stalashin Marina (49°25.875'N and 123°42.824'W). |
 Tidal Portion of Fraser River (Area 29) |
@@ -188,4 +170,4 @@ The following Subareas or portions of Subareas:
 (a) Subarea 29-11 and Subareas 29-13 to 29-17;
 (b) The portion of Subarea 29-9 bounded on the west by a line from a fishing boundary sign near the entrance to Canoe Passage, thence to a fishing boundary sign on Westham Island, thence following the westerly shoreline of Westham Island and Reifel Island to Pelly Point on Reifel Island, thence to Garry Point on Lulu Island; and
 (c) The portion of Subarea 29-12 bounded on the west by a line from the most southwesterly point of Sea Island, thence following the westerly shoreline of that island to the Iona Island Road Causeway, thence following that causeway and continuing in a straight line in a northerly direction to a fishing boundary sign on the north shore of Iona Island, thence in a straight line in a northerly direction to a fishing boundary sign on the mainland. |
-Last updated: 2026-09-05
+Last updated: 2026-10-01
