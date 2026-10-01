@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T20:58Z",
+ "generated": "2026-10-01T00:12Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -144,6 +144,78 @@
  ],
  "reports": [
   {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Two fresh chrome salmon caught",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28356039490742908/",
+   "date": "2026-09-30",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A coho kept for dinner (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28354910600855797/",
+   "date": "2026-09-30",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Video reports from the river at 7, 9 and 10 am",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28353835407629983/",
+   "date": "2026-09-30",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Muddy water after the heavy rain (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28344223305257860/",
+   "date": "2026-09-29",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A 92 cm, 25 lb chinook: the biggest fish of the year for the angler (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28341363462210511/",
+   "date": "2026-09-29",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Lots of fish in one pool, no other anglers",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28334248549588669/",
+   "date": "2026-09-29",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Three salmon toward the non-tidal tag (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28335596566120534/",
+   "date": "2026-09-29",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "A large school of chinook holding in a deep pool at the end of the run (underwater video)",
+   "url": "https://www.instagram.com/walkinglessa/reel/Dd5V7DXKt7W/",
+   "date": "2026-09-29",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
    "src": "Reddit r/chilliwack",
    "title": "The salmon run is going strong in the Chilliwack River",
    "url": "https://www.reddit.com/r/chilliwack/comments/1wslwfn/the_salmon_run_is_going_strong_in_the_chilliwack/",
@@ -151,6 +223,78 @@
    "sp": [],
    "w": ["chilliwack"],
    "reddit": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Lots of hatchery coho (second-hand report)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28325597087120482/",
+   "date": "2026-09-28",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "After the rain, a chinook day on the Vedder (video)",
+   "url": "https://www.tiktok.com/@babygirlairi/video/7690574967078964481",
+   "date": "2026-09-28",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A 46 lb salmon landed (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28322564757423715/",
+   "date": "2026-09-27",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A 34-inch chinook (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28322510637429127/",
+   "date": "2026-09-27",
+   "sp": ["chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Vedder Canal: coho, chinook and chum in one day (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28316412131372311/",
+   "date": "2026-09-27",
+   "sp": ["coho", "chinook", "chum"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Two wild coho hooked on a 12 mm soft bead and released",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28316285874718270/",
+   "date": "2026-09-27",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Chum action all day on the Vedder (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7690364950786886932",
+   "date": "2026-09-27",
+   "sp": ["chum"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Reddit r/FishingBC",
+   "title": "A chinook (spring) from Sand Heads",
+   "url": "https://www.reddit.com/r/fishingBC/comments/1wrsxqt/beautiful_sandheads_spring/",
+   "date": "2026-09-27",
+   "sp": ["chinook"],
+   "w": ["29-3"],
+   "manual": true
   },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
@@ -176,6 +320,24 @@
    "url": "https://www.instagram.com/p/DdxFraWD8pi/",
    "date": "2026-09-26",
    "sp": ["chinook", "coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Reddit r/FishingBC",
+   "title": "Near the Great Blue Heron Reserve others hooked many fish, the poster got none",
+   "url": "https://www.reddit.com/r/fishingBC/comments/1wr7yxd/im_getting_frustrated/",
+   "date": "2026-09-26",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "A first chinook on the Vedder (video)",
+   "url": "https://www.tiktok.com/@kaiju.rnr/video/7690037080155606292",
+   "date": "2026-09-26",
+   "sp": ["chinook"],
    "w": ["chilliwack"],
    "manual": true
   },
