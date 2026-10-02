@@ -70,6 +70,7 @@
 .github/workflows/pr-preview.yml   pull requests: отримати дані «Зараз у Fraser» і рівень води (strict), зібрати index.html, додати як артефакт site-preview; без публікації
 README.uk.md          цей файл українською (README.md — англійською)
 docs/screenshots/      скріншоти й демо-GIF для README (англійською та українською)
+docs/architecture.md   діаграми C4: звідки беруться дані, автоматично чи вручну (англійською)
 dfo/
   update.py             читає сторінки DFO, розбирає таблиці, перевіряє, пише build/rules.json + build/status.json
   catalog.py            знання, що ведуться вручну: назви DFO -> лінії на карті, назви груп, українські й французькі тексти
@@ -178,6 +179,8 @@ python run_all.py --page     # лише перезібрати index.html піс
 Безкоштовні статичні хостинги, що працюють так само: GitHub Pages, Cloudflare Pages, Netlify, Vercel (Hobby, некомерційно).
 
 ## Джерела даних
+
+Діаграми C4 у [docs/architecture.md](docs/architecture.md) показують, які дані надходять автоматично, а які вручну (англійською).
 
 - DFO, Region 2 – Lower Mainland, лосось у прісних водах: https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html (стан на 2026-09-16)
 - DFO, Area 28, солоні води: https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html (стан на 2026-09-01)
