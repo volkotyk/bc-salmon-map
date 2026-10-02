@@ -93,6 +93,7 @@ build/
   hydro.json            water level data (generated; committed with reports.json)
   manual/reports.csv    reports added by hand (see "Add data by hand")
   manual/testfish.csv   test-fishery or count rows added by hand
+  smoke.py              opens index.html in headless Chrome; CI does not publish a page that fails at the start
   *.py                  geometry fetch + build scripts, assemble.py
 ```
 

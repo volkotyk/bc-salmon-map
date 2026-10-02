@@ -11,6 +11,8 @@ name: Update DFO rules and deploy
 #   4. build/fetch_hydro.py gets the water level of the last 14 days at the ECCC gauges of the map rivers.
 #      A failed gauge is a warning and keeps its previous data; build/hydro.json is committed with step 3.
 #   5. index.html is assembled with the check time and published to GitHub Pages.
+#      Before the publish, build/smoke.py opens the page in headless Chrome. When the page script fails at the start,
+#      the job stops and the live page stays at the last good version.
 on:
   push:
     branches: [main]
@@ -83,6 +85,10 @@ jobs:
         env:
           CHECKED_AT: ${{ steps.dfo.outputs.checked_at }}
         run: python3 run_all.py --page
+
+      - name: Check that the page starts (a broken page is not published)
+        working-directory: build
+        run: python3 smoke.py
 
       - name: Collect site files
         run: mkdir _site && cp index.html .nojekyll _site/
