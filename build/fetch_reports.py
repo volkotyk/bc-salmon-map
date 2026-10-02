@@ -99,6 +99,8 @@ WATERS = {
     "28-10":           r"burrard inlet",
     "28-8":            r"false creek",
 }
+# Waters that dfo/update.py writes only while DFO lists them: the Fraser mouth closure is seasonal (08-01..09-30).
+SEASONAL = {"a29-mouth"}
 tags = lambda table: {k: re.compile(rf"\b(?:{v})\b", re.I) for k, v in table.items()}
 SPECIES_RE, WATERS_RE = tags(SPECIES), tags(WATERS)
 
@@ -491,8 +493,8 @@ def warn(msg):
 def main():
     waters = json.loads((HERE / "rules.json").read_text(encoding="utf-8"))["waters"]
     known = {w["id"] for w in waters} | {s for w in waters for s in w.get("subs") or []}
-    if WATERS.keys() - known:
-        warn(f"WATERS keys missing from rules.json: {sorted(WATERS.keys() - known)}")
+    if WATERS.keys() - known - SEASONAL:
+        warn(f"WATERS keys missing from rules.json: {sorted(WATERS.keys() - known - SEASONAL)}")
     try:
         prev = json.loads(OUT.read_text(encoding="utf-8"))
     except (OSError, ValueError):

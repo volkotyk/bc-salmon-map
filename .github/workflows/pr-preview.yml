@@ -37,6 +37,11 @@ jobs:
         run: python3 run_all.py --page
 
       - if: ${{ !cancelled() }}
+        name: Check that the page starts
+        working-directory: build
+        run: python3 smoke.py
+
+      - if: ${{ !cancelled() }}
         name: Write the run summary
         working-directory: build
         run: |

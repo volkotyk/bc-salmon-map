@@ -1011,7 +1011,9 @@ WATERS.forEach(w => {
     return {halo, line, hit};
   });
 });
-layers['a29-mouth'].poly.bringToFront();
+// The Fraser mouth closure is seasonal: dfo/update.py drops it when DFO no longer lists it.
+const mouthToFront = () => layers['a29-mouth']?.poly.bringToFront();
+mouthToFront();
 
 // 'other': the water needs the licence that the viewer does not have. It stays on the map as a faint outline.
 const rowKey = cat => cat === 'inactive' ? 'closed' : cat;
@@ -1722,7 +1724,7 @@ function render() {
   const res = WATERS.filter(licensed).map(w => ({w, ...evaluate(w, sp, md)}));
   WATERS.forEach(w => { if (!licensed(w)) styleWater(w, 'other'); });
   res.forEach(({w, cat}) => styleWater(w, cat));
-  layers['a29-mouth'].poly.bringToFront();
+  mouthToFront();
   applyHidden();
 
   const fresh = res.filter(r => !r.w.tidal && !r.w.closure);
@@ -2232,5 +2234,7 @@ map.on('popupopen', () => { if (!WIDE.matches) { $('legend').open = false; lower
 navigator.permissions?.query({name:'geolocation'}).then(p => {
   if (!me.on && (p.state === 'granted' || (p.state === 'prompt' && !WIDE.matches))) startLocate(true);
 }, () => {});
+// build/smoke.py looks for this mark: an error during the start leaves it unset.
+document.documentElement.dataset.ready = '1';
 })();
 </script>
