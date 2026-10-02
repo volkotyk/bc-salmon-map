@@ -74,6 +74,7 @@ Features:
 .github/workflows/pr-preview.yml   pull requests: fetch the running-now data and the water levels (strict), build index.html, attach it as the site-preview artifact; no deploy
 README.uk.md          this file in Ukrainian
 docs/screenshots/      README screenshots and the demo GIFs (English and Ukrainian)
+docs/architecture.md   C4 diagrams: where the data come from, automatic or by hand
 dfo/
   update.py             reads the DFO pages, parses the tables, validates, writes build/rules.json + build/status.json
   catalog.py            hand-kept knowledge: DFO names -> map lines, group names, Ukrainian and French wording
@@ -182,6 +183,8 @@ Other basemap options (checked September 2026):
 Free static hosts that work the same way: GitHub Pages, Cloudflare Pages, Netlify, Vercel (Hobby, non-commercial).
 
 ## Data sources
+
+The C4 diagrams in [docs/architecture.md](docs/architecture.md) show which data come in automatically and which by hand.
 
 - DFO, Region 2 – Lower Mainland freshwater salmon: https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html (as of 2026-09-16)
 - DFO, Area 28 tidal: https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html (as of 2026-09-01)
