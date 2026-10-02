@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-02T03:28Z",
+ "generated": "2026-10-02T20:02Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-03", 8, 0.5],
     ["2026-09-04", 6, 0.38],
     ["2026-09-05", 1, 0.06],
     ["2026-09-06", 0, 0.0],
@@ -24,7 +23,8 @@
     ["2026-09-24", 8, 0.43],
     ["2026-09-26", 12, 0.69],
     ["2026-09-28", 5, 0.3],
-    ["2026-09-30", 18, 0.99]
+    ["2026-09-30", 18, 0.99],
+    ["2026-10-02", 3, 0.18]
    ]
   },
   {
@@ -76,7 +76,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-09-03", 7, 0.66],
     ["2026-09-04", 9, 0.8],
     ["2026-09-05", 5, 0.49],
     ["2026-09-06", 2, 0.19],
@@ -103,7 +102,8 @@
     ["2026-09-27", 16, 1.14],
     ["2026-09-28", 14, 1.13],
     ["2026-09-29", 64, 4.49],
-    ["2026-09-30", 28, 1.8]
+    ["2026-09-30", 28, 1.8],
+    ["2026-10-01", 24, 1.45]
    ]
   },
   {
@@ -113,7 +113,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-09-03", 24, 50.0],
     ["2026-09-04", 9, 24.32],
     ["2026-09-05", 14, 32.56],
     ["2026-09-06", 5, 11.63],
@@ -761,24 +760,6 @@
    "date": "2026-09-04",
    "sp": ["coho"],
    "w": [],
-   "manual": true
-  },
-  {
-   "src": "Reddit r/FishingBC",
-   "title": "Few salmon seen on the Vedder on Sep 1 (low water before the rain)",
-   "url": "https://www.reddit.com/r/fishingBC/comments/1w67gld/ambleside_vs_vedder_for_salmon/",
-   "date": "2026-09-03",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Several salmon seen moving upstream at the Vedder Crossing bridge",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/27999733299706864/",
-   "date": "2026-09-03",
-   "sp": [],
-   "w": ["chilliwack"],
    "manual": true
   }
  ]
