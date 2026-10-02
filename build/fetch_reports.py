@@ -45,6 +45,9 @@ KEEP_DAYS = 28            # test-fishery history kept in the page
 FEEDS = [
     # source name, Atom feed, title filter (other blog posts are sales and news)
     ("Pacific Angler", "https://www.pacificangler.ca/blogs/learn.atom", re.compile(r"fishing report", re.I)),
+    # Fred's (Chilliwack) also posts Fraser sturgeon reports and guide ads: salmon map, salmon reports only.
+    ("Fred's Custom Tackle", "https://fredscustomtackle.com/blogs/fishing-reports.atom",
+     re.compile(r"^fishing report\b(?!.*sturgeon)", re.I)),
 ]
 KEEP_REPORTS = 3          # newest reports kept per feed
 
