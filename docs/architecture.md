@@ -16,7 +16,7 @@ C4Context
     System_Ext(dfo, "DFO", "Region 2, Area 28, Area 29 pages; FOS report of the Albion test fishery")
     System_Ext(psc, "PSC", "Whonnock and Qualark test-fishery PDFs")
     System_Ext(eccc, "ECCC", "Real-time hydrometric OGC API, 12 gauges")
-    System_Ext(pa, "Pacific Angler", "Fishing report Atom feed")
+    System_Ext(pa, "Tackle shops", "Pacific Angler and Fred's Custom Tackle fishing report Atom feeds")
     System_Ext(reddit, "Reddit", "r/fishingBC and r/chilliwack RSS feeds")
   }
 
@@ -76,7 +76,7 @@ C4Container
   title Scripts and files that carry the data
 
   Boundary(ext, "External") {
-    System_Ext(sources, "Automatic sources", "DFO, PSC, ECCC, Pacific Angler, Reddit")
+    System_Ext(sources, "Automatic sources", "DFO, PSC, ECCC, Pacific Angler, Fred's Custom Tackle, Reddit")
     System_Ext(pages, "GitHub Pages", "Serves index.html")
   }
 

@@ -45,6 +45,9 @@ KEEP_DAYS = 28            # test-fishery history kept in the page
 FEEDS = [
     # source name, Atom feed, title filter (other blog posts are sales and news)
     ("Pacific Angler", "https://www.pacificangler.ca/blogs/learn.atom", re.compile(r"fishing report", re.I)),
+    # Fred's (Chilliwack) also posts Fraser sturgeon reports and guide ads: salmon map, salmon reports only.
+    ("Fred's Custom Tackle", "https://fredscustomtackle.com/blogs/fishing-reports.atom",
+     re.compile(r"^fishing report\b(?!.*sturgeon)", re.I)),
 ]
 KEEP_REPORTS = 3          # newest reports kept per feed
 
@@ -62,8 +65,8 @@ QUESTION_RE = re.compile(r"\?\s*$|\bvs\.?\b|\blooking for\b|^(?:how|where|what|w
 
 # Species names as anglers write them. "Pink" and "spring" alone are also a colour and a season.
 SPECIES = {
-    "chinook": r"chinook|springs|spring salmon",
-    "coho":    r"coho",
+    "chinook": r"chinooks?|springs|spring salmon",
+    "coho":    r"cohos?",
     "chum":    r"chum|chums|dog salmon",
     "pink":    r"pinks|pink salmon|humpies",
     "sockeye": r"sockeye",
@@ -73,7 +76,7 @@ SPECIES = {
 # main() warns about keys that rules.json lacks. Town and lake names are excluded:
 # "Squamish", "Coquitlam" or "Harrison Lake" alone are not the river.
 WATERS = {
-    "chilliwack":      r"vedder|chilliwack river",
+    "chilliwack":      r"(?<!eddie\s)vedder|chilliwack river",     # not the singer Eddie Vedder
     "capilano":        r"capilano",
     "squamish":        r"squamish river|the squamish",
     "cheakamus":       r"cheakamus",
