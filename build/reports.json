@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-02T20:38Z",
+ "generated": "2026-10-03T00:02Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -103,7 +103,8 @@
     ["2026-09-28", 14, 1.13],
     ["2026-09-29", 64, 4.49],
     ["2026-09-30", 28, 1.8],
-    ["2026-10-01", 24, 1.45]
+    ["2026-10-01", 24, 1.45],
+    ["2026-10-02", 12, 0.85]
    ]
   },
   {
@@ -139,11 +140,129 @@
     ["2026-09-27", 2, 8.33],
     ["2026-09-28", 0, 0.0],
     ["2026-09-29", 6, 12.5],
-    ["2026-09-30", 8, 20.0]
+    ["2026-09-30", 8, 20.0],
+    ["2026-10-01", 14, 29.17]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "River conditions on Oct 2 at 3 pm (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28380348598311997/",
+   "date": "2026-10-02",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A big fish released after a hard fight (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28378936645119859/",
+   "date": "2026-10-02",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "River conditions on Oct 1 at 6 pm (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28369604132719777/",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "The water is still muddy",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28367875332892657/",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A salmon landed (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28366674256346098/",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "The first fish of the day caught",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28338060105874180/",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A fish caught on an early morning cast (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28354907424189448/",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "A chum released (video)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28357231643957026/",
+   "date": "2026-10-01",
+   "sp": ["chum"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "No fish kept on the Vedder, a slow day",
+   "url": "https://www.instagram.com/p/Dd-S6sVpM11/",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Instagram",
+   "title": "A small coho released, then a chinook (video)",
+   "url": "https://www.instagram.com/p/Dd-YyAhMQaM/",
+   "date": "2026-10-01",
+   "sp": ["coho", "chinook"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Lots of fish in the Vedder (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7691912616649706753",
+   "date": "2026-10-01",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "Another chum caught on the Vedder (video)",
+   "url": "https://www.tiktok.com/@khovu56/video/7691915114148007188",
+   "date": "2026-10-01",
+   "sp": ["chum"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "TikTok",
+   "title": "A coho caught and released on the Vedder (video)",
+   "url": "https://www.tiktok.com/@ebifisher/video/7691683105148751112",
+   "date": "2026-10-01",
+   "sp": ["coho"],
+   "w": ["chilliwack"],
+   "manual": true
+  },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
    "title": "Two fresh chrome salmon caught",
@@ -166,6 +285,15 @@
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
    "title": "Video reports from the river at 7, 9 and 10 am",
    "url": "https://www.facebook.com/groups/717189431721286/posts/28353835407629983/",
+   "date": "2026-09-30",
+   "sp": [],
+   "w": ["chilliwack"],
+   "manual": true
+  },
+  {
+   "src": "Facebook · Vedder River Chilliwack Fishing Report",
+   "title": "Several salmon caught near the Train Bridge (photo)",
+   "url": "https://www.facebook.com/groups/717189431721286/posts/28357313967282127/",
    "date": "2026-09-30",
    "sp": [],
    "w": ["chilliwack"],
