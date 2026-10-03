@@ -20,7 +20,7 @@ Chum salmon |
 28 |
 30cm |
 barbless hook and line |
-2 |
+4 |
 Open |
 Coho salmon (hatchery and wild combined) |
 28-1 to 28-10 |
@@ -47,7 +47,7 @@ Sockeye salmon |
 barbless hook and line |
 0 |
 Non Retention |
-Last updated: 2026-10-01
+Last updated: 2026-10-03
 Restrictions
 Always check for protected areas [#area-closures].
 Species |

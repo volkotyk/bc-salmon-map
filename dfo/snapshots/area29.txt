@@ -27,7 +27,7 @@ Chum salmon |
 29-1 to 29-5 and 29-8 |
 30cm |
 barbless hook and line |
-2 |
+4 |
 Open |
 29-6,29-7 and 29-9 to 29-17 |
 0 |
@@ -61,7 +61,7 @@ Non Retention |
 29-6,29-7 and 29-9 to 29-17 |
 0 |
 Closed |
-Last updated: 2026-10-01
+Last updated: 2026-10-03
 Restrictions
 Always check for protected areas [#area-closures].
 Species |

@@ -8,12 +8,12 @@
   "area28": {
    "title": "Area 28",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s28-eng.html",
-   "dfoDate": "2026-10-01"
+   "dfoDate": "2026-10-03"
   },
   "area29": {
    "title": "Area 29",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html",
-   "dfoDate": "2026-10-01"
+   "dfoDate": "2026-10-03"
   }
  },
  "waters": [
@@ -1056,9 +1056,9 @@
      "to": "03-31",
      "type": "retain",
      "lim": {
-      "uk": "2 на день, мін. 30 см",
-      "en": "2 per day, min. 30 cm",
-      "fr": "2 par jour, min. 30 cm"
+      "uk": "4 на день, мін. 30 см",
+      "en": "4 per day, min. 30 cm",
+      "fr": "4 par jour, min. 30 cm"
      }
     },
     {
@@ -1129,7 +1129,7 @@
     }
    ],
    "notes": [],
-   "asOf": "2026-10-01",
+   "asOf": "2026-10-03",
    "subNotes": {
     "28-1": [
      {
@@ -1262,7 +1262,7 @@
     }
    ],
    "notes": [],
-   "asOf": "2026-10-01",
+   "asOf": "2026-10-03",
    "subNotes": {
     "28-8": [
      {
@@ -1307,9 +1307,9 @@
      "to": "03-31",
      "type": "retain",
      "lim": {
-      "uk": "2 на день, мін. 30 см",
-      "en": "2 per day, min. 30 cm",
-      "fr": "2 par jour, min. 30 cm"
+      "uk": "4 на день, мін. 30 см",
+      "en": "4 per day, min. 30 cm",
+      "fr": "4 par jour, min. 30 cm"
      }
     },
     {
@@ -1380,7 +1380,7 @@
     }
    ],
    "notes": [],
-   "asOf": "2026-10-01",
+   "asOf": "2026-10-03",
    "subNotes": {}
   },
   {
@@ -1419,9 +1419,9 @@
      "to": "03-31",
      "type": "retain",
      "lim": {
-      "uk": "2 на день, мін. 30 см",
-      "en": "2 per day, min. 30 cm",
-      "fr": "2 par jour, min. 30 cm"
+      "uk": "4 на день, мін. 30 см",
+      "en": "4 per day, min. 30 cm",
+      "fr": "4 par jour, min. 30 cm"
      }
     },
     {
@@ -1498,7 +1498,7 @@
      "fr": "Rappel : In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
     }
    ],
-   "asOf": "2026-10-01",
+   "asOf": "2026-10-03",
    "subNotes": {
     "29-1": [
      {
@@ -1592,7 +1592,7 @@
      "fr": "Rappel : In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
     }
    ],
-   "asOf": "2026-10-01",
+   "asOf": "2026-10-03",
    "subNotes": {
     "29-9": [
      {
