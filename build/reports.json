@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-04T18:45Z",
+ "generated": "2026-10-04T19:51Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -152,6 +152,14 @@
    "sp": [],
    "w": ["chilliwack"],
    "reddit": true
+  },
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: October 2, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-2-2026",
+   "date": "2026-10-02",
+   "sp": ["chinook", "coho", "chum", "sockeye"],
+   "w": ["chilliwack", "capilano", "squamish", "harrison", "chehalis"]
   },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
@@ -824,14 +832,6 @@
    "sp": ["chinook"],
    "w": ["chilliwack"],
    "manual": true
-  },
-  {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: September 11, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-11-2026",
-   "date": "2026-09-11",
-   "sp": ["chinook", "coho", "chum"],
-   "w": ["chilliwack", "capilano", "a29-mouth"]
   },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
