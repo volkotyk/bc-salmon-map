@@ -67,7 +67,7 @@
 
 ```
 .github/workflows/pages.yml   щодня + при push: оновити правила з DFO, закомітити зміни, отримати дані «Зараз у Fraser» і рівень води, зібрати index.html, опублікувати на Pages
-.github/workflows/pr-preview.yml   pull requests: отримати дані «Зараз у Fraser» і рівень води (strict), зібрати index.html, додати як артефакт site-preview; без публікації
+.github/workflows/pr-preview.yml   pull requests: отримати дані «Зараз у Fraser» і рівень води (strict: джерело з помилкою робить перевірку червоною, але відповідь HTTP 429 або 5xx дає тільки попередження), зібрати index.html, додати як артефакт site-preview; без публікації
 README.uk.md          цей файл українською (README.md — англійською)
 docs/screenshots/      скріншоти й демо-GIF для README (англійською та українською)
 docs/architecture.md   діаграми C4: звідки беруться дані, автоматично чи вручну (англійською)

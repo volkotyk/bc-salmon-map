@@ -3,7 +3,8 @@ name: PR preview
 # For every pull request to main: fetch the running-now data from a GitHub runner (the same network
 # as the deploy), assemble the page, and attach it to the run as the "site-preview" artifact.
 # Nothing is deployed and nothing is committed. The run fails when a data source fails
-# (fetch_reports.py --strict), but the page is still built so you can look at it.
+# (fetch_reports.py --strict), but the page is still built so you can look at it. A source that answers
+# HTTP 429 or 5xx (a rate limit or an error of that site) is a warning only: it is not a fault of the PR.
 on:
   pull_request:
     branches: [main]

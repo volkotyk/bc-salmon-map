@@ -71,7 +71,7 @@ Features:
 
 ```
 .github/workflows/pages.yml   daily + on push: update rules from DFO, commit changes, fetch the running-now data and the water levels, build index.html, deploy to Pages
-.github/workflows/pr-preview.yml   pull requests: fetch the running-now data and the water levels (strict), build index.html, attach it as the site-preview artifact; no deploy
+.github/workflows/pr-preview.yml   pull requests: fetch the running-now data and the water levels (strict: a failed source fails the check, but a source that answers HTTP 429 or 5xx is a warning only), build index.html, attach it as the site-preview artifact; no deploy
 README.uk.md          this file in Ukrainian
 docs/screenshots/      README screenshots and the demo GIFs (English and Ukrainian)
 docs/architecture.md   C4 diagrams: where the data come from, automatic or by hand
