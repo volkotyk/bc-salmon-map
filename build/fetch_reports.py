@@ -17,7 +17,8 @@ stamp) differ from the previous snapshot. Only titles, dates, links and tags are
 text stays on the shop site.
 
   python fetch_reports.py            deploy mode: warnings only
-  python fetch_reports.py --strict   PR check: exit code 1 when a source failed
+  python fetch_reports.py --strict   PR check: exit code 1 when a source failed or a manual row is bad;
+                                     a source that answers HTTP 429 or 5xx is a warning only
 """
 import csv, html, json, os, re, sys, time, urllib.parse, urllib.request, zlib
 import xml.etree.ElementTree as ET
@@ -27,6 +28,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "reports.json"
 UA = "bc-salmon-map-reports/1.0 (+https://github.com/volkotyk/bc-salmon-map)"
+# The Shopify edge answers 429 "local_rate_limited" to the first request when an unknown User-Agent comes
+# from a cloud network (GitHub runners). A UA that starts with the real library token gets the feed.
+# Reddit limits a UA that starts with the library token, so the other sources keep the project name first.
+# Both UAs name the client and the project; neither imitates a browser.
+SHOP_UA = f"Python-urllib/{urllib.request.__version__} {UA}"
 
 FOS = "https://www-ops2.pac.dfo-mpo.gc.ca/fos2_Internet/Testfish/rptCSbD.cfm?stat=CPTFM"
 ALBION_PAGE = "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html"
@@ -110,22 +116,27 @@ tags = lambda table: {k: re.compile(rf"\b(?:{v})\b", re.I) for k, v in table.ite
 SPECIES_RE, WATERS_RE = tags(SPECIES), tags(WATERS)
 
 
-def fetch(url, data=None):
+class Unavailable(RuntimeError):
+    """The server answered "not now" (HTTP 429 or 5xx). The source keeps its data; --strict does not fail on it."""
+
+
+def fetch(url, data=None, ua=UA):
     last = None
     for attempt in range(3):
         try:
-            req = urllib.request.Request(url, data=data, headers={"User-Agent": UA})
+            req = urllib.request.Request(url, data=data, headers={"User-Agent": ua})
             with urllib.request.urlopen(req, timeout=60) as r:
                 return r.read()
         except Exception as e:          # network hiccup: retry, then let the caller skip the source
             last = e
             if attempt == 2:
                 break
-            # 429 Too Many Requests (Reddit): wait as the server asks (Retry-After), up to a minute.
+            # 429 Too Many Requests (Reddit, Shopify): wait as the server asks (Retry-After), up to a minute.
             limited = getattr(e, "code", 0) == 429
             asked = (e.headers.get("Retry-After") or "") if limited and e.headers else ""
             time.sleep(min(60, int(asked)) if asked.isdigit() else (20 if limited else 5) * (attempt + 1))
-    raise RuntimeError(f"cannot fetch {url}: {last}")
+    code = getattr(last, "code", 0) or 0
+    raise (Unavailable if code == 429 or code >= 500 else RuntimeError)(f"cannot fetch {url}: {last}")
 
 
 def fetch_text(url, data=None):
@@ -265,23 +276,23 @@ def test_fishery(today, prev):
         if s:
             out.append(s)
 
-    def keep(msg, match):
+    def keep(msg, match, e):
         # A failed source keeps the series of the previous snapshot; their dates show their age.
         kept = [s for s in old if match(s["id"])]
-        warn(f"{msg} (kept {len(kept)} series of the previous snapshot)")
+        warn(f"{msg} (kept {len(kept)} series of the previous snapshot)", e)
         out.extend(kept)
 
     for sp, fsub, code in ALBION:
         try:
             add("Albion", sp, "DFO", ALBION_PAGE, albion(today.year, fsub, code))
         except Exception as e:
-            keep(f"Albion {sp}: {e}", lambda i, sp=sp: i == f"albion-{sp}")
+            keep(f"Albion {sp}: {e}", lambda i, sp=sp: i == f"albion-{sp}", e)
     for site, url in PSC:
         try:
             for sp, days in psc(url).items():
                 add(site, sp, "PSC", PSC_PAGE, days)
         except Exception as e:
-            keep(f"{site}: {e}", lambda i, p=f"{site.lower()}-": i.startswith(p))
+            keep(f"{site}: {e}", lambda i, p=f"{site.lower()}-": i.startswith(p), e)
     return out
 
 
@@ -290,7 +301,7 @@ ATOM = "{http://www.w3.org/2005/Atom}"
 
 
 def shop_reports(name, url, title_re):
-    root = ET.fromstring(fetch(url))
+    root = ET.fromstring(fetch(url, ua=SHOP_UA))
     out = []
     for e in root.iter(ATOM + "entry"):
         title = re.sub(r"\s+", " ", e.findtext(ATOM + "title", "")).strip()
@@ -337,7 +348,7 @@ def reddit(prev, today):
         try:
             got = reddit_reports(sub, today)
         except Exception as e:
-            warn(f"{src}: {e} (kept {len(old)} posts of the previous snapshot)")
+            warn(f"{src}: {e} (kept {len(old)} posts of the previous snapshot)", e)
             got = []
         # Keep the posts of earlier runs too: a busy subreddit pushes a post out of the feed in days.
         urls = {r["url"] for r in got}
@@ -482,7 +493,7 @@ def reports(prev):
             got = shop_reports(name, url, title_re)
         except Exception as e:
             kept = [r for r in prev.get("reports", []) if r.get("src") == name and not r.get("manual")]
-            warn(f"{name}: {e} (kept {len(kept)} reports of the previous snapshot)")
+            warn(f"{name}: {e} (kept {len(kept)} reports of the previous snapshot)", e)
             out += kept
             continue
         print(f"{name}: {len(got)} reports")
@@ -617,9 +628,11 @@ def dump(data):
 warnings = []
 
 
-def warn(msg):
-    # GitHub Actions shows ::warning:: lines on the run summary.
-    warnings.append(msg)
+def warn(msg, cause=None):
+    # GitHub Actions shows ::warning:: lines on the run summary. --strict counts every warning except
+    # an unavailable source: a third-party rate limit or server error does not make a PR check red.
+    if not isinstance(cause, Unavailable):
+        warnings.append(msg)
     print(f"::warning::fetch_reports: {msg}", file=sys.stderr)
 
 
