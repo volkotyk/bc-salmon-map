@@ -18,6 +18,9 @@ C4Context
     System_Ext(eccc, "ECCC", "Real-time hydrometric OGC API, 12 gauges")
     System_Ext(pa, "Tackle shops", "Pacific Angler and Fred's Custom Tackle fishing report Atom feeds")
     System_Ext(reddit, "Reddit", "r/fishingBC and r/chilliwack RSS feeds")
+    System_Ext(ig, "Instagram", "Hashtag posts, Apify scraper, first daily run")
+    System_Ext(fb, "Facebook", "Vedder River Chilliwack Fishing Report group, Apify scraper")
+    System_Ext(tt, "TikTok", "Hashtag videos, Apify scraper, first daily run")
   }
 
   Boundary(core, "The map and its people") {
@@ -28,9 +31,6 @@ C4Context
   }
 
   Boundary(manual, "Manual: a person copies or runs, then commits") {
-    System_Ext(ig, "Instagram", "Posts and reels")
-    System_Ext(fb, "Facebook", "Vedder River Chilliwack Fishing Report group")
-    System_Ext(tt, "TikTok", "Videos")
     System_Ext(geo, "OSM Overpass, DFO ArcGIS", "River, lake, coast and subarea geometry")
     System_Ext(photos, "WDFW PDF, Wikimedia Commons", "Species images")
   }
@@ -40,10 +40,10 @@ C4Context
   Rel(eccc, map, "auto: water level")
   Rel(pa, map, "auto: report links")
   Rel(reddit, map, "auto: filtered posts")
+  Rel(ig, map, "auto: filtered posts")
+  Rel(fb, map, "auto: filtered posts")
+  Rel(tt, map, "auto: filtered posts")
 
-  Rel(ig, maint, "manual: reads")
-  Rel(fb, maint, "manual: reads")
-  Rel(tt, maint, "manual: reads")
   Rel(geo, maint, "manual: runs osm.py, fetch_subareas.py")
   Rel(photos, maint, "manual: runs fetch_species.py")
 
@@ -55,9 +55,6 @@ C4Context
   UpdateRelStyle(maint, map, $offsetX="10")
   UpdateRelStyle(map, maint, $offsetX="-130")
 
-  UpdateElementStyle(ig, $bgColor="#BA7517", $borderColor="#854F0B")
-  UpdateElementStyle(fb, $bgColor="#BA7517", $borderColor="#854F0B")
-  UpdateElementStyle(tt, $bgColor="#BA7517", $borderColor="#854F0B")
   UpdateElementStyle(geo, $bgColor="#BA7517", $borderColor="#854F0B")
   UpdateElementStyle(photos, $bgColor="#BA7517", $borderColor="#854F0B")
   UpdateElementStyle(dfo, $bgColor="#0F6E56", $borderColor="#085041")
@@ -65,6 +62,9 @@ C4Context
   UpdateElementStyle(eccc, $bgColor="#0F6E56", $borderColor="#085041")
   UpdateElementStyle(pa, $bgColor="#0F6E56", $borderColor="#085041")
   UpdateElementStyle(reddit, $bgColor="#0F6E56", $borderColor="#085041")
+  UpdateElementStyle(ig, $bgColor="#0F6E56", $borderColor="#085041")
+  UpdateElementStyle(fb, $bgColor="#0F6E56", $borderColor="#085041")
+  UpdateElementStyle(tt, $bgColor="#0F6E56", $borderColor="#085041")
 
   UpdateLayoutConfig($c4ShapeInRow="1", $c4BoundaryInRow="3")
 ```
@@ -76,7 +76,7 @@ C4Container
   title Scripts and files that carry the data
 
   Boundary(ext, "External") {
-    System_Ext(sources, "Automatic sources", "DFO, PSC, ECCC, Pacific Angler, Fred's Custom Tackle, Reddit")
+    System_Ext(sources, "Automatic sources", "DFO, PSC, ECCC, Pacific Angler, Fred's Custom Tackle, Reddit, Apify (Instagram, TikTok, Facebook)")
     System_Ext(pages, "GitHub Pages", "Serves index.html")
   }
 
@@ -90,7 +90,7 @@ C4Container
   Boundary(files, "Files in git") {
     ContainerDb(cat, "dfo/catalog.py", "Python", "Manual: names, translations")
     ContainerDb(rules, "rules.json, status.json", "JSON", "Auto: written by dfo/update.py")
-    ContainerDb(csv, "build/manual/*.csv", "CSV", "Manual: Instagram, Facebook, TikTok rows")
+    ContainerDb(csv, "build/manual/*.csv", "CSV", "Manual: posts that no automatic source finds")
     ContainerDb(rep, "reports.json", "JSON", "Auto: written by fetch_reports.py")
     ContainerDb(hyd, "hydro.json", "JSON", "Auto: written by fetch_hydro.py")
     ContainerDb(geo, "geo.json, species/*.webp", "JSON, WebP", "Manual run of the local scripts")
@@ -101,7 +101,7 @@ C4Container
   }
 
   Rel(sources, update, "auto: DFO pages")
-  Rel(sources, fetchrep, "auto: FOS, PSC, Atom, RSS")
+  Rel(sources, fetchrep, "auto: FOS, PSC, Atom, RSS, Apify API")
   Rel(sources, fetchhyd, "auto: OGC API")
   Rel(assemble, pages, "auto: deploy index.html")
 
@@ -137,7 +137,7 @@ Colours: green is automatic, amber is manual. The boundary names and the labels 
 
 ## Notes
 
-- **Instagram, Facebook and TikTok** have no public search API for this use. A person adds each post as one row of `build/manual/reports.csv` (see "Add data by hand" in the [README](../README.md#add-data-by-hand)). If nobody adds rows, these reports leave the page after 21 days, and the page gives no warning.
+- **Instagram, Facebook and TikTok** come through Apify scrapers, only on the first daily run and only with the `APIFY_TOKEN` secret (see "Social posts through Apify" in the [README](../README.md#social-posts-through-apify)). Each run has a cost cap. Without the secret, the posts of the previous snapshot stay and leave the page after 21 days, and the page gives no warning. A person adds a post that the filter skips to `build/manual/reports.csv`.
 - **Reddit** is automatic, but the filter keeps only posts that name a map water, salmon and a catch word, and are not questions. A person can add a post that the filter skips to `reports.csv`.
 - **DFO** is automatic while the parser understands the pages. When the safety check blocks an update, the workflow opens an issue labelled `dfo-update`, and a person fixes `dfo/catalog.py`.
 - **`build/manual/testfish.csv`** has only its header now.

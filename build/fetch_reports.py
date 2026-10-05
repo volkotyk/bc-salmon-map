@@ -1,11 +1,13 @@
 """Fetch the "what is running now" data for the page panel. Standard library only.
 
-Two kinds of source:
+Three kinds of source:
   test fishery   daily catch per species of the test nets on the Fraser:
                  DFO Albion (Fort Langley; Chinook, Chum, Coho) from the DFO FOS report,
                  PSC Whonnock (Maple Ridge) and Qualark (near Yale; Sockeye, Pink) from PSC PDF tables
   shop reports   weekly fishing reports of tackle shops (Atom feed): title, date, link,
                  species and map waters named in the text
+  posts          Reddit (public feeds) and Instagram, TikTok, a Facebook group (Apify scrapers,
+                 only with APIFY_TOKEN set): filtered posts, same fields as the shop reports
 
 Writes reports.json next to this script. The file is committed: git history keeps a daily snapshot,
 and a local build has data without the network. A source that fails keeps its data from the previous
@@ -345,6 +347,134 @@ def reddit(prev, today):
     return out
 
 
+# ---------- social posts: Apify scrapers (Instagram, TikTok, a public Facebook group) ----------
+# Apify runs the scrapers. This script starts the runs, waits for them, and reads their datasets (REST API).
+# Each run costs money, so the runs start only when APIFY_TOKEN is set (the workflow sets it for the first
+# daily run and a manual run) and MAX_USD caps the charge of each run. Without the token the posts of the
+# previous snapshot stay. A post counts when it names a map water (in the text or a TAG_WATERS hashtag)
+# and a species, salmon, or a catch word, and its first line is not a question. The author name is not kept.
+APIFY = "https://api.apify.com/v2"
+APIFY_TIMEOUT = 300       # seconds of a run; Apify stops a longer run and keeps the posts it found
+SOCIAL = [
+    # source name, Apify actor, actor input, item fields (link, text, time), waters when the text names none,
+    # MAX_USD of a run. Per day: about 100 + 60 + 30 posts, at most $0.60 (budget: $20 a month).
+    ("Instagram", "apify~instagram-hashtag-scraper",
+     {"hashtags": ["vedderriver", "chilliwackriver", "capilanoriver", "squamishriver", "harrisonriver"],
+      "resultsType": "posts", "resultsLimit": 20},
+     ("url", "caption", "timestamp"), [], 0.30),
+    ("TikTok", "clockworks~tiktok-scraper",
+     {"hashtags": ["vedderriver", "chilliwackriver", "capilanoriver"], "resultsPerPage": 20,
+      "oldestPostDateUnified": "3 days", "shouldDownloadVideos": False},
+     ("webVideoUrl", "text", "createTimeISO"), [], 0.15),
+    # The group is about the Vedder: a post that names no other water is a Vedder post.
+    ("Facebook · Vedder River Chilliwack Fishing Report", "apify~facebook-groups-scraper",
+     {"startUrls": [{"url": "https://www.facebook.com/groups/717189431721286"}], "resultsLimit": 30,
+      "viewOption": "CHRONOLOGICAL", "onlyPostsNewerThan": "3 days"},
+     ("url", "text", "time"), ["chilliwack"], 0.15),
+]
+# Hashtags -> map keys. "#vedderriver" is one word, so WATERS does not find it.
+TAG_WATERS = {"vedderriver": "chilliwack", "vedder": "chilliwack", "chilliwackriver": "chilliwack",
+              "capilanoriver": "capilano", "squamishriver": "squamish", "harrisonriver": "harrison"}
+HASHTAG_RE = re.compile(r"#(\w+)")
+SALMON_TAG_RE = re.compile(r"\bsalmon", re.I)      # also "#salmonfishing"
+PACIFIC = timezone(timedelta(hours=-8))
+
+
+def apify(path, token, body=None):
+    """One Apify API call. The token goes in a header, so it is never in a URL or a log line."""
+    req = urllib.request.Request(APIFY + path, data=None if body is None else json.dumps(body).encode(),
+                                 headers={"User-Agent": UA, "Authorization": f"Bearer {token}",
+                                          "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=120) as r:
+            return json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        # Apify gives the reason of a refusal in the body: {"error": {"type": ..., "message": ...}}
+        try:
+            err = json.loads(e.read()).get("error") or {}
+        except ValueError:
+            err = {}
+        raise RuntimeError(f"Apify HTTP {e.code} {err.get('type', '')}: {err.get('message', e.reason)}") from None
+
+
+def apify_items(run, fields, token):
+    """Wait for a started run, then return the fields of its dataset items."""
+    deadline = time.time() + APIFY_TIMEOUT + 180
+    while run["status"] in ("READY", "RUNNING", "TIMING-OUT", "ABORTING"):
+        if time.time() > deadline:
+            raise RuntimeError(f"Apify run {run['id']} is still {run['status']}")
+        try:
+            run = apify(f"/actor-runs/{run['id']}?waitForFinish=60", token)["data"]
+        except Exception as e:          # a dropped poll: the run goes on, ask again
+            print(f"Apify run {run['id']}: {e}, asking again")
+            time.sleep(10)
+    # TIMED-OUT: the run stopped at APIFY_TIMEOUT, and the posts it found are good.
+    if run["status"] not in ("SUCCEEDED", "TIMED-OUT"):
+        raise RuntimeError(f"Apify run {run['id']} ended {run['status']}")
+    return apify(f"/datasets/{run['defaultDatasetId']}/items?clean=1&fields={','.join(fields)}", token)
+
+
+def social_title(text):
+    # The first line of the post without hashtags, mentions and links. The post text stays on the platform.
+    lines = (re.sub(r"[#@][\w.]+|https?://\S+", "", ln).strip(" .,-|·") for ln in text.splitlines())
+    return re.sub(r"\s+", " ", next((ln for ln in lines if ln), ""))[:140]
+
+
+def social_posts(name, items, fields, default_w, since):
+    link_f, text_f, time_f = fields
+    out = []
+    for it in items:
+        link, text, stamp = it.get(link_f) or "", it.get(text_f) or "", it.get(time_f) or ""
+        try:                            # a UTC time stamp; the page shows the Pacific date
+            date = datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone(PACIFIC).date().isoformat()
+        except ValueError:
+            continue
+        tagged = [TAG_WATERS[t.lower()] for t in HASHTAG_RE.findall(text) if t.lower() in TAG_WATERS]
+        w = list(dict.fromkeys([k for k, rx in WATERS_RE.items() if rx.search(text)] + tagged)) or default_w
+        sp = [k for k, rx in SPECIES_RE.items() if rx.search(text)]
+        title = social_title(text)
+        if not (link.startswith("https://") and date >= since and w and (sp or SALMON_TAG_RE.search(text) or CATCH_RE.search(text))
+                and not QUESTION_RE.search(title)):
+            continue
+        out.append({"src": name, "title": title or name, "url": link, "date": date, "sp": sp, "w": w})
+    return out
+
+
+def social(prev, today):
+    since, token, out = (today - timedelta(days=KEEP_DAYS)).isoformat(), os.environ.get("APIFY_TOKEN", ""), []
+    runs = {}
+    for name, actor, inp, _, _, max_usd in SOCIAL if token else []:
+        try:                            # start all runs first: Apify runs them at the same time
+            runs[name] = apify(f"/acts/{actor}/runs?timeout={APIFY_TIMEOUT}&maxTotalChargeUsd={max_usd}", token, inp)["data"]
+        except Exception as e:
+            warn(f"{name}: cannot start the Apify run: {e}")
+    for name, _, _, fields, default_w, _ in SOCIAL:
+        old = [r for r in prev.get("reports", []) if r.get("src") == name and not r.get("manual") and r.get("date", "") >= since]
+        if not token:
+            print(f"{name}: no APIFY_TOKEN, no Apify run; kept {len(old)} posts of the previous snapshot")
+            out += old
+            continue
+        got = []
+        if name in runs:
+            try:
+                got = social_posts(name, apify_items(runs[name], fields, token), fields, default_w, since)
+            except Exception as e:
+                warn(f"{name}: {e} (kept {len(old)} posts of the previous snapshot)")
+        # Keep the posts of earlier runs: each run reads only the last days.
+        urls = {r["url"] for r in got}
+        merged = got + [r for r in old if r["url"] not in urls]
+        print(f"{name}: {len(got)} matching posts, {len(merged)} kept")
+        out += merged
+    return out
+
+
+def url_key(url):
+    # The post id is the last part of the path. A platform shows one post under several paths
+    # (instagram.com/p/X and instagram.com/<user>/p/X; facebook .../posts/X and .../permalink/X).
+    p = urllib.parse.urlsplit(url)
+    return p.netloc.removeprefix("www.").removeprefix("m."), p.path.rstrip("/").rsplit("/", 1)[-1]
+
+
 def reports(prev):
     out = []
     for name, url, title_re in FEEDS:
@@ -496,8 +626,9 @@ def warn(msg):
 def main():
     waters = json.loads((HERE / "rules.json").read_text(encoding="utf-8"))["waters"]
     known = {w["id"] for w in waters} | {s for w in waters for s in w.get("subs") or []}
-    if WATERS.keys() - known - SEASONAL:
-        warn(f"WATERS keys missing from rules.json: {sorted(WATERS.keys() - known - SEASONAL)}")
+    missing = (WATERS.keys() | set(TAG_WATERS.values())) - known - SEASONAL
+    if missing:
+        warn(f"WATERS or TAG_WATERS keys missing from rules.json: {sorted(missing)}")
     try:
         prev = json.loads(OUT.read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -505,9 +636,12 @@ def main():
     today = datetime.now(timezone(timedelta(hours=-8))).date()     # Pacific standard time is close enough for a date
     auto = reports(prev) + reddit(prev, today)
     manual = [r for r in manual_reports(today, waters, known) if r["url"] not in {a["url"] for a in auto} or not r["url"]]
+    # A social post that is also a manual row shows once, with the title written by hand.
+    by_hand = {url_key(r["url"]) for r in manual if r["url"]}
+    posts = [r for r in social(prev, today) if url_key(r["url"]) not in by_hand]
     data = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
             "testfish": test_fishery(today, prev) + manual_testfish(today),
-            "reports": sorted(auto + manual, key=lambda r: r["date"], reverse=True)}
+            "reports": sorted(auto + manual + posts, key=lambda r: r["date"], reverse=True)}
     OUT.write_text(dump(data), encoding="utf-8", newline="\n")
     # The snapshot is committed. "changed" ignores the time stamp, so a run that finds no new data makes no commit.
     changed = {k: v for k, v in data.items() if k != "generated"} != {k: v for k, v in prev.items() if k != "generated"}

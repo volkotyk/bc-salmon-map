@@ -6,7 +6,8 @@ name: Update DFO rules and deploy
 #      build/status.json gets "pending", and an issue is opened (once per new problem).
 #   2. Changed rules / status / snapshots are committed back to main.
 #   3. build/fetch_reports.py gets the "running now" panel data (DFO and PSC test fisheries,
-#      tackle shop reports, Reddit). A failed source is a warning and keeps its previous data.
+#      tackle shop reports, Reddit; Instagram, TikTok and Facebook through Apify on the first daily run).
+#      A failed source is a warning and keeps its previous data.
 #      When the data changed, build/reports.json is committed: git history is the daily snapshot.
 #   4. build/fetch_hydro.py gets the water level of the last 14 days at the ECCC gauges of the map rivers.
 #      A failed gauge is a warning and keeps its previous data; build/hydro.json is committed with step 3.
@@ -62,6 +63,10 @@ jobs:
       - id: reports
         name: Fetch the running-now data (a failed source keeps its previous data)
         working-directory: build
+        env:
+          # The Apify scrapers (Instagram, TikTok, Facebook) cost money: only the first daily run and a manual run
+          # start them. Other runs get an empty token and keep the social posts of the previous snapshot.
+          APIFY_TOKEN: ${{ (github.event.schedule == '23 15 * * *' || github.event_name == 'workflow_dispatch') && secrets.APIFY_TOKEN || '' }}
         run: python3 fetch_reports.py
 
       - id: hydro
