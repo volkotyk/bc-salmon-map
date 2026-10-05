@@ -45,7 +45,7 @@ The screenshots show the built-in outline map; the live site draws the same laye
 | Rivers and lakes (lines) | 23 waters of DFO **Region 2 – Lower Mainland** with salmon openings, limits, gear rules, sections | DFO freshwater salmon table |
 | Tidal subareas (shaded) | All 31 subareas of DFO **Areas 28 and 29**: Howe Sound, Burrard Inlet, Strait of Georgia, tidal Fraser | DFO tidal pages + DFO PFMA subarea boundaries |
 | Seasonal closure | Mouth of the Fraser River salmon closure (Aug 1 – Sep 30), drawn from the DFO coordinates | DFO Area 29 page |
-| Running now (panel) | Daily catch of the Fraser test fisheries: Albion for Chinook, Chum and Coho, Whonnock and Qualark for Sockeye (and Pink in pink years). Each row: last sample, 7-day total, trend, 28-day bar strip. The newest tackle shop reports with the species and map waters they name; a water button flies the map to that water | [DFO Albion test fishery](https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html), [PSC test fishing results](https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/) (PDF tables), [Pacific Angler Friday Fishing Report](https://www.pacificangler.ca/blogs/learn), [Fred's Custom Tackle fishing reports](https://fredscustomtackle.com/pages/fishing-reports), Reddit [r/fishingBC](https://www.reddit.com/r/fishingBC/) and [r/chilliwack](https://www.reddit.com/r/chilliwack/) (public feeds) |
+| Running now (panel) | Daily catch of the Fraser test fisheries: Albion for Chinook, Chum and Coho, Whonnock and Qualark for Sockeye (and Pink in pink years). Each row: last sample, 7-day total, trend, 28-day bar strip. The newest tackle shop reports with the species and map waters they name; a water button flies the map to that water | [DFO Albion test fishery](https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html), [PSC test fishing results](https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/) (PDF tables), [Pacific Angler Friday Fishing Report](https://www.pacificangler.ca/blogs/learn), [Fred's Custom Tackle fishing reports](https://fredscustomtackle.com/pages/fishing-reports), Reddit [r/fishingBC](https://www.reddit.com/r/fishingBC/) and [r/chilliwack](https://www.reddit.com/r/chilliwack/) (public feeds); Instagram and TikTok hashtags and the public Facebook group *Vedder River Chilliwack Fishing Report* through [Apify](https://apify.com/) scrapers |
 | Water level | The last 14 days of water level (hourly) at the ECCC gauge of 12 rivers: level now, flow, change in 24 hours, 14-day line. A round badge marks each gauge on the map; its popup has the level and the gauge coordinates. The water popup and the *Water levels* block of the running-now panel (rivers open today) have a *Show the gauge on the map* button | [ECCC real-time hydrometric data](https://wateroffice.ec.gc.ca/) (OGC API `api.weather.gc.ca`, provisional) |
 | Base map | Real OpenStreetMap tiles when the host allows them; otherwise a built-in outline map (coastline, lakes, rivers) | OpenStreetMap |
 
@@ -62,7 +62,7 @@ Features:
 - **My location:** the button under the zoom buttons shows a blue dot at your GPS position with its accuracy circle; the first fix moves the map there. A click on the dot opens a popup with *Save to my spots*. A second click on the button stops the tracking. The position stays in the page: the site does not store or send it.
 - **Search:** the magnifier button under the zoom buttons. Coordinates (decimal, degrees-minutes-seconds, N/S/E/W, a pasted Google Maps link), subarea codes (`29-3`) and map waters are found in the page, with no network. Other place names go to [Nominatim](https://nominatim.org/) (OpenStreetMap, no key) only on Enter, at most once a second, only inside the map area; the page keeps the results for the session.
 - **Updates itself:** every day GitHub Actions reads the three DFO pages and republishes the map with the new rules. The page shows when DFO was last checked and when the rules last changed.
-- "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, Facebook and TikTok have no public search API for this use; add their posts by hand.
+- "Running now" panel, rebuilt every day: which salmon the DFO and PSC test nets on the Fraser catch, and links to recent tackle shop reports. A speech-bubble pin marks each water that a report of the last 21 days names (the number is the report count); the water's popup lists those reports under its rules. The page keeps only titles, dates, links and species tags, not the report text. A species named in a report does not mean it is open. Reddit is read from the public feeds of r/fishingBC and r/chilliwack (no API key): a post counts only when it names a map water, salmon and a catch word, and its title is not a question. Instagram, TikTok and the Facebook group are read through Apify scrapers once a day, with the same filter (see "Social posts through Apify"). Add a post that the filter skips by hand.
 - EN / FR / UA switch (also `#en` / `#fr` / `#uk` in the URL; the choice is remembered). English is the default. Light and dark themes: the page follows the system theme; a small sun / moon button next to the language switch changes it, and the page remembers the choice until it equals the system theme again.
 - Foldable blocks: a click on a block title folds "Running now", its report list, each district group and the report list in a popup. The page remembers the folded blocks.
 - Mobile first: on a phone the map fills the screen and the panel is a bottom sheet. Drag the sheet or tap its handle: the short position shows the species and the date, the middle position adds the list, the tall position shows everything. From 768 px wide the panel is a sidebar.
@@ -88,7 +88,7 @@ build/
   geo.json              map geometry: land, rivers, lakes, tidal subareas
   sub.geojson           DFO PFMA subareas for Areas 28–29 (raw)
   species/*.webp        species images (WDFW photos and public-domain drawings), inlined into the page; fetch_species.py makes them
-  fetch_reports.py      DFO/PSC test fisheries + shop report feeds -> reports.json (a failed source keeps its previous data)
+  fetch_reports.py      DFO/PSC test fisheries + shop report feeds + Reddit + Apify scrapers -> reports.json (a failed source keeps its previous data)
   reports.json          running-now data (generated; committed when the data change, so git history is the daily snapshot)
   fetch_hydro.py        ECCC real-time water level, last 14 days, hourly -> hydro.json (a failed gauge keeps its previous data)
   hydro.json            water level data (generated; committed with reports.json)
@@ -118,6 +118,24 @@ A report shows for 21 days, a count row for 28 days, as the automatic data do. T
 Rows for Albion, Whonnock and Qualark are refused, because those sites are collected automatically in other effort units.
 
 Python standard library only for everything that runs in GitHub Actions; `build/requirements.txt` is only for rebuilding the geometry.
+
+## Social posts through Apify
+
+`build/fetch_reports.py` starts three [Apify](https://apify.com/) scrapers, waits for them and reads their posts:
+
+| Source | Apify actor | What it reads | Cost cap of a run |
+|---|---|---|---|
+| Instagram | `apify/instagram-hashtag-scraper` | 20 newest posts of each hashtag: #vedderriver, #chilliwackriver, #capilanoriver, #squamishriver, #harrisonriver | $0.30 |
+| TikTok | `clockworks/tiktok-scraper` | 20 videos of the last 3 days of each hashtag: #vedderriver, #chilliwackriver, #capilanoriver | $0.15 |
+| Facebook | `apify/facebook-groups-scraper` | 30 newest posts of the last 3 days of the public group *Vedder River Chilliwack Fishing Report* | $0.15 |
+
+- The scrapers run only on the first daily run (15:23 UTC) and on a manual run from the Actions tab. Other runs, pull requests and local builds keep the posts of the previous snapshot. At most $0.60 a day, about $18 a month.
+- A post counts when it names a map water (in the text or a hashtag of `TAG_WATERS`) and a species, salmon or a catch word, and its first line is not a question. A Facebook group post that names no water is a Vedder post.
+- The page keeps the first line of the post (without hashtags, mentions and links), the date, the link and the tags. It does not keep the author name.
+- A post that is also a row of `manual/reports.csv` shows once, with the title from the CSV.
+- A failed scraper is a warning; its posts of the previous snapshot stay.
+
+Setup (one time): in the Apify console open *Settings → API & Integrations* and copy the API token. In the GitHub repository open *Settings → Secrets and variables → Actions* and add a secret `APIFY_TOKEN` with that token. To change the hashtags, the group or the cost caps, edit `SOCIAL` and `TAG_WATERS` in `build/fetch_reports.py`.
 
 ## Automatic DFO updates
 
