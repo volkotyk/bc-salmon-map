@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-06T21:12Z",
+ "generated": "2026-10-07T20:41Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-08", 18, 1.11],
     ["2026-09-10", 8, 0.5],
     ["2026-09-12", 14, 0.86],
     ["2026-09-14", 9, 0.54],
@@ -21,7 +20,8 @@
     ["2026-09-28", 5, 0.3],
     ["2026-09-30", 18, 0.99],
     ["2026-10-02", 3, 0.18],
-    ["2026-10-04", 5, 0.3]
+    ["2026-10-04", 5, 0.3],
+    ["2026-10-06", 7, 0.36]
    ]
   },
   {
@@ -77,7 +77,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-09-08", 7, 0.64],
     ["2026-09-09", 3, 0.27],
     ["2026-09-10", 6, 0.52],
     ["2026-09-11", 10, 0.88],
@@ -104,7 +103,8 @@
     ["2026-10-02", 12, 0.85],
     ["2026-10-03", 1, 0.08],
     ["2026-10-04", 5, 0.29],
-    ["2026-10-05", 5, 0.31]
+    ["2026-10-05", 5, 0.31],
+    ["2026-10-06", 0, 0.0]
    ]
   },
   {
@@ -114,7 +114,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-09-08", 4, 8.33],
     ["2026-09-09", 2, 4.17],
     ["2026-09-10", 2, 8.33],
     ["2026-09-11", 2, 5.0],
@@ -138,12 +137,23 @@
     ["2026-09-29", 6, 12.5],
     ["2026-09-30", 8, 20.0],
     ["2026-10-01", 14, 29.17],
+    ["2026-10-02", 11, 23.91],
     ["2026-10-03", 17, 35.42],
-    ["2026-10-04", 35, 72.92]
+    ["2026-10-04", 35, 72.92],
+    ["2026-10-05", 14, 29.17]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Reddit r/chilliwack",
+   "title": "The salmon run is going strong in the Chilliwack River",
+   "url": "https://www.reddit.com/r/chilliwack/comments/1x05bso/the_salmon_run_is_going_strong_in_the_chilliwack/",
+   "date": "2026-10-07",
+   "sp": [],
+   "w": ["chilliwack"],
+   "reddit": true
+  },
   {
    "src": "Fred's Custom Tackle",
    "title": "Fishing Report | Chilliwack/Vedder River",
@@ -867,24 +877,6 @@
    "date": "2026-09-09",
    "sp": [],
    "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "An early hatchery coho (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28064403699906490/",
-   "date": "2026-09-08",
-   "sp": ["coho"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Salmon hooked trolling at about 90 ft off Sand Heads",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28063995853280608/",
-   "date": "2026-09-08",
-   "sp": [],
-   "w": ["29-3"],
    "manual": true
   }
  ]
