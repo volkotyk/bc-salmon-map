@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-09T21:12Z",
+ "generated": "2026-10-10T19:23Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -31,7 +31,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-11", 25, 2.04],
     ["2026-09-13", 29, 2.42],
     ["2026-09-15", 71, 5.12],
     ["2026-09-17", 35, 2.78],
@@ -44,7 +43,8 @@
     ["2026-10-01", 164, 12.64],
     ["2026-10-03", 152, 10.29],
     ["2026-10-05", 278, 16.85],
-    ["2026-10-07", 320, 18.8]
+    ["2026-10-07", 320, 18.8],
+    ["2026-10-09", 228, 13.57]
    ]
   },
   {
@@ -54,7 +54,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-11", 2, 0.16],
     ["2026-09-13", 2, 0.17],
     ["2026-09-15", 10, 0.72],
     ["2026-09-17", 2, 0.16],
@@ -67,7 +66,8 @@
     ["2026-10-01", 2, 0.15],
     ["2026-10-03", 1, 0.07],
     ["2026-10-05", 0, 0.0],
-    ["2026-10-07", 2, 0.12]
+    ["2026-10-07", 2, 0.12],
+    ["2026-10-09", 1, 0.06]
    ]
   },
   {
@@ -77,7 +77,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-09-11", 10, 0.88],
     ["2026-09-12", 19, 1.57],
     ["2026-09-13", 26, 2.03],
     ["2026-09-14", 12, 0.98],
@@ -114,7 +113,6 @@
    "src": "PSC",
    "url": "https://www.psc.org/publications/fraser-panel-in-season-information/test-fishing-results/",
    "days": [
-    ["2026-09-11", 2, 5.0],
     ["2026-09-12", 2, 5.0],
     ["2026-09-13", 6, 15.0],
     ["2026-09-14", 14, 29.17],
@@ -144,6 +142,14 @@
   }
  ],
  "reports": [
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: October 9, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-9-2026",
+   "date": "2026-10-09",
+   "sp": ["chinook", "coho", "chum", "sockeye"],
+   "w": ["chilliwack", "capilano", "harrison", "a29-mouth", "28-1"]
+  },
   {
    "src": "Reddit r/chilliwack",
    "title": "The salmon run is going strong in the Chilliwack River",
@@ -700,14 +706,6 @@
    "manual": true
   },
   {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: September 18, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-18-2026",
-   "date": "2026-09-18",
-   "sp": ["chinook", "coho"],
-   "w": ["chilliwack", "capilano", "squamish", "cheakamus", "harrison", "a29-mouth"]
-  },
-  {
    "src": "Instagram",
    "title": "Chum hooked and released on the Vedder, no chinook or coho for the group",
    "url": "https://www.instagram.com/p/Ddaj4DOu9b-/",
@@ -839,24 +837,6 @@
    "url": "https://www.instagram.com/p/DdNJLCPPcez/",
    "date": "2026-09-12",
    "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "An early hatchery fish (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28102210282792498/",
-   "date": "2026-09-11",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Two hen salmon kept in the morning (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28058992033780990/",
-   "date": "2026-09-11",
-   "sp": [],
    "w": ["chilliwack"],
    "manual": true
   }
