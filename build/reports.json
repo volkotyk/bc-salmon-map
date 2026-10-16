@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-15T20:01Z",
+ "generated": "2026-10-16T18:52Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -31,7 +31,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-17", 35, 2.78],
     ["2026-09-19", 41, 3.25],
     ["2026-09-21", 97, 7.15],
     ["2026-09-23", 196, 13.07],
@@ -55,7 +54,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-17", 2, 0.16],
     ["2026-09-19", 11, 0.87],
     ["2026-09-21", 5, 0.37],
     ["2026-09-23", 0, 0.0],
@@ -634,42 +632,6 @@
    "url": "https://www.facebook.com/groups/717189431721286/posts/28203977229282469/",
    "date": "2026-09-19",
    "sp": ["chum"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Instagram",
-   "title": "Chum hooked and released on the Vedder, no chinook or coho for the group",
-   "url": "https://www.instagram.com/p/Ddaj4DOu9b-/",
-   "date": "2026-09-17",
-   "sp": ["chum"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A small sockeye nearly got away (video)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28177064988640360/",
-   "date": "2026-09-17",
-   "sp": ["sockeye"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Water low and murky on Sep 16",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28176786815334844/",
-   "date": "2026-09-17",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A good hatchery fish the day before (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28157703310576528/",
-   "date": "2026-09-17",
-   "sp": [],
    "w": ["chilliwack"],
    "manual": true
   }
