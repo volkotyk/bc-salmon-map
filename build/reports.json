@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T19:41Z",
+ "generated": "2026-10-17T17:53Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-18", 11, 0.69],
     ["2026-09-20", 7, 0.44],
     ["2026-09-22", 1, 0.06],
     ["2026-09-24", 8, 0.43],
@@ -44,7 +43,8 @@
     ["2026-10-09", 228, 13.57],
     ["2026-10-11", 61, 4.84],
     ["2026-10-13", 191, 11.9],
-    ["2026-10-15", 293, 16.99]
+    ["2026-10-15", 293, 16.99],
+    ["2026-10-16", 399, 22.26]
    ]
   },
   {
@@ -67,11 +67,20 @@
     ["2026-10-09", 1, 0.06],
     ["2026-10-11", 0, 0.0],
     ["2026-10-13", 0, 0.0],
-    ["2026-10-15", 9, 0.52]
+    ["2026-10-15", 9, 0.52],
+    ["2026-10-16", 10, 0.56]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: October 16, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-16-2026",
+   "date": "2026-10-16",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack", "squamish", "stave", "harrison"]
+  },
   {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: October 9, 2026",
@@ -437,14 +446,6 @@
    "sp": ["chinook"],
    "w": ["chilliwack"],
    "manual": true
-  },
-  {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: September 25, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-september-25-2026",
-   "date": "2026-09-25",
-   "sp": ["chinook", "coho", "chum"],
-   "w": ["chilliwack", "capilano"]
   },
   {
    "src": "Facebook · Vedder River Chilliwack Fishing Report",
