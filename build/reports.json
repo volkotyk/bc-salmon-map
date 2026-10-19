@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-18T18:53Z",
+ "generated": "2026-10-19T20:39Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-20", 7, 0.44],
     ["2026-09-22", 1, 0.06],
     ["2026-09-24", 8, 0.43],
     ["2026-09-26", 12, 0.69],
@@ -44,7 +43,8 @@
     ["2026-10-13", 191, 11.9],
     ["2026-10-15", 293, 16.99],
     ["2026-10-16", 399, 22.26],
-    ["2026-10-17", 442, 26.31]
+    ["2026-10-17", 442, 26.31],
+    ["2026-10-18", 369, 23.65]
    ]
   },
   {
@@ -68,7 +68,8 @@
     ["2026-10-13", 0, 0.0],
     ["2026-10-15", 9, 0.52],
     ["2026-10-16", 10, 0.56],
-    ["2026-10-17", 7, 0.42]
+    ["2026-10-17", 7, 0.42],
+    ["2026-10-18", 7, 0.45]
    ]
   }
  ],
@@ -597,33 +598,6 @@
    "url": "https://www.facebook.com/groups/717189431721286/posts/28241802665499925/",
    "date": "2026-09-21",
    "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "TikTok",
-   "title": "A salmon fishing day on the Vedder with several salmon (video)",
-   "url": "https://www.tiktok.com/@markatal/video/7687776168346684693",
-   "date": "2026-09-20",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "TikTok",
-   "title": "Fish on at the Vedder River (video)",
-   "url": "https://www.tiktok.com/@khovu56/video/7687770752111693076",
-   "date": "2026-09-20",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "By boat in low water: 4 coho hooked, 3 hatchery coho landed",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28214483078231884/",
-   "date": "2026-09-20",
-   "sp": ["coho"],
    "w": ["chilliwack"],
    "manual": true
   }
