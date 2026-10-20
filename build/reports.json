@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-19T21:14Z",
+ "generated": "2026-10-20T19:25Z",
  "testfish": [
   {
    "id": "albion-chinook",
@@ -29,7 +29,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-21", 97, 7.15],
     ["2026-09-23", 196, 13.07],
     ["2026-09-25", 175, 11.67],
     ["2026-09-27", 141, 9.64],
@@ -44,7 +43,8 @@
     ["2026-10-15", 293, 16.99],
     ["2026-10-16", 399, 22.26],
     ["2026-10-17", 442, 26.31],
-    ["2026-10-18", 369, 23.65]
+    ["2026-10-18", 369, 23.65],
+    ["2026-10-19", 425, 26.48]
    ]
   },
   {
@@ -54,7 +54,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-21", 5, 0.37],
     ["2026-09-23", 0, 0.0],
     ["2026-09-25", 2, 0.13],
     ["2026-09-27", 0, 0.0],
@@ -69,7 +68,8 @@
     ["2026-10-15", 9, 0.52],
     ["2026-10-16", 10, 0.56],
     ["2026-10-17", 7, 0.42],
-    ["2026-10-18", 7, 0.45]
+    ["2026-10-18", 7, 0.45],
+    ["2026-10-19", 0, 0.0]
    ]
   }
  ],
@@ -570,33 +570,6 @@
    "title": "Chinook fishing on the Vedder (video)",
    "url": "https://www.tiktok.com/@fishin.bc/video/7688557795779644692",
    "date": "2026-09-22",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Instagram · Pacific Angler",
-   "title": "44 lb chinook landed on a guided charter off Vancouver",
-   "url": "https://www.instagram.com/pacificangler/reel/Ddk2CMms7z6/",
-   "date": "2026-09-21",
-   "sp": ["chinook"],
-   "w": [],
-   "manual": true
-  },
-  {
-   "src": "Instagram",
-   "title": "A fish caught and released on the Vedder",
-   "url": "https://www.instagram.com/p/Ddj52g9yNK4/",
-   "date": "2026-09-21",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "No bites for chinook at Allison Pool on roe, a few fish seen",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28241802665499925/",
-   "date": "2026-09-21",
    "sp": ["chinook"],
    "w": ["chilliwack"],
    "manual": true
