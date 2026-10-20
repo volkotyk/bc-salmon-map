@@ -47,7 +47,7 @@ Sockeye salmon |
 barbless hook and line |
 0 |
 Non Retention |
-Last updated: 2026-10-03
+Last updated: 2026-10-20
 Restrictions
 Always check for protected areas [#area-closures].
 Species |
@@ -55,27 +55,27 @@ Areas |
 Restriction type |
 Restriction details |
 Finfish |
-Mannion Bay (Deep Bay) [#_3370] |
+Mannion Bay (Deep Bay) [#_6493] |
 Closed |
 any gear or method (Sep 1 to Dec 31) |
-Point Atkinson [#_3437] |
+Point Atkinson [#_1265] |
 Closed |
 any gear or method (year round ) |
-Porteau Cove [#_6879] |
+Porteau Cove [#_1930] |
 Closed |
 any gear or method (year round ) |
-Whytecliff Park [#_5789] |
+Whytecliff Park [#_95] |
 Closed |
 any gear or method (year round ) |
 28-8,28-10 |
 Reminder |
 Closed to harvesting per navigational closures in sub-areas 28-8 (False Creek) and 28-10 (Burrard Inlet, partial). |
 Salmon |
-Capilano River [#_2846] |
+Capilano River [#_1509] |
 Gear Restriction |
 You are not allowed to harvest using the following gears and methods:
 a hook having a single point greater than 15 mm from point to shank (Aug 1 to Dec 31)
-Seymour River [#_2848] |
+Seymour River [#_9902] |
 Gear Restriction |
 You are not allowed to harvest using the following gears and methods:
 a hook having a single point greater than 15 mm from point to shank (Aug 1 to Dec 31)
@@ -113,7 +113,7 @@ Annual Limit Pieces |
 Coastwide |
 Reminder |
 Keeping your chinook salmon? You must permanently record all retained chinook salmon (head-on length) on your Tidal Waters Sport Fishing Licence. The licence holder may alternatively record retained catch immediately in an electronic licence held in an approved third-party application linked to their National Recreational Licensing System (NRLS) account, or if mobile internet access is immediately available, directly in their NRLS account. The licence holder shall ensure that all mandatory catch records for the current licence year are produced, either on the licence (paper or electronic), or from the licence holder's NRLS account at the time of inspection. |
-Last updated: 2026-09-01
+Last updated: 2026-10-20
 Area descriptions
 Area |
 Map |
@@ -131,4 +131,4 @@ Seymour River |
 In that portion of Subarea 28-10, the Seymour River from the BCR Railway bridge downstream to the fishing boundary signs located on the west and east shore of the Seymour River (in Area 28). |
 Whytecliff Park |
 That portion of Subarea 28-2 bounded by a line commencing from the southernmost point of Whytecliff Park, thence in a straight line to a point located 100 m east of the most south easterly point of Whyte Islet, thence following the southern shoreline of Whyte Islet at a distance of 100 m to a point lying 100 m from the most south westerly point of Whyte Islet, thence in a straight line to a point lying 100 m west of White Cliff Point, thence following the shoreline at a distance of 100 m in a northerly direction to a point 100 m north of Lookout Point, thence following the shoreline at a distance of 100 m in an easterly direction to a point 100 m perpendicular to the most northerly point of Whytecliff Park, thence to the northernmost point of Whytecliff Park on the mainland [Whytecliff Park]. |
-Last updated: 2026-09-01
+Last updated: 2026-10-20
