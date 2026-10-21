@@ -1,27 +1,6 @@
 {
- "generated": "2026-10-20T20:07Z",
+ "generated": "2026-10-21T19:24Z",
  "testfish": [
-  {
-   "id": "albion-chinook",
-   "sp": "chinook",
-   "site": "Albion",
-   "src": "DFO",
-   "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
-   "days": [
-    ["2026-09-22", 1, 0.06],
-    ["2026-09-24", 8, 0.43],
-    ["2026-09-26", 12, 0.69],
-    ["2026-09-28", 5, 0.3],
-    ["2026-09-30", 18, 0.99],
-    ["2026-10-02", 3, 0.18],
-    ["2026-10-04", 5, 0.3],
-    ["2026-10-06", 7, 0.36],
-    ["2026-10-08", 2, 0.11],
-    ["2026-10-10", 0, 0.0],
-    ["2026-10-12", 1, 0.07],
-    ["2026-10-14", 24, 1.38]
-   ]
-  },
   {
    "id": "albion-chum",
    "sp": "chum",
@@ -44,7 +23,8 @@
     ["2026-10-16", 399, 22.26],
     ["2026-10-17", 442, 26.31],
     ["2026-10-18", 369, 23.65],
-    ["2026-10-19", 425, 26.48]
+    ["2026-10-19", 425, 26.48],
+    ["2026-10-20", 316, 19.33]
    ]
   },
   {
@@ -69,7 +49,8 @@
     ["2026-10-16", 10, 0.56],
     ["2026-10-17", 7, 0.42],
     ["2026-10-18", 7, 0.45],
-    ["2026-10-19", 0, 0.0]
+    ["2026-10-19", 0, 0.0],
+    ["2026-10-20", 0, 0.0]
    ]
   }
  ],
@@ -545,33 +526,6 @@
    "date": "2026-09-23",
    "sp": [],
    "w": ["28-9"],
-   "manual": true
-  },
-  {
-   "src": "Instagram · Bon Chovy Charters",
-   "title": "Good weather and some nice fish on the water off Vancouver",
-   "url": "https://www.instagram.com/bonchovyfishingcharters/p/DdmCQhlG0Nd/",
-   "date": "2026-09-22",
-   "sp": [],
-   "w": [],
-   "manual": true
-  },
-  {
-   "src": "Instagram",
-   "title": "Big chinook (spring) caught on a small bead on the Vedder",
-   "url": "https://www.instagram.com/p/DdmOONjtUxR/",
-   "date": "2026-09-22",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "TikTok",
-   "title": "Chinook fishing on the Vedder (video)",
-   "url": "https://www.tiktok.com/@fishin.bc/video/7688557795779644692",
-   "date": "2026-09-22",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
    "manual": true
   }
  ]
