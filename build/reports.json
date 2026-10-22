@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-21T20:21Z",
+ "generated": "2026-10-22T19:18Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-23", 196, 13.07],
     ["2026-09-25", 175, 11.67],
     ["2026-09-27", 141, 9.64],
     ["2026-09-29", 154, 10.69],
@@ -24,7 +23,8 @@
     ["2026-10-17", 442, 26.31],
     ["2026-10-18", 369, 23.65],
     ["2026-10-19", 425, 26.48],
-    ["2026-10-20", 316, 19.33]
+    ["2026-10-20", 316, 19.33],
+    ["2026-10-21", 225, 15.46]
    ]
   },
   {
@@ -34,7 +34,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-23", 0, 0.0],
     ["2026-09-25", 2, 0.13],
     ["2026-09-27", 0, 0.0],
     ["2026-09-29", 2, 0.14],
@@ -50,7 +49,8 @@
     ["2026-10-17", 7, 0.42],
     ["2026-10-18", 7, 0.45],
     ["2026-10-19", 0, 0.0],
-    ["2026-10-20", 0, 0.0]
+    ["2026-10-20", 0, 0.0],
+    ["2026-10-21", 0, 0.0]
    ]
   }
  ],
@@ -490,42 +490,6 @@
    "date": "2026-09-24",
    "sp": [],
    "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A limit of salmon for the day (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28257426837270841/",
-   "date": "2026-09-23",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "First hatchery-marked fish of the year (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28257845117229013/",
-   "date": "2026-09-23",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Instagram",
-   "title": "About 20 chinook hooked in a day, about 9 lost",
-   "url": "https://www.instagram.com/p/Ddpvt8HNedK/",
-   "date": "2026-09-23",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "TikTok",
-   "title": "A salmon caught at the Ambleside fishing pier (video)",
-   "url": "https://www.tiktok.com/@ernielising06/video/7688750998348680456",
-   "date": "2026-09-23",
-   "sp": [],
-   "w": ["28-9"],
    "manual": true
   }
  ]
