@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-22T20:17Z",
+ "generated": "2026-10-23T19:22Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -24,7 +24,8 @@
     ["2026-10-18", 369, 23.65],
     ["2026-10-19", 425, 26.48],
     ["2026-10-20", 316, 19.33],
-    ["2026-10-21", 225, 15.46]
+    ["2026-10-21", 225, 15.46],
+    ["2026-10-22", 238, 14.36]
    ]
   },
   {
@@ -50,7 +51,8 @@
     ["2026-10-18", 7, 0.45],
     ["2026-10-19", 0, 0.0],
     ["2026-10-20", 0, 0.0],
-    ["2026-10-21", 0, 0.0]
+    ["2026-10-21", 0, 0.0],
+    ["2026-10-22", 0, 0.0]
    ]
   }
  ],
@@ -461,33 +463,6 @@
    "title": "Busy on the Vedder, but lots of fish (video)",
    "url": "https://www.tiktok.com/@khovu56/video/7689642287348862228",
    "date": "2026-09-25",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "First limit of the season",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28273211059025752/",
-   "date": "2026-09-24",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Video from the river for Sep 23",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28272199322460259/",
-   "date": "2026-09-24",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "TikTok",
-   "title": "Salmon fishing on the Vedder on Sep 24 (video)",
-   "url": "https://www.tiktok.com/@ebifisher/video/7689293306664160519",
-   "date": "2026-09-24",
    "sp": [],
    "w": ["chilliwack"],
    "manual": true
