@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24T18:58Z",
+ "generated": "2026-10-25T18:28Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -25,7 +25,8 @@
     ["2026-10-20", 316, 19.33],
     ["2026-10-21", 225, 15.46],
     ["2026-10-22", 238, 14.36],
-    ["2026-10-23", 222, 14.1]
+    ["2026-10-23", 222, 14.1],
+    ["2026-10-24", 196, 13.4]
    ]
   },
   {
@@ -52,7 +53,8 @@
     ["2026-10-20", 0, 0.0],
     ["2026-10-21", 0, 0.0],
     ["2026-10-22", 0, 0.0],
-    ["2026-10-23", 3, 0.19]
+    ["2026-10-23", 3, 0.19],
+    ["2026-10-24", 2, 0.14]
    ]
   }
  ],
@@ -384,51 +386,6 @@
    "date": "2026-09-27",
    "sp": ["chinook"],
    "w": ["29-3"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A spring (chinook) salmon (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28307162535630604/",
-   "date": "2026-09-26",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Rain; 250 casts without a bite while others around caught fish",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28307679165578941/",
-   "date": "2026-09-26",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Instagram",
-   "title": "Springs hooked on Friday evening; Saturday busy with few fish, a wild coho landed",
-   "url": "https://www.instagram.com/p/DdxFraWD8pi/",
-   "date": "2026-09-26",
-   "sp": ["chinook", "coho"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Reddit r/FishingBC",
-   "title": "Near the Great Blue Heron Reserve others hooked many fish, the poster got none",
-   "url": "https://www.reddit.com/r/fishingBC/comments/1wr7yxd/im_getting_frustrated/",
-   "date": "2026-09-26",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "TikTok",
-   "title": "A first chinook on the Vedder (video)",
-   "url": "https://www.tiktok.com/@kaiju.rnr/video/7690037080155606292",
-   "date": "2026-09-26",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
    "manual": true
   }
  ]
