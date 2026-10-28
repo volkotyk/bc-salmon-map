@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-27T20:55Z",
+ "generated": "2026-10-28T20:24Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-29", 154, 10.69],
     ["2026-10-01", 164, 12.64],
     ["2026-10-03", 152, 10.29],
     ["2026-10-05", 278, 16.85],
@@ -28,7 +27,8 @@
     ["2026-10-24", 196, 13.4],
     ["2026-10-25", 73, 5.69],
     ["2026-10-26", 68, 5.18],
-    ["2026-10-27", 49, 3.96]
+    ["2026-10-27", 49, 3.96],
+    ["2026-10-28", 84, 6.44]
    ]
   },
   {
@@ -38,7 +38,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-09-29", 2, 0.14],
     ["2026-10-01", 2, 0.15],
     ["2026-10-03", 1, 0.07],
     ["2026-10-05", 0, 0.0],
@@ -58,7 +57,8 @@
     ["2026-10-24", 2, 0.14],
     ["2026-10-25", 0, 0.0],
     ["2026-10-26", 0, 0.0],
-    ["2026-10-27", 2, 0.16]
+    ["2026-10-27", 2, 0.16],
+    ["2026-10-28", 1, 0.08]
    ]
   }
  ],
@@ -263,51 +263,6 @@
    "url": "https://www.facebook.com/groups/717189431721286/posts/28357313967282127/",
    "date": "2026-09-30",
    "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Muddy water after the heavy rain (video)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28344223305257860/",
-   "date": "2026-09-29",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A 92 cm, 25 lb chinook: the biggest fish of the year for the angler (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28341363462210511/",
-   "date": "2026-09-29",
-   "sp": ["chinook"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Lots of fish in one pool, no other anglers",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28334248549588669/",
-   "date": "2026-09-29",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Three salmon toward the non-tidal tag (video)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28335596566120534/",
-   "date": "2026-09-29",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Instagram",
-   "title": "A large school of chinook holding in a deep pool at the end of the run (underwater video)",
-   "url": "https://www.instagram.com/walkinglessa/reel/Dd5V7DXKt7W/",
-   "date": "2026-09-29",
-   "sp": ["chinook"],
    "w": ["chilliwack"],
    "manual": true
   }
