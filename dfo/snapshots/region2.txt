@@ -61,6 +61,10 @@ Bait ban |
 Coho |
 Sep 15 to Jan 31 |
 1 hatchery marked per day |
+Chum |
+Oct 30 to Dec 31 |
+Non-retention
+FN1167 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all] |
 Capilano River |
 including tributaries |
 Coho |
@@ -97,6 +101,10 @@ Bait ban |
 Coho |
 Sep 15 to Jan 31 |
 1 per day, hatchery marked only |
+Chum |
+Oct 30 to Dec 31 |
+Non-retention
+FN1167 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all] |
 Chehalis River |
 downstream of the logging bridge 2.4 km downstream of Chehalis Lake, including tributaries to that part |
 Chinook |
@@ -125,10 +133,6 @@ July 1 to Aug 31 |
 Non-retention |
 Sep 1 to Dec 31 |
 4 hatchery marked per day |
-Chum |
-Oct 17 to Nov 30 |
-2 per day
-FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Coquitlam River |
 Chinook |
 Sep 5 to Sep 18 |
@@ -157,18 +161,10 @@ from the outlet of Harrison Lake downstream to the Highway 7 Bridge |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day |
-Chum |
-Oct 17 to Nov 30 |
-2 per day
-FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 from the Highway 7 Bridge downstream to the confluence with the Fraser River |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day |
-Chum |
-Oct 17 to Nov 30 |
-2 per day
-FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Kanaka Creek |
 downstream of the 112th Street bridge. |
 Coho |
@@ -217,6 +213,10 @@ Bait ban |
 Coho |
 Sep 15 to Jan 31 |
 1 per day, hatchery marked only |
+Chum |
+Oct 30 to Dec 31 |
+Non-retention
+FN1167 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all] |
 Nicomekl River |
 downstream of 208th Street |
 Chinook |
@@ -232,11 +232,6 @@ from the confluence of Siddle (Bell's) Creek downstream to the Fraser River |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day, only 2 over 35 cm |
-from the Highway 7 bridge at Dewdney downstream to the Fraser River |
-Chum |
-Oct 17 to Nov 30 |
-2 per day
-FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Norrish (Suicide) Creek |
 Coho |
 Sep 1 to Dec 31 |
@@ -251,10 +246,6 @@ Non-retention |
 Coho |
 Sep 1 to Dec 31 |
 1 hatchery marked per day |
-Chum |
-Oct 17 to Nov 30 |
-2 per day
-FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Squamish River (including Powerhouse Channel) |
 All |
 Apr 1 to Mar 31 |
@@ -262,16 +253,16 @@ Bait ban |
 Coho |
 Sep 15 to Jan 31 |
 1 per day, hatchery marked only |
+Chum |
+Oct 30 to Dec 31 |
+Non-retention
+FN1167 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all] |
 Stave River |
 downstream of B.C. Hydro Dam to the CPR Railway Bridge; except you shall not fish for salmon in that portion on the east side of the Stave River, known as the Ruskin Spawning Channel on the east bank of the BC Hydro park from the inlet near the dam, downstream to the boat ramp crossing; and you shall not fish for salmon in that portion on the west side of the Stave River known as the Northrop Spawning Channel from the intake downstream to where the channel joins the Stave River mainstem, including its tributary containing the fishway |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day, only 2 over 35 cm |
-Chum |
-Oct 17 to Nov 30 |
-2 per day
-FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Sumas River - See Chilliwack River [#chilliwack] |
 Vedder River - See Chilliwack River [#chilliwack] |
 Date modified:
-2026-10-16
+2026-10-28

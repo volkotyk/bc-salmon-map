@@ -3,7 +3,7 @@
   "region2": {
    "title": "Region 2 – Lower Mainland",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html",
-   "dfoDate": "2026-10-16"
+   "dfoDate": "2026-10-28"
   },
   "area28": {
    "title": "Area 28",
@@ -194,6 +194,23 @@
       "fr": "1 marqué d'écloserie par jour"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-30",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention",
+      "fr": "Remise à l'eau seulement"
+     },
+     "type": "release",
+     "fn": [
+      {
+       "id": "FN1167",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all"
+      }
+     ]
     }
    ]
   },
@@ -350,6 +367,23 @@
       "fr": "1 par jour, marqué d'écloserie seulement"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-30",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention",
+      "fr": "Remise à l'eau seulement"
+     },
+     "type": "release",
+     "fn": [
+      {
+       "id": "FN1167",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all"
+      }
+     ]
     }
    ]
   },
@@ -485,23 +519,6 @@
       "fr": "4 marqués d'écloserie par jour"
      },
      "type": "retain"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ]
     }
    ]
   },
@@ -647,24 +664,6 @@
      "sec": "a"
     },
     {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ],
-     "sec": "a"
-    },
-    {
      "sp": "coho",
      "from": "09-01",
      "to": "12-31",
@@ -674,24 +673,6 @@
       "fr": "4 marqués d'écloserie par jour"
      },
      "type": "retain",
-     "sec": "b"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ],
      "sec": "b"
     }
    ]
@@ -917,6 +898,23 @@
       "fr": "1 par jour, marqué d'écloserie seulement"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-30",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention",
+      "fr": "Remise à l'eau seulement"
+     },
+     "type": "release",
+     "fn": [
+      {
+       "id": "FN1167",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all"
+      }
+     ]
     }
    ]
   },
@@ -975,17 +973,10 @@
     "fr": "Nicomen Slough (avec le Dewdney Slough)"
    },
    "notes": [],
-   "secs": {
-    "a": {
-     "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
-     "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River",
-     "fr": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser."
-    },
-    "b": {
-     "uk": "From the Highway 7 bridge at Dewdney downstream to the Fraser River",
-     "en": "From the Highway 7 bridge at Dewdney downstream to the Fraser River",
-     "fr": "From the Highway 7 bridge at Dewdney downstream to the Fraser River"
-    }
+   "sec": {
+    "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
+    "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River",
+    "fr": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser."
    },
    "rules": [
     {
@@ -997,26 +988,7 @@
       "en": "4 hatchery marked per day, only 2 over 35 cm",
       "fr": "4 marqués d'écloserie par jour, dont ≤2 de plus de 35 cm"
      },
-     "type": "retain",
-     "sec": "a"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ],
-     "sec": "b"
+     "type": "retain"
     }
    ]
   },
@@ -1082,23 +1054,6 @@
       "fr": "1 marqué d'écloserie par jour"
      },
      "type": "retain"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ]
     }
    ]
   },
@@ -1139,6 +1094,23 @@
       "fr": "1 par jour, marqué d'écloserie seulement"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-30",
+     "to": "12-31",
+     "lim": {
+      "uk": "Лише відпустити",
+      "en": "Non-retention",
+      "fr": "Remise à l'eau seulement"
+     },
+     "type": "release",
+     "fn": [
+      {
+       "id": "FN1167",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372426&ID=all"
+      }
+     ]
     }
    ]
   },
@@ -1163,23 +1135,6 @@
       "fr": "4 marqués d'écloserie par jour, dont ≤2 de plus de 35 cm"
      },
      "type": "retain"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ]
     }
    ]
   },
