@@ -13,7 +13,7 @@
   "area29": {
    "title": "Area 29",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/tidal-maree/a-s29-eng.html",
-   "dfoDate": "2026-10-20"
+   "dfoDate": "2026-10-29"
   }
  },
  "waters": [
@@ -1584,9 +1584,9 @@
      "to": "03-31",
      "type": "gear",
      "lim": {
-      "uk": "Заборонено: гачок з кількома вістрями",
-      "en": "Not allowed: a hook having more than one point",
-      "fr": "Interdit : hameçon à plusieurs pointes"
+      "uk": "Заборонено: You are not allowed to fish using the following gears and methods: a hook having more than one point",
+      "en": "Not allowed: You are not allowed to fish using the following gears and methods: a hook having more than one point",
+      "fr": "Interdit : You are not allowed to fish using the following gears and methods: a hook having more than one point"
      }
     },
     {
@@ -1595,9 +1595,9 @@
      "to": "03-31",
      "type": "gear",
      "lim": {
-      "uk": "Заборонено: гачок із зазубриною",
-      "en": "Not allowed: barbed hook",
-      "fr": "Interdit : hameçon avec ardillon"
+      "uk": "Заборонено: You are not allowed to fish using the following gears and methods: barbed hook",
+      "en": "Not allowed: You are not allowed to fish using the following gears and methods: barbed hook",
+      "fr": "Interdit : You are not allowed to fish using the following gears and methods: barbed hook"
      }
     },
     {
@@ -1606,9 +1606,9 @@
      "to": "03-31",
      "type": "gear",
      "lim": {
-      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
-      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank",
-      "fr": "Interdit : hameçon à une pointe de plus de 22 mm entre la pointe et la tige"
+      "uk": "Заборонено: You are not allowed to fish using the following gears and methods: a hook having a single point greater than 22 mm from point to shank",
+      "en": "Not allowed: You are not allowed to fish using the following gears and methods: a hook having a single point greater than 22 mm from point to shank",
+      "fr": "Interdit : You are not allowed to fish using the following gears and methods: a hook having a single point greater than 22 mm from point to shank"
      }
     }
    ],
@@ -1619,7 +1619,7 @@
      "fr": "Rappel : In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
     }
    ],
-   "asOf": "2026-10-20",
+   "asOf": "2026-10-29",
    "subNotes": {
     "29-1": [
      {
@@ -1678,9 +1678,9 @@
      "to": "03-31",
      "type": "gear",
      "lim": {
-      "uk": "Заборонено: гачок з кількома вістрями",
-      "en": "Not allowed: a hook having more than one point",
-      "fr": "Interdit : hameçon à plusieurs pointes"
+      "uk": "Заборонено: You are not allowed to fish using the following gears and methods: a hook having more than one point",
+      "en": "Not allowed: You are not allowed to fish using the following gears and methods: a hook having more than one point",
+      "fr": "Interdit : You are not allowed to fish using the following gears and methods: a hook having more than one point"
      }
     },
     {
@@ -1689,9 +1689,9 @@
      "to": "03-31",
      "type": "gear",
      "lim": {
-      "uk": "Заборонено: гачок із зазубриною",
-      "en": "Not allowed: barbed hook",
-      "fr": "Interdit : hameçon avec ardillon"
+      "uk": "Заборонено: You are not allowed to fish using the following gears and methods: barbed hook",
+      "en": "Not allowed: You are not allowed to fish using the following gears and methods: barbed hook",
+      "fr": "Interdit : You are not allowed to fish using the following gears and methods: barbed hook"
      }
     },
     {
@@ -1700,9 +1700,9 @@
      "to": "03-31",
      "type": "gear",
      "lim": {
-      "uk": "Заборонено: гачок з одним вістрям понад 22 мм від вістря до цівки",
-      "en": "Not allowed: a hook having a single point greater than 22 mm from point to shank",
-      "fr": "Interdit : hameçon à une pointe de plus de 22 mm entre la pointe et la tige"
+      "uk": "Заборонено: You are not allowed to fish using the following gears and methods: a hook having a single point greater than 22 mm from point to shank",
+      "en": "Not allowed: You are not allowed to fish using the following gears and methods: a hook having a single point greater than 22 mm from point to shank",
+      "fr": "Interdit : You are not allowed to fish using the following gears and methods: a hook having a single point greater than 22 mm from point to shank"
      }
     }
    ],
@@ -1713,7 +1713,7 @@
      "fr": "Rappel : In tidal waters, it is illegal to angle with a fishing line that has more than one hook, artificial lure or artificial fly attached, with the following exceptions: (1) When bait fishing, you may attach multiple hooks to hold a single piece of bait as long as the hooks are not arranged to catch more than one fish. (2) When fishing for herring, mackerel, northern anchovy, Pacific sand lance or Pacific sardine you may attach any number of hooks to a line. (3) In the tidal waters of the Fraser River (see area boundary description below), you may fish with two hooks, artificial lures or artificial flies (on one line)."
     }
    ],
-   "asOf": "2026-10-20",
+   "asOf": "2026-10-29",
    "subNotes": {
     "29-9": [
      {
@@ -1742,9 +1742,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -1799,9 +1799,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -1856,9 +1856,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -1913,9 +1913,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -1970,9 +1970,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -2027,9 +2027,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -2084,9 +2084,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
@@ -2141,9 +2141,9 @@
       "fr": "Partie à marée du Fraser (secteur 29) : Saumon quinnat · Taille minimale (cm) : 30"
      },
      {
-      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
-      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (year round)",
-      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (toute l'année)"
+      "uk": "Припливна частина Fraser (Area 29): Chum salmon · Закрито: вудка з гачком без зазубрини (1 кві – 30 жов)",
+      "en": "Tidal portion of the Fraser River (in Area 29): Chum salmon · Closed: barbless hook and line (Apr 1 – Oct 30)",
+      "fr": "Partie à marée du Fraser (secteur 29) : Saumon kéta · Fermé : ligne avec hameçon sans ardillon (1 avr. – 30 oct.)"
      },
      {
       "uk": "Припливна частина Fraser (Area 29): Coho salmon · Закрито: вудка з гачком без зазубрини (цілий рік)",
