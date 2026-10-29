@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-28T21:18Z",
+ "generated": "2026-10-29T20:23Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -227,42 +227,6 @@
    "url": "https://www.tiktok.com/@ebifisher/video/7691683105148751112",
    "date": "2026-10-01",
    "sp": ["coho"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Two fresh chrome salmon caught",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28356039490742908/",
-   "date": "2026-09-30",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A coho kept for dinner (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28354910600855797/",
-   "date": "2026-09-30",
-   "sp": ["coho"],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Video reports from the river at 7, 9 and 10 am",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28353835407629983/",
-   "date": "2026-09-30",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "Several salmon caught near the Train Bridge (photo)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28357313967282127/",
-   "date": "2026-09-30",
-   "sp": [],
    "w": ["chilliwack"],
    "manual": true
   }
