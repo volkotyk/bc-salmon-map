@@ -4,7 +4,8 @@
 - district, display names, curated notes
 - Ukrainian and French wording for DFO phrases
 
-Everything the fishing rules *say* (species, dates, limits, gear, closures) comes from the DFO pages.
+Everything the fishing rules *say* (species, dates, limits, gear, closures) comes from the DFO pages,
+except TABLE_GAPS, which comes from DFO fishery notices.
 When DFO uses a name that is not here, dfo/update.py refuses to publish and opens an issue.
 """
 
@@ -19,16 +20,20 @@ SQUAMISH = B("Басейн Squamish: разом не більше 1 заводс
              "Bassin de la Squamish : au total, 1 coho marqué d'écloserie par jour pour toutes les eaux non soumises à la marée.")
 TRIBS = B("Разом з притоками.", "Including tributaries.", "Affluents compris.")
 
-# Fishery notices that no later notice cancels, but that the DFO Region 2 table no longer shows. The map does not
-# open these waters. It shows the note until `until`, or until DFO restores a row for `sp` on the water.
+# Rows of a fishery notice in force that the DFO Region 2 table does not show. update.py adds them as table rows, with
+# the note, until `until` or until DFO restores a row for `sp` on the water. Waters: id -> DFO "Specific area" text,
+# None for every section that the table has. Remove an entry when a later notice closes the fishery.
 TABLE_GAPS = [
-    dict(sp="chum", until="2026-11-30", waters={"chilliwack", "harrison", "nicomen", "serpentine", "stave"}, note=B(
-        "Кета (Chum): повідомлення DFO FN1122 дає ліміт 2 на день до 30 лис (ділянку див. у повідомленні), і пізніші повідомлення його не скасовують. "
-        "28 жов DFO прибрав цей рядок зі своєї таблиці, тому карта не показує кету відкритою. Перш ніж залишити кету, уточніть у DFO: 1-866-431-3474.",
-        "Chum: DFO notice FN1122 sets a limit of 2 per day to Nov 30 (see the notice for the section), and no later notice cancels it. "
-        "On Oct 28 DFO removed this row from its table, so the map does not show chum as open. Confirm with DFO before you keep a chum: 1-866-431-3474.",
-        "Kéta (Chum) : l'avis FN1122 du MPO fixe une limite de 2 par jour jusqu'au 30 nov. (voir l'avis pour le tronçon), et aucun avis ultérieur ne l'annule. "
-        "Le 28 oct., le MPO a retiré cette ligne de son tableau : la carte n'indique donc pas le kéta comme ouvert. Confirmez auprès du MPO avant de garder un kéta : 1-866-431-3474.")),
+    dict(sp="chum", dates=("10-17", "11-30"), limit="2 per day", until="2026-11-30",
+         fn=[{"id": "FN1122", "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"}],
+         waters={"chilliwack": None, "harrison": None, "serpentine": None, "stave": None,
+                 "nicomen": "from the Highway 7 bridge at Dewdney downstream to the Fraser River"},
+         note=B("Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, "
+                "але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
+                "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, "
+                "but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
+                "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne "
+                "pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474.")),
 ]
 
 # DFO "Waters" cell -> map entry. id = geometry key in build/geo.json.
@@ -94,6 +99,7 @@ AREA_UK = {
         "Від знаків межі до пішохідного мосту в кінці Stayte Road",
     "downstream of 208th Street": "Нижче 208th Street.",
     "from the confluence of Siddle (Bell's) Creek downstream to the Fraser River": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
+    "from the Highway 7 bridge at Dewdney downstream to the Fraser River": "Від мосту Highway 7 у Dewdney до Fraser River.",
     "downstream of 168th Street at Bothwell Park": "Нижче 168th Street біля Bothwell Park.",
     "downstream of B.C. Hydro Dam to the CPR Railway Bridge; except you shall not fish for salmon in that portion on the east side of the Stave River, known as the Ruskin Spawning Channel on the east bank of the BC Hydro park from the inlet near the dam, downstream to the boat ramp crossing; and you shall not fish for salmon in that portion on the west side of the Stave River known as the Northrop Spawning Channel from the intake downstream to where the channel joins the Stave River mainstem, including its tributary containing the fishway":
         "Від дамби BC Hydro до залізничного мосту CPR. Не ловіть у нерестових каналах Ruskin (східний берег) і Northrop (західний берег, разом з притокою з рибоходом).",
@@ -122,6 +128,7 @@ AREA_FR = {
         "Des panneaux de limite de pêche jusqu'à la passerelle au bout de Stayte Road.",
     "downstream of 208th Street": "En aval de la 208th Street.",
     "from the confluence of Siddle (Bell's) Creek downstream to the Fraser River": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser.",
+    "from the Highway 7 bridge at Dewdney downstream to the Fraser River": "Du pont de l'autoroute 7 à Dewdney jusqu'au Fraser.",
     "downstream of 168th Street at Bothwell Park": "En aval de la 168th Street, au parc Bothwell.",
     "downstream of B.C. Hydro Dam to the CPR Railway Bridge; except you shall not fish for salmon in that portion on the east side of the Stave River, known as the Ruskin Spawning Channel on the east bank of the BC Hydro park from the inlet near the dam, downstream to the boat ramp crossing; and you shall not fish for salmon in that portion on the west side of the Stave River known as the Northrop Spawning Channel from the intake downstream to where the channel joins the Stave River mainstem, including its tributary containing the fishway":
         "Du barrage de BC Hydro jusqu'au pont ferroviaire du CPR. Pêche interdite dans les chenaux de frai Ruskin (rive est) et Northrop (rive ouest, avec son affluent à passe migratoire).",

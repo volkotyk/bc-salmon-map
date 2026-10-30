@@ -162,11 +162,20 @@ def last_updated(fragment):
 
 
 # ---------------------------------------------------------------- Region 2 (fresh water)
-def table_gaps(wid, rules):
-    """Notes of C.TABLE_GAPS for this water, while the notice runs and the DFO table has no row for its species."""
+def add_table_gaps(waters):
+    """Add the rows of C.TABLE_GAPS while the notice runs and the DFO table has no row for its species on the water."""
     today = date.today().isoformat()
-    return [g["note"] for g in C.TABLE_GAPS
-            if wid in g["waters"] and today <= g["until"] and not any(r["sp"] == g["sp"] for r in rules)]
+    for g in C.TABLE_GAPS:
+        typ, lim = fresh_limit(g["limit"])
+        for wid, area in g["waters"].items():
+            w = waters[wid]
+            if today > g["until"] or any(r["sp"] == g["sp"] for r in w["rules"]):
+                continue
+            if area and area not in w["areas"]:
+                w["areas"].append(area)
+            w["rules"] += [{"sp": g["sp"], "from": g["dates"][0], "to": g["dates"][1], "lim": lim, "type": typ, "_area": a, "fn": g["fn"]}
+                           for a in ([area] if area else w["areas"])]
+            w["notes"] = [g["note"]]
 
 
 def parse_region2(page, bad):
@@ -215,11 +224,13 @@ def parse_region2(page, bad):
         w.setdefault("rules", []).append(rule)
     if len(waters) < 15:
         bad.add(f"region2: only {len(waters)} waters parsed, expected about 23")
+    else:
+        add_table_gaps(waters)
 
     out = []
     for wid, w in waters.items():
         m = w["meta"]
-        e = {"id": wid, "d": m["d"], "name": m["name"], "notes": m.get("notes", [])}
+        e = {"id": wid, "d": m["d"], "name": m["name"], "notes": m.get("notes", []) + w.get("notes", [])}
         if m.get("lake"):
             e["lake"] = True
         areas = [a for a in w["areas"]]
@@ -238,7 +249,6 @@ def parse_region2(page, bad):
             for r in w["rules"]:
                 r["sec"] = keys[areas.index(r.pop("_area"))]
         e["rules"] = w["rules"]
-        e["notes"] = e["notes"] + table_gaps(wid, e["rules"])
         out.append(e)
     return out, (modified[1] if modified else None)
 
