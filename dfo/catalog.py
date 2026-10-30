@@ -4,8 +4,7 @@
 - district, display names, curated notes
 - Ukrainian and French wording for DFO phrases
 
-Everything the fishing rules *say* (species, dates, limits, gear, closures) comes from the DFO pages,
-except TABLE_GAPS, which comes from DFO fishery notices.
+Everything the fishing rules *say* (species, dates, limits, gear, closures) comes from the DFO pages.
 When DFO uses a name that is not here, dfo/update.py refuses to publish and opens an issue.
 """
 
@@ -20,20 +19,13 @@ SQUAMISH = B("Басейн Squamish: разом не більше 1 заводс
              "Bassin de la Squamish : au total, 1 coho marqué d'écloserie par jour pour toutes les eaux non soumises à la marée.")
 TRIBS = B("Разом з притоками.", "Including tributaries.", "Affluents compris.")
 
-# Rows of a fishery notice in force that the DFO Region 2 table does not show. update.py adds them as table rows, with
-# the note, until `until` or until DFO restores a row for `sp` on the water. Waters: id -> DFO "Specific area" text,
-# None for every section that the table has. Remove an entry when a later notice closes the fishery.
+# Fishery notices that no later notice cancels, but that the DFO Region 2 table does not show. The map follows the
+# table, so these waters stay closed to `sp`. The note shows until `until`, or until DFO restores a row for `sp`.
 TABLE_GAPS = [
-    dict(sp="chum", dates=("10-17", "11-30"), limit="2 per day", until="2026-11-30",
-         fn=[{"id": "FN1122", "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"}],
-         waters={"chilliwack": None, "harrison": None, "serpentine": None, "stave": None,
-                 "nicomen": "from the Highway 7 bridge at Dewdney downstream to the Fraser River"},
-         note=B("Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, "
-                "але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
-                "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, "
-                "but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
-                "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne "
-                "pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474.")),
+    dict(sp="chum", until="2026-11-30", waters={"chilliwack", "harrison", "nicomen", "serpentine", "stave"}, note=B(
+        "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
+        "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
+        "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne.")),
 ]
 
 # DFO "Waters" cell -> map entry. id = geometry key in build/geo.json.

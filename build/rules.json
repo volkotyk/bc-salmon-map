@@ -471,9 +471,9 @@
    },
    "notes": [
     {
-     "uk": "Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
-     "en": "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
-     "fr": "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474."
+     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
+     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
+     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
     }
    ],
    "sec": {
@@ -525,23 +525,6 @@
       "fr": "4 marqués d'écloserie par jour"
      },
      "type": "retain"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ]
     }
    ]
   },
@@ -662,9 +645,9 @@
    "name": "Harrison River",
    "notes": [
     {
-     "uk": "Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
-     "en": "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
-     "fr": "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474."
+     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
+     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
+     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
     }
    ],
    "secs": {
@@ -702,42 +685,6 @@
       "fr": "4 marqués d'écloserie par jour"
      },
      "type": "retain",
-     "sec": "b"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ],
-     "sec": "a"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ],
      "sec": "b"
     }
    ]
@@ -1039,22 +986,15 @@
    },
    "notes": [
     {
-     "uk": "Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
-     "en": "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
-     "fr": "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474."
+     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
+     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
+     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
     }
    ],
-   "secs": {
-    "a": {
-     "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
-     "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River",
-     "fr": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser."
-    },
-    "b": {
-     "uk": "Від мосту Highway 7 у Dewdney до Fraser River.",
-     "en": "From the Highway 7 bridge at Dewdney downstream to the Fraser River",
-     "fr": "Du pont de l'autoroute 7 à Dewdney jusqu'au Fraser."
-    }
+   "sec": {
+    "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
+    "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River",
+    "fr": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser."
    },
    "rules": [
     {
@@ -1066,26 +1006,7 @@
       "en": "4 hatchery marked per day, only 2 over 35 cm",
       "fr": "4 marqués d'écloserie par jour, dont ≤2 de plus de 35 cm"
      },
-     "type": "retain",
-     "sec": "a"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ],
-     "sec": "b"
+     "type": "retain"
     }
    ]
   },
@@ -1114,9 +1035,9 @@
    "name": "Serpentine River",
    "notes": [
     {
-     "uk": "Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
-     "en": "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
-     "fr": "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474."
+     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
+     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
+     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
     }
    ],
    "sec": {
@@ -1157,23 +1078,6 @@
       "fr": "1 marqué d'écloserie par jour"
      },
      "type": "retain"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ]
     }
    ]
   },
@@ -1240,9 +1144,9 @@
    "name": "Stave River",
    "notes": [
     {
-     "uk": "Кета (Chum): ліміт взято з повідомлення DFO FN1122, чинного до 30 лис. З 28 жов таблиця DFO не має рядка кети для цієї води, але жодне повідомлення DFO кету не закриває. Перш ніж залишити кету, перевірте повідомлення DFO: 1-866-431-3474.",
-     "en": "Chum: the limit comes from DFO notice FN1122, in force to Nov 30. Since Oct 28 the DFO table has no chum row for this water, but no DFO notice closes chum. Check the DFO notices before you keep a chum: 1-866-431-3474.",
-     "fr": "Kéta (Chum) : la limite vient de l'avis FN1122 du MPO, en vigueur jusqu'au 30 nov. Depuis le 28 oct., le tableau du MPO n'a plus de ligne pour le kéta sur ce plan d'eau, mais aucun avis du MPO ne ferme le kéta. Vérifiez les avis du MPO avant de garder un kéta : 1-866-431-3474."
+     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
+     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
+     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
     }
    ],
    "sec": {
@@ -1261,23 +1165,6 @@
       "fr": "4 marqués d'écloserie par jour, dont ≤2 de plus de 35 cm"
      },
      "type": "retain"
-    },
-    {
-     "sp": "chum",
-     "from": "10-17",
-     "to": "11-30",
-     "lim": {
-      "uk": "2 на день",
-      "en": "2 per day",
-      "fr": "2 par jour"
-     },
-     "type": "retain",
-     "fn": [
-      {
-       "id": "FN1122",
-       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
-      }
-     ]
     }
    ]
   },
