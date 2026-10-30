@@ -3,7 +3,7 @@
   "region2": {
    "title": "Region 2 – Lower Mainland",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html",
-   "dfoDate": "2026-10-28"
+   "dfoDate": "2026-10-30"
   },
   "area28": {
    "title": "Area 28",
@@ -469,13 +469,7 @@
     "en": "Chilliwack / Vedder River (incl. Sumas River)",
     "fr": "Chilliwack / Vedder River (avec la Sumas River)"
    },
-   "notes": [
-    {
-     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
-     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
-     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
-    }
-   ],
+   "notes": [],
    "sec": {
     "uk": "Від знаків за 100 м нижче злиття зі Slesse Creek вниз за течією, разом з Sumas River від насосної станції Barrow Town до знаків біля Fraser.",
     "en": "From a line between 2 fishing boundary signs on either side of the Chilliwack River 100 m downstream from the confluence of the Chilliwack River and Slesse Creek downstream including that portion of the Sumas River from the Barrow Town Pump Station downstream to fishing boundary signs near the confluence with the Fraser River.",
@@ -525,6 +519,23 @@
       "fr": "4 marqués d'écloserie par jour"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-17",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день",
+      "en": "2 per day",
+      "fr": "2 par jour"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1122",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
+      }
+     ]
     }
    ]
   },
@@ -643,13 +654,7 @@
    "id": "harrison",
    "d": "valley",
    "name": "Harrison River",
-   "notes": [
-    {
-     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
-     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
-     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
-    }
-   ],
+   "notes": [],
    "secs": {
     "a": {
      "uk": "Від витоку з Harrison Lake до мосту Highway 7",
@@ -676,6 +681,24 @@
      "sec": "a"
     },
     {
+     "sp": "chum",
+     "from": "10-17",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день",
+      "en": "2 per day",
+      "fr": "2 par jour"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1122",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
+      }
+     ],
+     "sec": "a"
+    },
+    {
      "sp": "coho",
      "from": "09-01",
      "to": "12-31",
@@ -685,6 +708,24 @@
       "fr": "4 marqués d'écloserie par jour"
      },
      "type": "retain",
+     "sec": "b"
+    },
+    {
+     "sp": "chum",
+     "from": "10-17",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день",
+      "en": "2 per day",
+      "fr": "2 par jour"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1122",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
+      }
+     ],
      "sec": "b"
     }
    ]
@@ -984,17 +1025,18 @@
     "en": "Nicomen Slough (incl. Dewdney Slough)",
     "fr": "Nicomen Slough (avec le Dewdney Slough)"
    },
-   "notes": [
-    {
-     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
-     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
-     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
+   "notes": [],
+   "secs": {
+    "a": {
+     "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
+     "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River",
+     "fr": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser."
+    },
+    "b": {
+     "uk": "Від мосту Highway 7 у Dewdney до Fraser River.",
+     "en": "From the Highway 7 bridge at Dewdney downstream to the Fraser River",
+     "fr": "Du pont de l'autoroute 7 à Dewdney jusqu'au Fraser."
     }
-   ],
-   "sec": {
-    "uk": "Від злиття з Siddle (Bell's) Creek до Fraser River.",
-    "en": "From the confluence of Siddle (Bell's) Creek downstream to the Fraser River",
-    "fr": "Du confluent du Siddle (Bell's) Creek jusqu'au Fraser."
    },
    "rules": [
     {
@@ -1006,7 +1048,26 @@
       "en": "4 hatchery marked per day, only 2 over 35 cm",
       "fr": "4 marqués d'écloserie par jour, dont ≤2 de plus de 35 cm"
      },
-     "type": "retain"
+     "type": "retain",
+     "sec": "a"
+    },
+    {
+     "sp": "chum",
+     "from": "10-17",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день",
+      "en": "2 per day",
+      "fr": "2 par jour"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1122",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
+      }
+     ],
+     "sec": "b"
     }
    ]
   },
@@ -1033,13 +1094,7 @@
    "id": "serpentine",
    "d": "sur",
    "name": "Serpentine River",
-   "notes": [
-    {
-     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
-     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
-     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
-    }
-   ],
+   "notes": [],
    "sec": {
     "uk": "Нижче 168th Street біля Bothwell Park.",
     "en": "Downstream of 168th Street at Bothwell Park",
@@ -1078,6 +1133,23 @@
       "fr": "1 marqué d'écloserie par jour"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-17",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день",
+      "en": "2 per day",
+      "fr": "2 par jour"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1122",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
+      }
+     ]
     }
    ]
   },
@@ -1142,13 +1214,7 @@
    "id": "stave",
    "d": "valley",
    "name": "Stave River",
-   "notes": [
-    {
-     "uk": "За таблицею DFO кета (Chum) тут закрита. Повідомлення FN1122 (2 на день до 30 лис) не скасоване, тому DFO може повернути цей рядок.",
-     "en": "By the DFO table, chum is closed here. Notice FN1122 (2 per day to Nov 30) is not cancelled, so DFO can restore this row.",
-     "fr": "Selon le tableau du MPO, le kéta (Chum) est fermé ici. L'avis FN1122 (2 par jour jusqu'au 30 nov.) n'est pas annulé : le MPO peut donc rétablir cette ligne."
-    }
-   ],
+   "notes": [],
    "sec": {
     "uk": "Від дамби BC Hydro до залізничного мосту CPR. Не ловіть у нерестових каналах Ruskin (східний берег) і Northrop (західний берег, разом з притокою з рибоходом).",
     "en": "Downstream of B.C. Hydro Dam to the CPR Railway Bridge; except you shall not fish for salmon in that portion on the east side of the Stave River, known as the Ruskin Spawning Channel on the east bank of the BC Hydro park from the inlet near the dam, downstream to the boat ramp crossing; and you shall not fish for salmon in that portion on the west side of the Stave River known as the Northrop Spawning Channel from the intake downstream to where the channel joins the Stave River mainstem, including its tributary containing the fishway",
@@ -1165,6 +1231,23 @@
       "fr": "4 marqués d'écloserie par jour, dont ≤2 de plus de 35 cm"
      },
      "type": "retain"
+    },
+    {
+     "sp": "chum",
+     "from": "10-17",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день",
+      "en": "2 per day",
+      "fr": "2 par jour"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1122",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all"
+      }
+     ]
     }
    ]
   },

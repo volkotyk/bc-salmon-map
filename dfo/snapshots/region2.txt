@@ -133,6 +133,10 @@ July 1 to Aug 31 |
 Non-retention |
 Sep 1 to Dec 31 |
 4 hatchery marked per day |
+Chum |
+Oct 17 to Nov 30 |
+2 per day
+FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Coquitlam River |
 Chinook |
 Sep 5 to Sep 18 |
@@ -161,10 +165,18 @@ from the outlet of Harrison Lake downstream to the Highway 7 Bridge |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day |
+Chum |
+Oct 17 to Nov 30 |
+2 per day
+FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 from the Highway 7 Bridge downstream to the confluence with the Fraser River |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day |
+Chum |
+Oct 17 to Nov 30 |
+2 per day
+FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Kanaka Creek |
 downstream of the 112th Street bridge. |
 Coho |
@@ -232,6 +244,11 @@ from the confluence of Siddle (Bell's) Creek downstream to the Fraser River |
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day, only 2 over 35 cm |
+from the Highway 7 bridge at Dewdney downstream to the Fraser River |
+Chum |
+Oct 17 to Nov 30 |
+2 per day
+FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Norrish (Suicide) Creek |
 Coho |
 Sep 1 to Dec 31 |
@@ -246,6 +263,10 @@ Non-retention |
 Coho |
 Sep 1 to Dec 31 |
 1 hatchery marked per day |
+Chum |
+Oct 17 to Nov 30 |
+2 per day
+FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Squamish River (including Powerhouse Channel) |
 All |
 Apr 1 to Mar 31 |
@@ -262,7 +283,11 @@ downstream of B.C. Hydro Dam to the CPR Railway Bridge; except you shall not fis
 Coho |
 Sep 1 to Dec 31 |
 4 hatchery marked per day, only 2 over 35 cm |
+Chum |
+Oct 17 to Nov 30 |
+2 per day
+FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=370681&ID=all] |
 Sumas River - See Chilliwack River [#chilliwack] |
 Vedder River - See Chilliwack River [#chilliwack] |
 Date modified:
-2026-10-28
+2026-10-30
