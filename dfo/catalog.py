@@ -19,6 +19,18 @@ SQUAMISH = B("Басейн Squamish: разом не більше 1 заводс
              "Bassin de la Squamish : au total, 1 coho marqué d'écloserie par jour pour toutes les eaux non soumises à la marée.")
 TRIBS = B("Разом з притоками.", "Including tributaries.", "Affluents compris.")
 
+# Fishery notices that no later notice cancels, but that the DFO Region 2 table no longer shows. The map does not
+# open these waters. It shows the note until `until`, or until DFO restores a row for `sp` on the water.
+TABLE_GAPS = [
+    dict(sp="chum", until="2026-11-30", waters={"chilliwack", "harrison", "nicomen", "serpentine", "stave"}, note=B(
+        "Кета (Chum): повідомлення DFO FN1122 дає ліміт 2 на день до 30 лис (ділянку див. у повідомленні), і пізніші повідомлення його не скасовують. "
+        "28 жов DFO прибрав цей рядок зі своєї таблиці, тому карта не показує кету відкритою. Перш ніж залишити кету, уточніть у DFO: 1-866-431-3474.",
+        "Chum: DFO notice FN1122 sets a limit of 2 per day to Nov 30 (see the notice for the section), and no later notice cancels it. "
+        "On Oct 28 DFO removed this row from its table, so the map does not show chum as open. Confirm with DFO before you keep a chum: 1-866-431-3474.",
+        "Kéta (Chum) : l'avis FN1122 du MPO fixe une limite de 2 par jour jusqu'au 30 nov. (voir l'avis pour le tronçon), et aucun avis ultérieur ne l'annule. "
+        "Le 28 oct., le MPO a retiré cette ligne de son tableau : la carte n'indique donc pas le kéta comme ouvert. Confirmez auprès du MPO avant de garder un kéta : 1-866-431-3474.")),
+]
+
 # DFO "Waters" cell -> map entry. id = geometry key in build/geo.json.
 FRESH = {
     "Alouette River and tributaries": dict(id="alouette", d="tri", name="Alouette River", sec=TRIBS),

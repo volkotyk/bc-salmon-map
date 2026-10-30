@@ -162,6 +162,13 @@ def last_updated(fragment):
 
 
 # ---------------------------------------------------------------- Region 2 (fresh water)
+def table_gaps(wid, rules):
+    """Notes of C.TABLE_GAPS for this water, while the notice runs and the DFO table has no row for its species."""
+    today = date.today().isoformat()
+    return [g["note"] for g in C.TABLE_GAPS
+            if wid in g["waters"] and today <= g["until"] and not any(r["sp"] == g["sp"] for r in rules)]
+
+
 def parse_region2(page, bad):
     frag = cut(page, "<main", ["</main>"], "region2", bad)
     modified = re.search(r"Date modified:.*?(\d{4}-\d{2}-\d{2})", page, re.S)
@@ -231,6 +238,7 @@ def parse_region2(page, bad):
             for r in w["rules"]:
                 r["sec"] = keys[areas.index(r.pop("_area"))]
         e["rules"] = w["rules"]
+        e["notes"] = e["notes"] + table_gaps(wid, e["rules"])
         out.append(e)
     return out, (modified[1] if modified else None)
 
@@ -238,7 +246,7 @@ def parse_region2(page, bad):
 # ---------------------------------------------------------------- Areas 28 / 29 (tidal)
 def gear_text(details):
     """'You are not allowed ...: X (dates)' -> (X, dates) list."""
-    body = re.sub(r"^You are not allowed to harvest using the following gears and methods:\s*", "", details)
+    body = re.sub(r"^You are not allowed to \w+ using the following gears and methods:\s*", "", details)
     return [(m[1].strip(), m[2]) for m in re.finditer(r"(.+?)\s*\(([^()]*?)\s*\)", body)]
 
 
@@ -344,8 +352,8 @@ def parse_tidal(area, page, bad):
         if typ == "Gear Restriction" and whole_area and species in ("Salmon", "Finfish", ""):
             for what, dates in gear_text(details):
                 rng = parse_dates(dates)
-                if not rng:
-                    bad.add(f"{name}: cannot read gear dates {dates!r}")
+                if not rng or ":" in what:              # a colon: gear_text did not strip the lead-in sentence
+                    bad.add(f"{name}: cannot read gear row {what!r} ({dates!r})")
                     continue
                 area_gear.append({"sp": "all", "from": rng[0], "to": rng[1], "type": "gear",
                                   "lim": B(f"Заборонено: {C.DETAIL_UK.get(what, what)}", f"Not allowed: {what}",

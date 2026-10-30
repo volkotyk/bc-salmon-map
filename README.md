@@ -156,6 +156,10 @@ translation does not block: it is shown in English.
 
 To test the parser without the network: `python dfo/update.py --cache` (reuses `dfo/cache/`, saved by the last online run).
 
+**Table gaps.** The DFO table can drop a row while its fishery notice stays in force. The updater cannot see this, and the map
+follows the table. When a person finds such a gap, add it to `TABLE_GAPS` in `dfo/catalog.py`: the water popup then shows a warning.
+The warning goes away when DFO restores the row or when the notice ends.
+
 The bot commits to `main`, so run `git pull` before your next push. GitHub pauses scheduled workflows after 60 days
 without repository activity; re-enable the workflow from the Actions tab if that happens.
 
