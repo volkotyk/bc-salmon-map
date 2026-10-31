@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T21:00Z",
+ "generated": "2026-10-31T19:24Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -29,7 +29,8 @@
     ["2026-10-27", 49, 3.96],
     ["2026-10-28", 84, 6.44],
     ["2026-10-29", 33, 2.82],
-    ["2026-10-30", 68, 6.25]
+    ["2026-10-30", 68, 6.25],
+    ["2026-10-31", 29, 3.17]
    ]
   },
   {
@@ -60,11 +61,20 @@
     ["2026-10-27", 2, 0.16],
     ["2026-10-28", 1, 0.08],
     ["2026-10-29", 3, 0.26],
-    ["2026-10-30", 1, 0.09]
+    ["2026-10-30", 1, 0.09],
+    ["2026-10-31", 0, 0.0]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: October 30, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-30-2026",
+   "date": "2026-10-30",
+   "sp": ["chinook", "coho", "chum", "sockeye"],
+   "w": ["chilliwack", "squamish", "stave", "harrison"]
+  },
   {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: October 23, 2026",
@@ -90,14 +100,6 @@
    "w": ["chilliwack", "squamish", "stave", "harrison"]
   },
   {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: October 9, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-9-2026",
-   "date": "2026-10-09",
-   "sp": ["chinook", "coho", "chum", "sockeye"],
-   "w": ["chilliwack", "capilano", "harrison", "a29-mouth", "28-1"]
-  },
-  {
    "src": "Reddit r/chilliwack",
    "title": "The salmon run is going strong in the Chilliwack River",
    "url": "https://www.reddit.com/r/chilliwack/comments/1x05bso/the_salmon_run_is_going_strong_in_the_chilliwack/",
@@ -114,24 +116,6 @@
    "sp": [],
    "w": ["chilliwack"],
    "reddit": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "River conditions on Oct 2 at 3 pm (video)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28380348598311997/",
-   "date": "2026-10-02",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
-  },
-  {
-   "src": "Facebook · Vedder River Chilliwack Fishing Report",
-   "title": "A big fish released after a hard fight (video)",
-   "url": "https://www.facebook.com/groups/717189431721286/posts/28378936645119859/",
-   "date": "2026-10-02",
-   "sp": [],
-   "w": ["chilliwack"],
-   "manual": true
   }
  ]
 }
