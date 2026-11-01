@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T20:16Z",
+ "generated": "2026-11-01T19:49Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-03", 152, 10.29],
     ["2026-10-05", 278, 16.85],
     ["2026-10-07", 320, 18.8],
     ["2026-10-09", 228, 13.57],
@@ -40,7 +39,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-03", 1, 0.07],
     ["2026-10-05", 0, 0.0],
     ["2026-10-07", 2, 0.12],
     ["2026-10-09", 1, 0.06],
@@ -104,15 +102,6 @@
    "title": "The salmon run is going strong in the Chilliwack River",
    "url": "https://www.reddit.com/r/chilliwack/comments/1x05bso/the_salmon_run_is_going_strong_in_the_chilliwack/",
    "date": "2026-10-07",
-   "sp": [],
-   "w": ["chilliwack"],
-   "reddit": true
-  },
-  {
-   "src": "Reddit r/chilliwack",
-   "title": "The salmon run is going strong in the Chilliwack River",
-   "url": "https://www.reddit.com/r/chilliwack/comments/1wwz1aq/the_salmon_run_is_going_strong_in_the_chilliwack/",
-   "date": "2026-10-03",
    "sp": [],
    "w": ["chilliwack"],
    "reddit": true
