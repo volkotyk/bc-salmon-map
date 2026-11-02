@@ -156,10 +156,15 @@ Oct 1 to Dec 31 |
 1 hatchery marked per day |
 Dewdney Slough - See Nicomen Slough [#nicomen] |
 Fraser River |
-mainstem waters upstream of the CPR Bridge at Mission, BC |
+mainstem waters upstream of the CPR Bridge at Mission |
 All |
 Apr 1 until further notice |
 No fishing for salmon |
+mainstem waters downstream of the CPR Bridge at Mission to the Highway 1 Bridge at Hope |
+Chum |
+Nov 3 to Nov 30 |
+2 per day
+FN1179 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=372852&ID=all] |
 Harrison River |
 from the outlet of Harrison Lake downstream to the Highway 7 Bridge |
 Coho |
@@ -290,4 +295,4 @@ FN1122 [https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_I
 Sumas River - See Chilliwack River [#chilliwack] |
 Vedder River - See Chilliwack River [#chilliwack] |
 Date modified:
-2026-10-30
+2026-11-02

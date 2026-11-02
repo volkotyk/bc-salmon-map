@@ -24,14 +24,11 @@ Open |
 0 |
 Closed |
 Chum salmon |
-29-1 to 29-14 and 29-17 |
+29 |
 30cm |
 barbless hook and line |
 4 |
 Open |
-29-15 and 29-16 |
-0 |
-Closed |
 Coho salmon (hatchery and wild combined) |
 29-1 to 29-10 and 29-12 |
 30cm |
@@ -40,16 +37,13 @@ barbless hook and line |
 * Consisting of no more than: 2 - Hatchery - marked
 0 - Wild - unmarked
 Open |
-29-11,29-13,29-14 and 29-17 |
+29-11 and 29-13 to 29-17 |
 25cm |
 barbless hook and line |
 2 Combined Total
 * Consisting of no more than: 2 - Hatchery - marked
 0 - Wild - unmarked
 Open |
-29-15 and 29-16 |
-0 |
-Closed |
 Pink salmon |
 29-1 to 29-5 and 29-8 |
 30cm |
@@ -68,7 +62,7 @@ Non Retention |
 29-6,29-7 and 29-9 to 29-17 |
 0 |
 Closed |
-Last updated: 2026-10-31
+Last updated: 2026-11-01
 Restrictions
 Always check for protected areas [#area-closures].
 Species |
