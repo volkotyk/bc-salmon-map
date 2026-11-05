@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-04T22:08Z",
+ "generated": "2026-11-05T21:30Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-07", 320, 18.8],
     ["2026-10-09", 228, 13.57],
     ["2026-10-11", 61, 4.84],
     ["2026-10-13", 191, 11.9],
@@ -31,7 +30,8 @@
     ["2026-10-31", 29, 3.17],
     ["2026-11-01", 61, 5.21],
     ["2026-11-02", 48, 7.36],
-    ["2026-11-03", 29, 2.4]
+    ["2026-11-03", 29, 2.4],
+    ["2026-11-04", 32, 2.7]
    ]
   },
   {
@@ -41,7 +41,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-07", 2, 0.12],
     ["2026-10-09", 1, 0.06],
     ["2026-10-11", 0, 0.0],
     ["2026-10-13", 0, 0.0],
@@ -64,11 +63,20 @@
     ["2026-10-31", 0, 0.0],
     ["2026-11-01", 1, 0.09],
     ["2026-11-02", 0, 0.0],
-    ["2026-11-03", 0, 0.0]
+    ["2026-11-03", 0, 0.0],
+    ["2026-11-04", 0, 0.0]
    ]
   }
  ],
  "reports": [
+  {
+   "src": "Fred's Custom Tackle",
+   "title": "Fishing Report | Chilliwack/Vedder River",
+   "url": "https://fredscustomtackle.com/blogs/fishing-reports/fishing-report",
+   "date": "2026-11-03",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack"]
+  },
   {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: October 30, 2026",
@@ -86,29 +94,12 @@
    "w": ["chilliwack", "capilano", "squamish", "stave", "harrison"]
   },
   {
-   "src": "Fred's Custom Tackle",
-   "title": "Fishing Report | Chilliwack/Vedder River",
-   "url": "https://fredscustomtackle.com/blogs/fishing-reports/fishing-report",
-   "date": "2026-10-17",
-   "sp": ["chinook", "coho", "chum"],
-   "w": ["chilliwack"]
-  },
-  {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: October 16, 2026",
    "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-16-2026",
    "date": "2026-10-16",
    "sp": ["chinook", "coho", "chum"],
    "w": ["chilliwack", "squamish", "stave", "harrison"]
-  },
-  {
-   "src": "Reddit r/chilliwack",
-   "title": "The salmon run is going strong in the Chilliwack River",
-   "url": "https://www.reddit.com/r/chilliwack/comments/1x05bso/the_salmon_run_is_going_strong_in_the_chilliwack/",
-   "date": "2026-10-07",
-   "sp": [],
-   "w": ["chilliwack"],
-   "reddit": true
   }
  ]
 }
