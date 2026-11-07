@@ -3,7 +3,7 @@
   "region2": {
    "title": "Region 2 – Lower Mainland",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/rec/fresh-douce/region2-eng.html",
-   "dfoDate": "2026-11-02"
+   "dfoDate": "2026-11-06"
   },
   "area28": {
    "title": "Area 28",
@@ -655,6 +655,24 @@
      },
      "type": "closed",
      "sec": "a"
+    },
+    {
+     "sp": "coho",
+     "from": "11-07",
+     "to": "11-30",
+     "lim": {
+      "uk": "2 на день, лише заводські",
+      "en": "2 per day, hatchery marked only",
+      "fr": "2 par jour, marqués d'écloserie seulement"
+     },
+     "type": "retain",
+     "fn": [
+      {
+       "id": "FN1217",
+       "url": "https://notices.dfo-mpo.gc.ca/fns-sap/index-eng.cfm?pg=view_notice&DOC_ID=373612&ID=all"
+      }
+     ],
+     "sec": "b"
     },
     {
      "sp": "chum",
