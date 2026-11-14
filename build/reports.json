@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-13T22:07Z",
+ "generated": "2026-11-14T19:59Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-16", 399, 22.26],
     ["2026-10-17", 442, 26.31],
     ["2026-10-18", 369, 23.65],
     ["2026-10-19", 425, 26.48],
@@ -46,7 +45,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-16", 10, 0.56],
     ["2026-10-17", 7, 0.42],
     ["2026-10-18", 7, 0.45],
     ["2026-10-19", 0, 0.0],
@@ -80,6 +78,14 @@
  ],
  "reports": [
   {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: November 13, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/fridayfishingreport_nov13_2026",
+   "date": "2026-11-13",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack", "squamish", "stave", "harrison", "chehalis", "28-1", "28-8"]
+  },
+  {
    "src": "Reddit r/fishingBC",
    "title": "I couldn't catch salmon if my life depended on it",
    "url": "https://www.reddit.com/r/fishingBC/comments/1xrycu6/i_couldnt_catch_salmon_if_my_life_depended_on_it/",
@@ -111,14 +117,6 @@
    "date": "2026-10-30",
    "sp": ["chinook", "coho", "chum", "sockeye"],
    "w": ["chilliwack", "squamish", "stave", "harrison"]
-  },
-  {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: October 23, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-23-2026",
-   "date": "2026-10-23",
-   "sp": ["chinook", "coho", "chum"],
-   "w": ["chilliwack", "capilano", "squamish", "stave", "harrison"]
   }
  ]
 }
