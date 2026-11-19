@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-18T23:05Z",
+ "generated": "2026-11-19T22:43Z",
  "testfish": [
   {
    "id": "albion-chum",
@@ -8,7 +8,6 @@
    "src": "DFO",
    "url": "https://www.pac.dfo-mpo.gc.ca/fm-gp/fraser/albion-eng.html",
    "days": [
-    ["2026-10-21", 225, 15.46],
     ["2026-10-22", 238, 14.36],
     ["2026-10-23", 222, 14.1],
     ["2026-10-24", 196, 13.4],
