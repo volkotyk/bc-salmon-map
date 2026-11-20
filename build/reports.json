@@ -1,7 +1,15 @@
 {
- "generated": "2026-11-20T22:18Z",
+ "generated": "2026-11-20T22:49Z",
  "testfish": [],
  "reports": [
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: November 20, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-november-20-2026",
+   "date": "2026-11-20",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack", "squamish", "stave", "harrison", "chehalis"]
+  },
   {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: November 13, 2026",
@@ -34,14 +42,6 @@
    "date": "2026-11-03",
    "sp": ["chinook", "coho", "chum"],
    "w": ["chilliwack"]
-  },
-  {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: October 30, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-october-30-2026",
-   "date": "2026-10-30",
-   "sp": ["chinook", "coho", "chum", "sockeye"],
-   "w": ["chilliwack", "squamish", "stave", "harrison"]
   }
  ]
 }
