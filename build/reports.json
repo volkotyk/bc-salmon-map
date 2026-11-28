@@ -1,7 +1,15 @@
 {
- "generated": "2026-11-27T00:47Z",
+ "generated": "2026-11-28T00:14Z",
  "testfish": [],
  "reports": [
+  {
+   "src": "Pacific Angler",
+   "title": "Pacific Angler Friday Fishing Report: November 27, 2026",
+   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-november-27-2027",
+   "date": "2026-11-27",
+   "sp": ["chinook", "coho", "chum"],
+   "w": ["chilliwack", "squamish", "stave", "harrison", "chehalis"]
+  },
   {
    "src": "Pacific Angler",
    "title": "Pacific Angler Friday Fishing Report: November 20, 2026",
@@ -26,14 +34,6 @@
    "sp": ["chum"],
    "w": ["chilliwack"],
    "reddit": true
-  },
-  {
-   "src": "Pacific Angler",
-   "title": "Pacific Angler Friday Fishing Report: November 6, 2026",
-   "url": "https://www.pacificangler.ca/blogs/learn/pacific-angler-friday-fishing-report-november_6_2026",
-   "date": "2026-11-06",
-   "sp": ["chinook", "coho", "chum"],
-   "w": ["chilliwack", "squamish", "stave", "harrison", "chehalis"]
   },
   {
    "src": "Fred's Custom Tackle",
